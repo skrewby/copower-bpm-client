@@ -2,7 +2,7 @@ import {
     alpha,
     createTheme as createMuiTheme,
     responsiveFontSizes
-  } from '@material-ui/core/styles';
+  } from '@mui/material/styles';
   import {
     darkBackground,
     darkError,

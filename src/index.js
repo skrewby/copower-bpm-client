@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './app';
+import { App } from './app';
 
 // Import Libraries
 import { HelmetProvider } from 'react-helmet-async';
