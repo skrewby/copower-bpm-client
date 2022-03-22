@@ -1,5 +1,4 @@
-import { createSvgIcon } from '@material-ui/core/utils';
-
+import { createSvgIcon } from '@mui/material/utils';
 export const Logout = createSvgIcon(
   <svg
     fill="currentColor"

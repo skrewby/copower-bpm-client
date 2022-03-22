@@ -6,6 +6,9 @@ import { LoadingScreen } from './components/loading-screen';
 import { AuthGuard } from './components/auth/auth-guard';
 import { GuestGuard } from './components/auth/guest-guard';
 
+// Containers
+import { BPMLayout } from './containers/bpm-layout';
+
 const Loadable = (Component) => (props) => (
     <Suspense fallback={<LoadingScreen />}>
         <Component {...props} />
@@ -25,7 +28,7 @@ const routes = [
         path: '/',
         element: (
             <Navigate
-                to="/bpm/dashboard"
+                to="/bpm"
                 replace
             />
         ),
@@ -44,6 +47,14 @@ const routes = [
             <GuestGuard>
                 <PasswordRecovery />
             </GuestGuard>
+        )
+    },
+    {
+        path: "bpm",
+        element: (
+            <AuthGuard>
+                <BPMLayout />
+            </AuthGuard>
         )
     },
     {
