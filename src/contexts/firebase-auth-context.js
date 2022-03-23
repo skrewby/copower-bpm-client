@@ -50,7 +50,7 @@ export const AuthProvider = (props) => {
             id: user.uid,
             avatar: user.photoURL,
             email: user.email,
-            name: 'Chen Simmons'
+            displayName: user.displayName
           }
         }
       });
