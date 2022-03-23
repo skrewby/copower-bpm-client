@@ -13,6 +13,7 @@ import { usePopover } from '../../hooks/use-popover';
 import { Bell as BellIcon } from '../../icons/bell';
 import { Sparkles as SparklesIcon } from '../../icons/sparkles';
 import { Speakerphone as SpeakerphoneIcon } from '../../icons/speakerphone';
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 
 const notifications = [
   {
@@ -58,7 +59,7 @@ export const NotificationsPopover = (props) => {
             color: 'primary.contrastText'
           }}
         >
-          <BellIcon />
+          <NotificationsNoneOutlinedIcon />
         </IconButton>
       </Badge>
       <Popover

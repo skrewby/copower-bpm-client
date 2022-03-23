@@ -8,9 +8,9 @@ import routes from './routes';
 import { createCustomTheme } from './theme';
 
 export const App = () => {
-  const content = useRoutes(routes);
   const { settings } = useSettings();
   const { isInitialized } = useAuth();
+  const content = useRoutes(routes);
 
   const theme = createCustomTheme({
     direction: settings.direction,

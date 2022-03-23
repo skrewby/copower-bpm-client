@@ -21,7 +21,7 @@ const PasswordRecovery = Loadable(lazy(() => import('./containers/auth/password-
 
 // BPM pages
 const NotFound = Loadable(lazy(() => import('./containers/not-found').then((module) => ({ default: module.NotFound }))));
-
+const AdminDashboard = Loadable(lazy(() => import('./containers/dashboard/admin-dashboard').then((module) => ({ default: module.AdminDashboard }))));
 
 const routes = [
     {
@@ -55,7 +55,22 @@ const routes = [
             <AuthGuard>
                 <BPMLayout />
             </AuthGuard>
-        )
+        ),
+        children: [
+            {
+                path: '',
+                element: (
+                    <Navigate
+                        to="/bpm/dashboard"
+                        replace
+                    />
+                )
+            },
+            {
+                path: 'dashboard',
+                element: <AdminDashboard />
+            }
+        ]
     },
     {
         path: '*',

@@ -17,7 +17,7 @@ const BPMLayoutRoot = styled('div')(({ theme }) => ({
 const BPMLayoutContent = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
-  height: '100%'
+  height: '100%',
 }));
 
 export const BPMLayout = () => {
@@ -27,13 +27,7 @@ export const BPMLayout = () => {
   return (
     <BPMLayoutRoot>
       <Navbar />
-      <BPMLayoutContent
-        sx={{
-          ml: {
-            md: '73px'
-          }
-        }}
-      >
+      <BPMLayoutContent>
         <Outlet />
       </BPMLayoutContent>
     </BPMLayoutRoot>
