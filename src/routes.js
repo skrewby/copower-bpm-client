@@ -25,6 +25,8 @@ const Dashboard = Loadable(lazy(() => import('./containers/dashboard/dashboard')
 
 const Leads = Loadable(lazy(() => import('./containers/leads/leads').then((module) => ({ default: module.Leads }))));
 const Lead = Loadable(lazy(() => import('./containers/leads/lead').then((module) => ({ default: module.Lead }))));
+const LeadSummary = Loadable(lazy(() => import('./containers/leads/lead-summary').then((module) => ({ default: module.LeadSummary }))));
+const LeadQuotation = Loadable(lazy(() => import('./containers/leads/lead-quotation').then((module) => ({ default: module.LeadQuotation }))));
 
 const routes = [
     {
@@ -82,7 +84,17 @@ const routes = [
                     },
                     {
                         path: ':orderId',
-                        element: <Lead />
+                        element: <Lead />,
+                        children: [
+                            {
+                                path: '',
+                                element: <LeadSummary />
+                            },
+                            {
+                                path: 'quotation',
+                                element: <LeadQuotation />
+                            }
+                        ]
                     }
                 ]
             },

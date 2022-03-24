@@ -1,17 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { Box, Button, Container, Grid, Skeleton, Typography, Tab, Tabs } from '@mui/material';
+import { Box, Button, Container, Skeleton, Typography, Tab, Tabs, Divider } from '@mui/material';
 import { leadApi } from '../../api/lead';
 import { ActionsMenu } from '../../components/actions-menu';
-import { LeadInfo } from '../../components/lead/lead-info';
-import { LeadInfoDialog } from '../../components/lead/lead-info-dialog';
-import { LeadSystemItems } from '../../components/lead/lead-system-items';
-import { LeadPropertyDetails } from '../../components/lead/lead-property-details';
-import { LeadPropertyDialog } from '../../components/lead/lead-property-dialog';
-import { LeadProgress } from '../../components/lead/lead-progress';
-import { LeadFiles } from '../../components/lead/lead-files';
 import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
@@ -32,8 +25,7 @@ const tabs = [
 export const Lead = () => {
   const mounted = useMounted();
   const [leadState, setLeadState] = useState({ isLoading: true });
-  const [openInfoDialog, setOpenInfoDialog] = useState(false);
-  const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
+  const location = useLocation();
 
   const getLead = useCallback(async () => {
     setLeadState(() => ({ isLoading: true }));
@@ -155,79 +147,24 @@ export const Lead = () => {
             <Box sx={{ flexGrow: 1 }} />
             <ActionsMenu actions={actions} />
           </Box>
+          <Tabs
+            allowScrollButtonsMobile
+            sx={{ mt: 4 }}
+            value={tabs.findIndex((tab) => tab.href === location.pathname)}
+            variant="scrollable"
+          >
+            {tabs.map((option) => (
+              <Tab
+                component={RouterLink}
+                key={option.href}
+                label={option.label}
+                to={option.href}
+              />
+            ))}
+          </Tabs>
+          <Divider />
         </Box>
-        <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            container
-            item
-            lg={8}
-            spacing={3}
-            sx={{ height: 'fit-content' }}
-            xs={12}
-          >
-            <Grid
-              item
-              xs={12}
-            >
-              <LeadInfo
-                onEdit={() => setOpenInfoDialog(true)}
-                lead={leadState.data}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-            >
-              <LeadPropertyDetails
-                onEdit={() => toast.error('Not implemented yet')}
-                lead={leadState.data}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-            >
-              <LeadFiles files={leadState.data?.files} />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-            >
-              <LeadSystemItems 
-                onEdit={() => toast.error('Not implemented yet')} 
-                lead={leadState.data} 
-              />
-            </Grid>
-          </Grid>
-          <Grid
-            container
-            item
-            lg={4}
-            spacing={3}
-            sx={{ height: 'fit-content' }}
-            xs={12}
-          >
-            <Grid
-              item
-              xs={12}
-            >
-              <LeadProgress lead={leadState.data} />
-            </Grid>
-          </Grid>
-        </Grid>
-        <LeadInfoDialog
-          onClose={() => setOpenInfoDialog(false)}
-          open={openInfoDialog}
-          lead={leadState.data}
-        />
-        <LeadPropertyDialog
-          onClose={() => setOpenPropertyDialog(false)}
-          open={openPropertyDialog}
-          lead={leadState.data}
-        />
+        <Outlet />
       </>
     );
   };
