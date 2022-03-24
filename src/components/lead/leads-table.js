@@ -19,7 +19,6 @@ import { Pagination } from '../pagination';
 import { ResourceError } from '../resource-error';
 import { ResourceUnavailable } from '../resource-unavailable';
 import { Status } from '../status';
-import { InvoiceMenu } from './invoice-menu';
 
 const columns = [
   {
@@ -179,9 +178,6 @@ export const LeadsTable = (props) => {
                     color={statusVariant.color}
                     label={statusVariant.label}
                   />
-                </TableCell>
-                <TableCell>
-                  <InvoiceMenu />
                 </TableCell>
               </TableRow>
             );
