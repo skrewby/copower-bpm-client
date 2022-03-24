@@ -34,7 +34,7 @@ export const LeadSystemSummary = (props) => {
             </TableHead>
             <TableBody>
                 {lead.system.map((systemItem) => (
-                    <TableRow key={systemItem.sku}>
+                    <TableRow key={systemItem.name}>
                         <TableCell>
                             {systemItem.name}
                         </TableCell>

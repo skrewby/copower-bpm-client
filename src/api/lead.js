@@ -340,10 +340,12 @@ const lead = {
   ],
   files: [
     {
+      "id": 1,
       "type": "Panel Design",
       "name": "panel-design.pdf"
     },
     {
+      "id": 2,
       "type": "Front of House",
       "name": "dlkasd.png"
     }
