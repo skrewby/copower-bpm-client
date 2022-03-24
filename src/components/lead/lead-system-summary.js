@@ -1,14 +1,11 @@
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
 import {
-    Avatar,
-    Box,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableRow,
-    Typography
 } from '@mui/material';
 
 export const LeadSystemSummary = (props) => {

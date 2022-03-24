@@ -1,4 +1,4 @@
-import { subDays, subMinutes } from 'date-fns';
+import { subDays } from 'date-fns';
 import { throttle } from '../config';
 import { applyFilters } from '../utils/apply-filters';
 import { applyPagination } from '../utils/apply-pagination';

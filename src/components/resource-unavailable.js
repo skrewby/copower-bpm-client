@@ -24,7 +24,7 @@ export const ResourceUnavailable = (props) => {
         sx={{ mt: 2 }}
         variant="body2"
       >
-        There are not objects here yet.
+        There is nothing here yet.
       </Typography>
       {onCreate && (
         <Button
@@ -34,7 +34,7 @@ export const ResourceUnavailable = (props) => {
           sx={{ mt: 2 }}
           variant="contained"
         >
-          Create Object
+          Add
         </Button>
       )}
     </ResourceUnavailableRoot>

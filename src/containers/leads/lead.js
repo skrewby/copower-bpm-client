@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { Box, Button, Container, Grid, Skeleton, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Skeleton, Typography, Tab, Tabs } from '@mui/material';
 import { leadApi } from '../../api/lead';
 import { ActionsMenu } from '../../components/actions-menu';
 import { LeadInfo } from '../../components/lead/lead-info';
@@ -15,6 +15,19 @@ import { LeadFiles } from '../../components/lead/lead-files';
 import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
+
+// NOTE: This should be generated based on product data because "/1" represents "/:id" from routing
+// //  strategy where ":id" is dynamic depending on current product id
+const tabs = [
+  {
+    href: '/bpm/leads/1',
+    label: 'Summary'
+  },
+  {
+    href: '/bpm/leads/1/quotation',
+    label: 'Quotation'
+  }
+];
 
 export const Lead = () => {
   const mounted = useMounted();
@@ -121,7 +134,7 @@ export const Lead = () => {
               color="primary"
               component={RouterLink}
               startIcon={<ArrowBackOutlinedIcon />}
-              to="/dashboard/leads"
+              to="/bpm/leads"
               variant="text"
             >
               Leads

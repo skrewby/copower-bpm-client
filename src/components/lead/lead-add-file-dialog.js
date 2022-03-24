@@ -31,34 +31,53 @@ const currencyOptions = [
   }
 ];
 
-export const ProductVariantDialog = (props) => {
+const fileTypeOptions = [
+  {
+    label: 'Meterbox',
+    value: 'meterbox'
+  },
+  {
+    label: 'Panel Design',
+    value: 'panelDesign'
+  },
+  {
+    label: 'Panel String Design',
+    value: 'panelStringDesign'
+  },
+  {
+    label: 'Front of House',
+    value: 'frontHouse'
+  },
+  {
+    label: 'Energy Bill',
+    value: 'energyBill'
+  },
+  {
+    label: 'Misc',
+    value: 'misc'
+  },
+];
+
+export const LeadAddFileDialog = (props) => {
   const { open, onClose, onExited, onVariantsChange, variant, ...other } = props;
   const mode = variant ? 'update' : 'add';
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      currency: variant?.currency || 'eur',
-      description: variant?.description || '',
-      image: variant?.image || '',
-      name: variant?.name || '',
-      price: variant?.price || 0,
-      sku: variant?.sku || '',
+      fileType: variant?.fileType || '',
+      file: variant?.file || '',
       submit: null
     },
     validationSchema: Yup.object().shape({
-      currency: Yup
+      fileType: Yup
         .string()
-        .oneOf(currencyOptions.map((option) => option.value))
-        .required('Currency is required'),
-      description: Yup.string().max(1024).required('Description name is required'),
-      image: Yup.string(),
-      name: Yup.string().max(255).required('Variant name is required'),
-      price: Yup.number().required('Price is required'),
-      sku: Yup.string().max(255).required('Sku is required')
+        .oneOf(fileTypeOptions.map((option) => option.value))
+        .required('File type is required'),
+      file: Yup.string().required('File is required')
     }),
     onSubmit: async (values, helpers) => {
       try {
-        toast.success(mode === 'update' ? 'Variant updated' : 'Variant saved');
+        toast.success(mode === 'update' ? 'File updated' : 'File uploaded');
         onVariantsChange?.({ ...variant, ...values }, mode);
         helpers.setStatus({ success: true });
         helpers.setSubmitting(false);
@@ -90,7 +109,7 @@ export const ProductVariantDialog = (props) => {
       {...other}
     >
       <DialogTitle>
-        {mode === 'update' ? 'Update Variant' : 'Add Variant'}
+        {mode === 'update' ? 'Update File' : 'Add File'}
       </DialogTitle>
       <DialogContent>
         <Grid
@@ -102,67 +121,17 @@ export const ProductVariantDialog = (props) => {
             xs={12}
           >
             <InputField
-              error={Boolean(formik.touched.name && formik.errors.name)}
-              fullWidth
-              helperText={formik.touched.name && formik.errors.name}
-              label="Name"
-              name="name"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              placeholder="e.g Green"
-              value={formik.values.name}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
-            <InputField
-              error={Boolean(formik.touched.sku && formik.errors.sku)}
-              fullWidth
-              helperText={formik.touched.sku && formik.errors.sku}
-              label="SKU"
-              name="sku"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              placeholder="D-293TX"
-              value={formik.values.sku}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
-            <InputField
-              error={Boolean(formik.touched.description && formik.errors.description)}
-              fullWidth
-              helperText={formik.touched.description && formik.errors.description}
-              label="Description"
-              multiline
-              name="description"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              placeholder="Product description"
-              rows={4}
-              value={formik.values.description}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
-            <InputField
-              error={Boolean(formik.touched.currency && formik.errors.currency)}
-              helperText={formik.touched.currency && formik.errors.currency}
-              label="Currency"
-              name="currency"
+              error={Boolean(formik.touched.fileType && formik.errors.fileType)}
+              helperText={formik.touched.fileType && formik.errors.fileType}
+              label="Type"
+              name="fileType"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               select
               sx={{ minWidth: 236 }}
-              value={formik.values.currency}
+              value={formik.values.fileType}
             >
-              {currencyOptions.map((option) => (
+              {fileTypeOptions.map((option) => (
                 <MenuItem
                   key={option.value}
                   value={option.value}
@@ -176,38 +145,14 @@ export const ProductVariantDialog = (props) => {
             item
             xs={12}
           >
-            <InputField
-              error={Boolean(formik.touched.price && formik.errors.price)}
-              helperText={formik.touched.price && formik.errors.price}
-              label="Price"
-              name="price"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              type="number"
-              sx={{ maxWidth: 236 }}
-              value={formik.values.price}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    {currencyOptions
-                      .find((option) => option.value === formik.values.currency).label}
-                  </InputAdornment>
-                )
-              }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
             <Typography
               color="textPrimary"
               sx={{ mb: 1.25 }}
               variant="subtitle2"
             >
-              Image
+              File
             </Typography>
-            {formik.values.image
+            {formik.values.file
               ? (
                 <Box
                   sx={{
@@ -291,11 +236,11 @@ export const ProductVariantDialog = (props) => {
   );
 };
 
-ProductVariantDialog.defaultProps = {
+LeadAddFileDialog.defaultProps = {
   open: false
 };
 
-ProductVariantDialog.propTypes = {
+LeadAddFileDialog.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   onExited: PropTypes.func,

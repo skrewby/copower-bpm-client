@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import Proptypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import { format } from 'date-fns';
-import numeral from 'numeral';
-import toast from 'react-hot-toast';
 import {
   Box,
   Checkbox,

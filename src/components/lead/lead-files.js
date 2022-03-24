@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -19,7 +17,7 @@ import { useDialog } from '../../hooks/use-dialog';
 import { generateResourceId } from '../../utils/generate-resource-id';
 import { ConfirmationDialog } from '../confirmation-dialog';
 import { ResourceUnavailable } from '../resource-unavailable';
-import { ProductVariantDialog } from '../../components/lead/product-variant-dialog';
+import { LeadAddFileDialog } from './lead-add-file-dialog';
 import toast from 'react-hot-toast';
 
 export const LeadFiles = (props) => {
@@ -155,7 +153,7 @@ export const LeadFiles = (props) => {
           />
         )}
       </Card>
-      <ProductVariantDialog
+      <LeadAddFileDialog
         onClose={handleCloseFileDialog}
         onExited={handleExitedDialog}
         onVariantsChange={handleVariantsChange}
