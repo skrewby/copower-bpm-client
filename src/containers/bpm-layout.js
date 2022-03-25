@@ -5,6 +5,7 @@ import { styled } from '@mui/system';
 
 // Components
 import { Navbar } from '../components/navbar/navbar';
+import { Footer } from '../components/footer';
 
 import { useSettings } from '../contexts/settings-context';
 
@@ -29,6 +30,7 @@ export const BPMLayout = () => {
       <Navbar />
       <BPMLayoutContent>
         <Outlet />
+        <Footer />
       </BPMLayoutContent>
     </BPMLayoutRoot>
   );
