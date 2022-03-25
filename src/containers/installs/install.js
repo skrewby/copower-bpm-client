@@ -13,28 +13,48 @@ import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 // //  strategy where ":id" is dynamic depending on current product id
 const tabs = [
   {
-    href: '/bpm/leads/1',
+    href: '/bpm/installs/1',
     label: 'Summary'
   },
   {
-    href: '/bpm/leads/1/quotation',
-    label: 'Quotation'
-  }
+    href: '/bpm/installs/1/ptc',
+    label: 'PTC'
+  },
+  {
+    href: '/bpm/installs/1/schedule',
+    label: 'Schedule'
+  },
+  {
+    href: '/bpm/installs/1/review',
+    label: 'Review'
+  },
+  {
+    href: '/bpm/installs/1/retailer',
+    label: 'Retailer Notification'
+  },
+  {
+    href: '/bpm/installs/1/stc',
+    label: 'STC Submission'
+  },
+  {
+    href: '/bpm/installs/1/finance',
+    label: 'Finance'
+  },
 ];
 
-export const Lead = () => {
+export const Install = () => {
   const mounted = useMounted();
-  const [leadState, setLeadState] = useState({ isLoading: true });
+  const [installState, setInstallState] = useState({ isLoading: true });
   const location = useLocation();
 
-  const getLead = useCallback(async () => {
-    setLeadState(() => ({ isLoading: true }));
+  const getInstall = useCallback(async () => {
+    setInstallState(() => ({ isLoading: true }));
 
     try {
       const result = await leadApi.getLead();
 
       if (mounted.current) {
-        setLeadState(() => ({
+        setInstallState(() => ({
           isLoading: false,
           data: result
         }));
@@ -43,7 +63,7 @@ export const Lead = () => {
       console.error(err);
 
       if (mounted.current) {
-        setLeadState(() => ({
+        setInstallState(() => ({
           isLoading: false,
           error: err.message
         }));
@@ -52,38 +72,22 @@ export const Lead = () => {
   }, [mounted]);
 
   useEffect(() => {
-    getLead().catch(console.error);
-  }, [getLead]);
+    getInstall().catch(console.error);
+  }, [getInstall]);
 
-  const handleSendQuote = () => {
-    toast.error('Not implemented yet. It should create a pdf similar to Pylon quote and send it to customer by email');
-  };
-
-  const handleReject = () => {
-    toast.error('Not implemented yet. This option will be shown to operations when sales sends lead to operations. A wizard will appear where operations can leave a comment');
-  };
-
-  const handleAccept = () => {
-    toast.error('Not implemented yet. This option will be shown to operations when sales sends lead to operations');
+  const handleInstallerPack = () => {
+    toast.error('Not implemented yet.');
   };
 
   const actions = [
     {
-      label: 'Send Quote',
-      onClick: handleSendQuote
-    },
-    {
-      label: 'Accept Sale',
-      onClick: handleAccept
-    },
-    {
-      label: 'Reject Sale',
-      onClick: handleReject
+      label: 'Download Installer Pack',
+      onClick: handleInstallerPack
     }
   ];
 
   const renderContent = () => {
-    if (leadState.isLoading) {
+    if (installState.isLoading) {
       return (
         <Box sx={{ py: 4 }}>
           <Skeleton height={42} />
@@ -93,7 +97,7 @@ export const Lead = () => {
       );
     }
 
-    if (leadState.error) {
+    if (installState.error) {
       return (
         <Box sx={{ py: 4 }}>
           <Box
@@ -111,7 +115,7 @@ export const Lead = () => {
               sx={{ mt: 2 }}
               variant="body2"
             >
-              {leadState.error}
+              {installState.error}
             </Typography>
           </Box>
         </Box>
@@ -126,10 +130,10 @@ export const Lead = () => {
               color="primary"
               component={RouterLink}
               startIcon={<ArrowBackOutlinedIcon />}
-              to="/bpm/leads"
+              to="/bpm/installs"
               variant="text"
             >
-              Leads
+              Installs
             </Button>
           </Box>
           <Box
@@ -142,7 +146,7 @@ export const Lead = () => {
               color="textPrimary"
               variant="h4"
             >
-              {`${leadState.data.refID} - ${leadState.data.name}`}
+              {`${installState.data.refID} - ${installState.data.name}`}
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
             <ActionsMenu actions={actions} />
@@ -172,7 +176,7 @@ export const Lead = () => {
   return (
     <>
       <Helmet>
-        <title>Lead | Copower BPM</title>
+        <title>Install | Copower BPM</title>
       </Helmet>
       <Box
         sx={{

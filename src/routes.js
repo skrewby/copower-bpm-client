@@ -28,6 +28,10 @@ const Lead = Loadable(lazy(() => import('./containers/leads/lead').then((module)
 const LeadSummary = Loadable(lazy(() => import('./containers/leads/lead-summary').then((module) => ({ default: module.LeadSummary }))));
 const LeadQuotation = Loadable(lazy(() => import('./containers/leads/lead-quotation').then((module) => ({ default: module.LeadQuotation }))));
 
+const Installs = Loadable(lazy(() => import('./containers/installs/installs').then((module) => ({ default: module.Installs }))));
+const Install = Loadable(lazy(() => import('./containers/installs/install').then((module) => ({ default: module.Install }))));
+const InstallSummary = Loadable(lazy(() => import('./containers/installs/install-summary').then((module) => ({ default: module.InstallSummary }))));
+
 const routes = [
     {
         path: '/',
@@ -83,7 +87,7 @@ const routes = [
                         element: <Leads />
                     },
                     {
-                        path: ':orderId',
+                        path: ':leadID',
                         element: <Lead />,
                         children: [
                             {
@@ -98,6 +102,25 @@ const routes = [
                     }
                 ]
             },
+            {
+                path: 'installs',
+                children: [
+                    {
+                        path: '',
+                        element: <Installs />
+                    },
+                    {
+                        path: ':installID',
+                        element: <Install />,
+                        children: [
+                            {
+                                path: '',
+                                element: <InstallSummary />
+                            }
+                        ]
+                    }
+                ]
+            }
         ]
     },
     {
