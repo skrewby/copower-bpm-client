@@ -49,11 +49,11 @@ export const InstallInfo = (props) => {
           <PropertyList>
             <PropertyListItem
               label="Address"
-              value={install.address}
+              value={install.streetAddress}
             />
             <PropertyListItem
               label="Phone Number"
-              value={install.phone}
+              value={install.contactNum}
             />
           </PropertyList>
         </Grid>

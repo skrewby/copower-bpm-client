@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { Box, Container, Grid, Skeleton, Typography  } from '@mui/material';
-import { leadApi } from '../../api/lead';
+import { installApi } from '../../api/install';
 import { InstallInfo } from '../../components/installs/install-info';
-import { LeadInfoDialog } from '../../components/lead/lead-info-dialog';
+import { InstallInfoDialog } from '../../components/installs/install-info-dialog';
 import { InstallPropertyDetails } from '../../components/installs/install-property-details';
 import { LeadPropertyDialog } from '../../components/lead/lead-property-dialog';
 import { InstallProgress } from '../../components/installs/install-progress';
@@ -14,18 +14,18 @@ import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
 export const InstallSummary = () => {
   const mounted = useMounted();
-  const [leadState, setLeadState] = useState({ isLoading: true });
+  const [installState, setInstallState] = useState({ isLoading: true });
   const [openInfoDialog, setOpenInfoDialog] = useState(false);
   const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
 
-  const getLead = useCallback(async () => {
-    setLeadState(() => ({ isLoading: true }));
+  const getInstall = useCallback(async () => {
+    setInstallState(() => ({ isLoading: true }));
 
     try {
-      const result = await leadApi.getLead();
+      const result = await installApi.getInstall();
 
       if (mounted.current) {
-        setLeadState(() => ({
+        setInstallState(() => ({
           isLoading: false,
           data: result
         }));
@@ -34,7 +34,7 @@ export const InstallSummary = () => {
       console.error(err);
 
       if (mounted.current) {
-        setLeadState(() => ({
+        setInstallState(() => ({
           isLoading: false,
           error: err.message
         }));
@@ -43,11 +43,11 @@ export const InstallSummary = () => {
   }, [mounted]);
 
   useEffect(() => {
-    getLead().catch(console.error);
-  }, [getLead]);
+    getInstall().catch(console.error);
+  }, [getInstall]);
 
   const renderContent = () => {
-    if (leadState.isLoading) {
+    if (installState.isLoading) {
       return (
         <Box sx={{ py: 4 }}>
           <Skeleton height={42} />
@@ -57,7 +57,7 @@ export const InstallSummary = () => {
       );
     }
 
-    if (leadState.error) {
+    if (installState.error) {
       return (
         <Box sx={{ py: 4 }}>
           <Box
@@ -75,7 +75,7 @@ export const InstallSummary = () => {
               sx={{ mt: 2 }}
               variant="body2"
             >
-              {leadState.error}
+              {installState.error}
             </Typography>
           </Box>
         </Box>
@@ -102,7 +102,7 @@ export const InstallSummary = () => {
             >
               <InstallInfo
                 onEdit={() => setOpenInfoDialog(true)}
-                install={leadState.data}
+                install={installState.data}
               />
             </Grid>
             <Grid
@@ -111,14 +111,14 @@ export const InstallSummary = () => {
             >
               <InstallPropertyDetails
                 onEdit={() => toast.error('Not implemented yet')}
-                install={leadState.data}
+                install={installState.data}
               />
             </Grid>
             <Grid
               item
               xs={12}
             >
-              <LeadFiles files={leadState.data?.files} />
+              <LeadFiles files={installState.data?.files} />
             </Grid>
           </Grid>
           <Grid
@@ -133,19 +133,19 @@ export const InstallSummary = () => {
               item
               xs={12}
             >
-              <InstallProgress lead={leadState.data} />
+              <InstallProgress install={installState.data} />
             </Grid>
           </Grid>
         </Grid>
-        <LeadInfoDialog
+        <InstallInfoDialog
           onClose={() => setOpenInfoDialog(false)}
           open={openInfoDialog}
-          lead={leadState.data}
+          lead={installState.data}
         />
         <LeadPropertyDialog
           onClose={() => setOpenPropertyDialog(false)}
           open={openPropertyDialog}
-          lead={leadState.data}
+          lead={installState.data}
         />
       </>
     );

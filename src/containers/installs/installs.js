@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Box, Button, Card, Container, Divider, Typography } from '@mui/material';
-import { leadApi } from '../../api/lead';
+import { installApi } from '../../api/install';
 import { InstallsFilter } from '../../components/installs/installs-filter';
 import { InstallsTable } from '../../components/installs/installs-table';
 import { useMounted } from '../../hooks/use-mounted';
@@ -31,7 +31,7 @@ export const Installs = () => {
     setInstallsState(() => ({ isLoading: true }));
 
     try {
-      const result = await leadApi.getLeads({
+      const result = await installApi.getInstalls({
         filters: controller.filters,
         page: controller.page,
         query: controller.query,
@@ -182,14 +182,14 @@ export const Installs = () => {
               onQueryChange={handleQueryChange}
               onViewChange={handleViewChange}
               query={controller.query}
-              selectedLeads={selectedInstalls}
+              selectedInstalls={selectedInstalls}
               view={controller.view}
             />
             <Divider />
             <InstallsTable
               error={installsState.error}
-              leads={installsState.data?.leads}
-              leadsCount={installsState.data?.leadsCount}
+              installs={installsState.data?.installs}
+              installsCount={installsState.data?.installsCount}
               isLoading={installsState.isLoading}
               onPageChange={handlePageChange}
               onSelect={handleSelect}

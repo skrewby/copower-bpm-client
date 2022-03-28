@@ -3,7 +3,7 @@ import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { Box, Button, Container, Skeleton, Typography, Tab, Tabs, Divider } from '@mui/material';
-import { leadApi } from '../../api/lead';
+import { installApi } from '../../api/install';
 import { ActionsMenu } from '../../components/actions-menu';
 import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
@@ -51,7 +51,7 @@ export const Install = () => {
     setInstallState(() => ({ isLoading: true }));
 
     try {
-      const result = await leadApi.getLead();
+      const result = await installApi.getInstall();
 
       if (mounted.current) {
         setInstallState(() => ({
@@ -146,7 +146,7 @@ export const Install = () => {
               color="textPrimary"
               variant="h4"
             >
-              {`${installState.data.refID} - ${installState.data.name}`}
+              {`${installState.data.reference} - ${installState.data.name}`}
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
             <ActionsMenu actions={actions} />

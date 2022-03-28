@@ -110,7 +110,7 @@ export const InstallsFilter = (props) => {
     onQueryChange,
     onViewChange,
     query,
-    selectedLeads,
+    selectedInstalls,
     view
   } = props;
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
@@ -148,7 +148,7 @@ export const InstallsFilter = (props) => {
             display: 'grid',
             gap: 2,
             gridTemplateColumns: {
-              sm: selectedLeads.length > 0 ? 'auto 1fr auto' : '1fr auto',
+              sm: selectedInstalls.length > 0 ? 'auto 1fr auto' : '1fr auto',
               xs: 'auto'
             },
             justifyItems: 'flex-start',
@@ -159,9 +159,9 @@ export const InstallsFilter = (props) => {
             disabled={disabled}
             onArchive={() => { }}
             onDelete={() => { }}
-            selectedCount={selectedLeads.length}
+            selectedCount={selectedInstalls.length}
             sx={{
-              display: selectedLeads.length > 0 ? 'flex' : 'none',
+              display: selectedInstalls.length > 0 ? 'flex' : 'none',
               order: {
                 sm: 1,
                 xs: 2

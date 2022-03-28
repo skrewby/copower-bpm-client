@@ -12,7 +12,7 @@ import { InstallTimeline } from './install-timeline';
 export const InstallProgress = (props) => {
   const { install, ...other } = props;
   const [cancelInstallOpen, handleOpenCancelInstall, handleCloseCancelInstall] = useDialog();
-  const [status, setStatus] = useState(install?.progress || 'new');
+  const [status, setStatus] = useState(install?.status);
 
   const handleCancelInstall = () => {
     handleCloseCancelInstall();
@@ -52,5 +52,5 @@ export const InstallProgress = (props) => {
 };
 
 InstallProgress.propTypes = {
-  lead: PropTypes.object
+  install: PropTypes.object
 };

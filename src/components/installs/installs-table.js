@@ -22,7 +22,7 @@ import { Status } from '../status';
 
 const columns = [
   {
-    id: 'refID',
+    id: 'reference',
     disablePadding: true,
     label: 'Reference'
   },
@@ -31,16 +31,20 @@ const columns = [
     label: 'Name'
   },
   {
-    id: 'sales',
-    label: 'Assigned Sales'
+    id: 'streetAddress',
+    label: 'Address'
+  },
+  {
+    id: 'contactNum',
+    label: 'Phone'
   },
   {
     id: 'createdDate',
     label: 'Created'
   },
   {
-    id: 'updatedDate',
-    label: 'Last Updated'
+    id: 'lastUpdated',
+    label: 'Updated'
   },
   {
     id: 'status',
@@ -50,32 +54,57 @@ const columns = [
 
 const statusVariants = [
   {
-    color: 'info.main',
+    color: '#7680c4',
     label: 'New',
-    value: 'New'
+    value: 'new'
   },
   {
-    color: 'warning.main',
-    label: 'Rejected',
-    value: 'Rejected'
+    color: '#c476c0',
+    label: 'Deposit',
+    value: 'deposit'
   },
   {
-    color: 'error.main',
-    label: 'Closed',
-    value: 'Closed'
+    color: '#c47683',
+    label: 'PTC',
+    value: 'ptc'
+  },
+  {
+    color: '#bcc476',
+    label: 'Schedule',
+    value: 'schedule'
+  },
+  {
+    color: '#c49176',
+    label: 'Review',
+    value: 'review'
+  },
+  {
+    color: '#c47676',
+    label: 'Payment',
+    value: 'payment'
+  },
+  {
+    color: '#87ab6f',
+    label: 'Retailer',
+    value: 'retailer'
+  },
+  {
+    color: '#936fab',
+    label: 'STC',
+    value: 'stc'
   },
   {
     color: 'success.main',
-    label: 'Win',
-    value: 'Win'
+    label: 'Complete',
+    value: 'complete'
   }
 ];
 
 export const InstallsTable = (props) => {
   const {
     error,
-    leads: leadsProp,
-    leadsCount,
+    installs: installsProp,
+    installsCount,
     isLoading,
     onPageChange,
     onSelect,
@@ -86,15 +115,15 @@ export const InstallsTable = (props) => {
     sort,
     sortBy
   } = props;
-  const [leads, setLeads] = useState(leadsProp);
+  const [installs, setLeads] = useState(installsProp);
 
   useEffect(() => {
-    setLeads(leadsProp);
-  }, [leadsProp]);
+    setLeads(installsProp);
+  }, [installsProp]);
 
   const displayLoading = isLoading;
   const displayError = Boolean(!isLoading && error);
-  const displayUnavailable = Boolean(!isLoading && !error && !leads?.length);
+  const displayUnavailable = Boolean(!isLoading && !error && !installs?.length);
 
   return (
     <Box
@@ -109,10 +138,10 @@ export const InstallsTable = (props) => {
           <TableRow>
             <TableCell padding="checkbox">
               <Checkbox
-                checked={leads.length > 0 && selectedLeads.length === leads.length}
+                checked={installs.length > 0 && selectedLeads.length === installs.length}
                 disabled={isLoading}
                 indeterminate={selectedLeads.length > 0
-                  && selectedLeads.length < leads.length}
+                  && selectedLeads.length < installs.length}
                 onChange={onSelectAll}
               />
             </TableCell>
@@ -132,22 +161,22 @@ export const InstallsTable = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {leads.map((lead) => {
+          {installs.map((install) => {
             const statusVariant = statusVariants.find((variant) => variant.value
-              === lead.status);
+              === install.status);
 
             return (
               <TableRow
                 hover
-                key={lead.id}
+                key={install.id}
                 selected={!!selectedLeads.find((selectedCustomer) => selectedCustomer
-                  === lead.id)}
+                  === install.id)}
               >
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={!!selectedLeads.find((selectedCustomer) => selectedCustomer
-                      === lead.id)}
-                    onChange={(event) => onSelect(event, lead.id)}
+                      === install.id)}
+                    onChange={(event) => onSelect(event, install.id)}
                   />
                 </TableCell>
                 <TableCell>
@@ -158,20 +187,23 @@ export const InstallsTable = (props) => {
                     underline="none"
                     variant="subtitle2"
                   >
-                    {lead.refID}
+                    {install.reference}
                   </Link>
                 </TableCell>
                 <TableCell>
-                  {lead.name}
+                  {install.name}
                 </TableCell>
                 <TableCell>
-                  {lead.sales}
+                  {install.streetAddress}
                 </TableCell>
                 <TableCell>
-                  {format(lead.createdDate, 'dd MMM yyyy')}
+                  {install.contactNum}
                 </TableCell>
                 <TableCell>
-                  {format(lead.updatedDate, 'dd MMM yyyy')}
+                  {format(install.createdDate, 'dd MMM yyyy')}
+                </TableCell>
+                <TableCell>
+                  {format(install.updatedDate, 'dd MMM yyyy')}
                 </TableCell>
                 <TableCell>
                   <Status
@@ -213,15 +245,15 @@ export const InstallsTable = (props) => {
         disabled={isLoading}
         onPageChange={onPageChange}
         page={page}
-        rowsCount={leadsCount}
+        rowsCount={installsCount}
       />
     </Box>
   );
 };
 
 InstallsTable.defaultProps = {
-  leads: [],
-  leadsCount: 0,
+  installs: [],
+  installsCount: 0,
   page: 1,
   selectedLeads: [],
   sort: 'desc',
@@ -229,7 +261,7 @@ InstallsTable.defaultProps = {
 };
 
 InstallsTable.propTypes = {
-  leads: Proptypes.array,
+  installs: Proptypes.array,
   leadsCount: Proptypes.number,
   error: Proptypes.string,
   isLoading: Proptypes.bool,
