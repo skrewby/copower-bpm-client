@@ -111,6 +111,14 @@ export const InstallPropertyDetails = (props) => {
               label="Roof Type"
               value={roofTypeOption.label}
             />
+            <PropertyListItem
+              label="NMI"
+              value={install.nmi}
+            />
+            <PropertyListItem
+              label="Comment"
+              value={install.propertyComment}
+            />
           </PropertyList>
         </Grid>
         <Grid
@@ -124,8 +132,16 @@ export const InstallPropertyDetails = (props) => {
               value={existingSystemOption.label}
             />
             <PropertyListItem
-              label="Comment"
-              value={install.propertyComment}
+              label="Retailer"
+              value={install.retailer}
+            />
+            <PropertyListItem
+              label="Distributor"
+              value={install.distributor}
+            />
+            <PropertyListItem
+              label="Meter Number"
+              value={install.meterNum}
             />
           </PropertyList>
         </Grid>

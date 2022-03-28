@@ -296,6 +296,10 @@ const lead = {
   "discount": 8.61,
   "progress": "new",
   "currencySymbol": '$',
+  "distributor": "Ausgrid",
+  "retailer": "Origin",
+  "meterNum": "304204",
+  "nmi": "4103925782",
   "system": [
     {
       "type": "price",

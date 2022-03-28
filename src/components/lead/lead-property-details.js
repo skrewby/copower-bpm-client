@@ -111,6 +111,14 @@ export const LeadPropertyDetails = (props) => {
               label="Roof Type"
               value={roofTypeOption.label}
             />
+            <PropertyListItem
+              label="NMI"
+              value={lead.nmi}
+            />
+            <PropertyListItem
+              label="Comment"
+              value={lead.propertyComment}
+            />
           </PropertyList>
         </Grid>
         <Grid
@@ -124,8 +132,16 @@ export const LeadPropertyDetails = (props) => {
               value={existingSystemOption.label}
             />
             <PropertyListItem
-              label="Comment"
-              value={lead.propertyComment}
+              label="Retailer"
+              value={lead.retailer}
+            />
+            <PropertyListItem
+              label="Distributor"
+              value={lead.distributor}
+            />
+            <PropertyListItem
+              label="Meter Number"
+              value={lead.meterNum}
             />
           </PropertyList>
         </Grid>

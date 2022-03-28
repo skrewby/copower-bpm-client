@@ -232,17 +232,21 @@ const install = {
   "discount": 8.61,
   "progress": "new",
   "currencySymbol": '$',
+  "distributor": "Ausgrid",
+  "retailer": "Origin",
+  "meterNum": "304204",
+  "nmi": "4103925782",
   "system": [
     {
-      "type": "price",
-      "name": "6.66 kW System",
+      "type": "System",
+      "name": "6.66 kW",
       "quantity": 1,
       "unitAmount": 4500,
       "currencySymbol": '$',
       "totalAmount": 4500
     },
     {
-      "type": "panel",
+      "type": "Panel",
       "name": "Trina TSM390DE09.08",
       "quantity": 17,
       "unitAmount": 0,
@@ -250,7 +254,7 @@ const install = {
       "totalAmount": 0
     },
     {
-      "type": "inverter",
+      "type": "Inverter",
       "name": "Fronius Primo 5.0",
       "quantity": 1,
       "unitAmount": 0,
@@ -258,21 +262,21 @@ const install = {
       "totalAmount": 0
     },
     {
-      "type": "extra",
+      "type": "Extra",
+      "name": "Fronius Smart Meter",
+      "quantity": 1,
+      "unitAmount": 20,
+      "currencySymbol": '$',
+      "totalAmount": 340
+    },
+    {
+      "type": "Extra",
       "name": "Klip-Lok",
       "quantity": 17,
       "unitAmount": 20,
       "currencySymbol": '$',
       "totalAmount": 340
     },
-    {
-      "type": "extra",
-      "name": "Transportation",
-      "quantity": 1,
-      "unitAmount": 84,
-      "currencySymbol": '$',
-      "totalAmount": 84
-    }
   ],
   files: [
     {

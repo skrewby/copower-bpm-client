@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { Box, Container, Grid, Skeleton, Typography  } from '@mui/material';
+import { Box, Container, Grid, Skeleton, Typography } from '@mui/material';
 import { installApi } from '../../api/install';
 import { InstallInfo } from '../../components/installs/install-info';
 import { InstallInfoDialog } from '../../components/installs/install-info-dialog';
@@ -9,6 +9,7 @@ import { InstallPropertyDetails } from '../../components/installs/install-proper
 import { LeadPropertyDialog } from '../../components/lead/lead-property-dialog';
 import { InstallProgress } from '../../components/installs/install-progress';
 import { LeadFiles } from '../../components/lead/lead-files';
+import { InstallSystemSummary } from '../../components/installs/install-system-summary';
 import { useMounted } from '../../hooks/use-mounted';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
@@ -110,6 +111,15 @@ export const InstallSummary = () => {
               xs={12}
             >
               <InstallPropertyDetails
+                onEdit={() => toast.error('Not implemented yet')}
+                install={installState.data}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+            >
+              <InstallSystemSummary
                 onEdit={() => toast.error('Not implemented yet')}
                 install={installState.data}
               />
