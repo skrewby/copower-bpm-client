@@ -30,6 +30,14 @@ const views = [
     value: 'New'
   },
   {
+    label: 'Contacted',
+    value: 'Contacted'
+  },
+  {
+    label: 'Quotation',
+    value: 'Quotation'
+  },
+  {
     label: 'Rejected',
     value: 'Rejected'
   },

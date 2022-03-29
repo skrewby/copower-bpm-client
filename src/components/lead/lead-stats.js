@@ -11,7 +11,7 @@ export const LeadStats = () => {
         {
             color: theme.palette.info.main,
             data: 13,
-            name: 'New'
+            name: 'Open'
         },
         {
             color: theme.palette.success.main,
@@ -105,9 +105,8 @@ export const LeadStats = () => {
                         >
                             Converted
                             {' '}
-                            <strong>12</strong>
+                            <strong>20%</strong>
                             {' '}
-                            leads
                         </Typography>
                     </Grid>
                     <Grid
