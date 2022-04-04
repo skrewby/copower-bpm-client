@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Box, Button, Card, Container, Divider, Typography } from '@mui/material';
-import { leadApi } from '../../api/lead';
+import { bpmAPI } from '../../api/bpmAPI';
 import { LeadsFilter } from '../../components/lead/leads-filter';
 import { LeadStats } from '../../components/lead/lead-stats';
 import { LeadsTable } from '../../components/lead/leads-table';
@@ -19,7 +19,7 @@ export const Leads = () => {
     page: 0,
     query: '',
     sort: 'desc',
-    sortBy: 'createdDate',
+    sortBy: 'create_date',
     view: 'all'
   });
   const [leadsState, setLeadsState] = useState({ isLoading: true });
@@ -34,7 +34,7 @@ export const Leads = () => {
     setLeadsState(() => ({ isLoading: true }));
 
     try {
-      const result = await leadApi.getLeads({
+      const result = await bpmAPI.getLeads({
         filters: controller.filters,
         page: controller.page,
         query: controller.query,
@@ -133,7 +133,7 @@ export const Leads = () => {
         }}
       >
         <Container
-          maxWidth="lg"
+          maxWidth="xl"
           sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -165,7 +165,6 @@ export const Leads = () => {
               </Button>
             </Box>
           </Box>
-          <LeadStats />
           <Card
             sx={{
               display: 'flex',

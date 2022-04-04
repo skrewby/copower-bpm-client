@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Proptypes from 'prop-types';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
   Box,
@@ -22,24 +22,31 @@ import { Status } from '../status';
 
 const columns = [
   {
-    id: 'refID',
-    disablePadding: true,
-    label: 'Reference'
+    id: 'lead_id',
+    label: 'ID'
   },
   {
     id: 'name',
     label: 'Name'
   },
   {
+    id: 'address',
+    label: 'Address'
+  },
+  {
     id: 'sales',
     label: 'Assigned Sales'
   },
   {
-    id: 'createdDate',
+    id: 'source',
+    label: 'Source'
+  },
+  {
+    id: 'create_date',
     label: 'Created'
   },
   {
-    id: 'updatedDate',
+    id: 'last_updated',
     label: 'Last Updated'
   },
   {
@@ -87,6 +94,7 @@ export const LeadsTable = (props) => {
     sortBy
   } = props;
   const [leads, setLeads] = useState(leadsProp);
+  let navigate = useNavigate();
 
   useEffect(() => {
     setLeads(leadsProp);
@@ -107,15 +115,6 @@ export const LeadsTable = (props) => {
       <Table sx={{ minWidth: 1000, height: 'fit-content' }}>
         <TableHead>
           <TableRow>
-            <TableCell padding="checkbox">
-              <Checkbox
-                checked={leads.length > 0 && selectedLeads.length === leads.length}
-                disabled={isLoading}
-                indeterminate={selectedLeads.length > 0
-                  && selectedLeads.length < leads.length}
-                onChange={onSelectAll}
-              />
-            </TableCell>
             {columns.map((column) => (
               <TableCell key={column.id}>
                 <TableSortLabel
@@ -139,39 +138,31 @@ export const LeadsTable = (props) => {
             return (
               <TableRow
                 hover
-                key={lead.id}
-                selected={!!selectedLeads.find((selectedCustomer) => selectedCustomer
-                  === lead.id)}
+                key={lead.lead_id}
+                selected={!!selectedLeads.find((selectedLead) => selectedLead
+                  === lead.lead_id)}
+                onClick={() => { navigate("/bpm/leads/1"); }}
               >
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={!!selectedLeads.find((selectedCustomer) => selectedCustomer
-                      === lead.id)}
-                    onChange={(event) => onSelect(event, lead.id)}
-                  />
-                </TableCell>
                 <TableCell>
-                  <Link
-                    color="inherit"
-                    component={RouterLink}
-                    to="/bpm/leads/1"
-                    underline="none"
-                    variant="subtitle2"
-                  >
-                    {lead.refID}
-                  </Link>
+                  {lead.lead_id}
                 </TableCell>
                 <TableCell>
                   {lead.name}
                 </TableCell>
                 <TableCell>
+                  {lead.address}
+                </TableCell>
+                <TableCell>
                   {lead.sales}
                 </TableCell>
                 <TableCell>
-                  {format(lead.createdDate, 'dd MMM yyyy')}
+                  {lead.source}
                 </TableCell>
                 <TableCell>
-                  {format(lead.updatedDate, 'dd MMM yyyy')}
+                  {format(lead.create_date, 'dd MMM yyyy')}
+                </TableCell>
+                <TableCell>
+                  {format(lead.last_updated, 'dd MMM yyyy')}
                 </TableCell>
                 <TableCell>
                   <Status
@@ -225,7 +216,7 @@ LeadsTable.defaultProps = {
   page: 1,
   selectedLeads: [],
   sort: 'desc',
-  sortBy: 'createdDate'
+  sortBy: 'id'
 };
 
 LeadsTable.propTypes = {
