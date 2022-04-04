@@ -63,8 +63,8 @@ class BPMAPi {
         const queriedLeads = leads.filter((_lead) => {
             // If query exists, it looks in lead name and address
             if (!!query && 
-                (!_lead.first_name?.toLowerCase().includes(query.toLowerCase()) ||
-                !_lead.last_name?.toLowerCase().includes(query.toLowerCase()) ||
+                (!_lead.first_name?.toLowerCase().includes(query.toLowerCase()) &&
+                !_lead.last_name?.toLowerCase().includes(query.toLowerCase()) &&
                 !_lead.address?.toLowerCase().includes(query.toLowerCase()))) {
                 return false;
             }
@@ -75,7 +75,7 @@ class BPMAPi {
             }
 
             // In this case, the view represents the resource status
-            return _lead.status_id === view;
+            return _lead.status === view;
         });
         const filteredLeads = applyFilters(queriedLeads, filters);
         const sortedLeads = applySort(filteredLeads, sort, sortBy);
