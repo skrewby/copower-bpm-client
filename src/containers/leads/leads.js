@@ -6,6 +6,7 @@ import { leadApi } from '../../api/lead';
 import { LeadsFilter } from '../../components/lead/leads-filter';
 import { LeadStats } from '../../components/lead/lead-stats';
 import { LeadsTable } from '../../components/lead/leads-table';
+import { LeadCreateDialog } from '../../components/lead/lead-create-dialog';
 import { useMounted } from '../../hooks/use-mounted';
 import { useSelection } from '../../hooks/use-selection';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -22,6 +23,7 @@ export const Leads = () => {
     view: 'all'
   });
   const [leadsState, setLeadsState] = useState({ isLoading: true });
+  const [openCreateDialog, setOpenCreateDialog] = useState();
   const [
     selectedLeads,
     handleSelect,
@@ -119,10 +121,6 @@ export const Leads = () => {
     });
   };
 
-  const handleCreateLead = () => {
-    toast.error("Not implemented yet");
-  };
-
   return (
     <>
       <Helmet>
@@ -160,7 +158,7 @@ export const Leads = () => {
                 color="primary"
                 size="large"
                 startIcon={<AddOutlinedIcon fontSize="small" />}
-                onClick={handleCreateLead}
+                onClick={() => setOpenCreateDialog(true)}
                 variant="contained"
               >
                 Add
@@ -205,6 +203,10 @@ export const Leads = () => {
           </Card>
         </Container>
       </Box>
+      <LeadCreateDialog
+        onClose={() => setOpenCreateDialog(false)}
+        open={openCreateDialog}
+      />
     </>
   );
 };
