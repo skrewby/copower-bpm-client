@@ -1,0 +1,41 @@
+* {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
+    sans-serif, 'Apple Color';
+}
+
+.rbc-day-slot .rbc-time-slot {
+  border: unset;
+}
+.rbc-timeslot-group:nth-child(4n + 1),
+.rbc-timeslot-group:nth-child(4n + 2),
+.rbc-timeslot-group:nth-child(4n + 3),
+.rbc-timeslot-group:nth-child(4n + 4) {
+  /* or 4n+1 */
+  
+  border-width: 0px;
+  margin: 0;
+  padding: 0;
+  border-color: rgb(0, 0, 0);
+}
+
+.rbc-timeslot-group:nth-child(4n + 1) {
+  border-top: 1px solid rgba(252, 252, 253, 0);
+}
+.rbc-today {
+  background-color: rgba(41, 105, 189, 0.644);
+}
+.rbc-event,
+.rbc-background-event {
+  background-color: #e7331386;
+  color: rgb(10, 10, 10);
+}
+
+.rbc-calendar{
+  background-color: neutral.100;
+}
+.rbc-overlay{
+  background-color: #6d6d6d;
+}
+.rbc-off-range-bg {
+  background-color: #7070705b;
+}
