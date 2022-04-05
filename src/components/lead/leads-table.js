@@ -55,29 +55,6 @@ const columns = [
   }
 ];
 
-const statusVariants = [
-  {
-    color: 'info.main',
-    label: 'New',
-    value: 'New'
-  },
-  {
-    color: 'warning.main',
-    label: 'Rejected',
-    value: 'Rejected'
-  },
-  {
-    color: 'error.main',
-    label: 'Closed',
-    value: 'Closed'
-  },
-  {
-    color: 'success.main',
-    label: 'Win',
-    value: 'Win'
-  }
-];
-
 export const LeadsTable = (props) => {
   const {
     error,
@@ -85,11 +62,8 @@ export const LeadsTable = (props) => {
     leadsCount,
     isLoading,
     onPageChange,
-    onSelect,
-    onSelectAll,
     onSortChange,
     page,
-    selectedLeads,
     sort,
     sortBy
   } = props;
@@ -132,16 +106,11 @@ export const LeadsTable = (props) => {
         </TableHead>
         <TableBody>
           {leads.map((lead) => {
-            const statusVariant = statusVariants.find((variant) => variant.value
-              === lead.status);
-
             return (
               <TableRow
                 hover
                 key={lead.lead_id}
-                selected={!!selectedLeads.find((selectedLead) => selectedLead
-                  === lead.lead_id)}
-                onClick={() => { navigate("/bpm/leads/1"); }}
+                onClick={() => { navigate(`/bpm/leads/${lead.lead_id}`); }}
               >
                 <TableCell>
                   {lead.lead_id}
@@ -166,8 +135,8 @@ export const LeadsTable = (props) => {
                 </TableCell>
                 <TableCell>
                   <Status
-                    color={statusVariant.color}
-                    label={statusVariant.label}
+                    color={lead.status_colour}
+                    label={lead.status}
                   />
                 </TableCell>
               </TableRow>
@@ -214,7 +183,6 @@ LeadsTable.defaultProps = {
   leads: [],
   leadsCount: 0,
   page: 1,
-  selectedLeads: [],
   sort: 'desc',
   sortBy: 'id'
 };
@@ -225,8 +193,6 @@ LeadsTable.propTypes = {
   error: Proptypes.string,
   isLoading: Proptypes.bool,
   onPageChange: Proptypes.func,
-  onSelect: Proptypes.func,
-  onSelectAll: Proptypes.func,
   onSortChange: Proptypes.func,
   page: Proptypes.number,
   selectedInvoices: Proptypes.array,

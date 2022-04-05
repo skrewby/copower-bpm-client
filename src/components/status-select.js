@@ -14,21 +14,21 @@ export const StatusSelect = (props) => {
     >
       {options.map((option) => (
         <MenuItem
-          key={option.value}
+          key={option.status_id}
           sx={{
             alignItems: 'center',
             display: 'flex'
           }}
-          value={option.value}
+          value={option.status_id}
         >
           <StatusBadge
-            color={option.color}
+            color={option.status_colour}
             sx={{
-              backgroundColor: option.color,
+              backgroundColor: option.status_colour,
               mr: 1
             }}
           />
-          {option.label}
+          {option.status_name}
         </MenuItem>
       ))}
     </InputField>
@@ -37,8 +37,8 @@ export const StatusSelect = (props) => {
 
 StatusSelect.propTypes = {
   options: PropTypes.arrayOf(PropTypes.shape({
-    color: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired
+    status_id: PropTypes.number.isRequired,
+    status_name: PropTypes.string.isRequired,
+    status_colour: PropTypes.string.isRequired
   })).isRequired
 };

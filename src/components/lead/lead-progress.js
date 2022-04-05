@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -14,45 +14,57 @@ import { ActionListItem } from '../action-list-item';
 import { ConfirmationDialog } from '../confirmation-dialog';
 import { StatusSelect } from '../status-select';
 import { LeadTimeline } from './lead-timeline';
-
-const statusOptions = [
-  {
-    color: 'info.main',
-    label: 'New',
-    value: 'new'
-  },
-  {
-    color: 'error.main',
-    label: 'Contacted',
-    value: 'contacted'
-  },
-  {
-    color: 'warning.main',
-    label: 'Quotation',
-    value: 'quotation'
-  },
-  {
-    color: 'success.main',
-    label: 'Complete',
-    value: 'complete'
-  }
-];
+import { bpmAPI } from '../../api/bpmAPI';
+import { useMounted } from '../../hooks/use-mounted';
 
 export const LeadProgress = (props) => {
   const { lead, ...other } = props;
   const [sendToOperationsOpen, handleOpenSendToOperations, handleCloseSendToOperations] = useDialog();
   const [rejectLeadOpen, handleOpenRejectLead, handleCloseRejectLead] = useDialog();
   const [closeLeadOpen, handleOpenCloseLead, handleCloseCloseLead] = useDialog();
-  const [status, setStatus] = useState(lead?.progress || '');
-  const [newStatus, setNewStatus] = useState(lead?.progress || '');
+
+  const mounted = useMounted();
+  const [statusOptions, setStatusOptions] = useState({ isLoading: true, data: [] });
+  const getData = useCallback(async () => {
+    setStatusOptions(() => ({ isLoading: true, data: [] }));
+
+    try {
+      const statusAPI = await bpmAPI.getLeadStatusOptions();
+      const statusResult = statusAPI.map((row) => {
+        return ({
+          status_id: row.status_id,
+          status_name: row.status_name,
+          status_colour: row.status_colour
+        });
+      });
+
+      if (mounted.current) {
+        setStatusOptions(() => ({
+          isLoading: false,
+          data: statusResult
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+
+      if (mounted.current) {
+        setStatusOptions(() => ({
+          isLoading: false,
+          error: err.message
+        }));
+      }
+    }
+  }, [mounted]);
+
+  useEffect(() => {
+    getData().catch(console.error);
+  }, [getData]);
 
   const handleStatusChange = (event) => {
-    setNewStatus(event.target.value);
+
   };
 
   const handleSaveChanges = () => {
-    setStatus(newStatus);
-    lead.progress = newStatus;
     toast.success('Changes saved');
   };
 
@@ -82,17 +94,9 @@ export const LeadProgress = (props) => {
         <CardContent>
           <StatusSelect
             onChange={handleStatusChange}
-            options={statusOptions}
-            value={newStatus}
+            options={statusOptions.data}
+            value={statusOptions.data.filter(status => status.status_id === lead.status_id)[0]?.status_id || ''}
           />
-          <Button
-            color="primary"
-            onClick={handleSaveChanges}
-            sx={{ my: 2 }}
-            variant="contained"
-          >
-            Save Changes
-          </Button>
           <Typography
             sx={{
               color: 'text.secondary',
@@ -103,7 +107,7 @@ export const LeadProgress = (props) => {
             {`Updated ${format(new Date(), 'dd/MM/yyyy HH:mm')}`}
           </Typography>
           <Divider sx={{ my: 2 }} />
-          <LeadTimeline status={status} />
+          <LeadTimeline lead={lead} />
         </CardContent>
         <Divider />
         <ActionList>

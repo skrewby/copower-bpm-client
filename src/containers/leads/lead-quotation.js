@@ -107,7 +107,7 @@ export const LeadQuotation = () => {
         }}
       >
         <Container
-          maxWidth="lg"
+          maxWidth="xl"
           sx={{
             display: 'flex',
             flexDirection: 'column',

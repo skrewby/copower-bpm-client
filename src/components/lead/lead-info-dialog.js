@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -13,28 +14,49 @@ import {
   MenuItem
 } from '@mui/material';
 import { InputField } from '../form/input-field';
-
-const sourceOptions = [
-  {
-    label: 'Local Champ',
-    value: 'Local Champ'
-  },
-  {
-    label: 'Online',
-    value: 'Online'
-  },
-  {
-    label: 'Solar Market',
-    value: 'Solar Market'
-  },
-  {
-    label: 'Self Gen',
-    value: 'Self Gen'
-  }
-];
+import { bpmAPI } from '../../api/bpmAPI';
+import { useMounted } from '../../hooks/use-mounted';
 
 export const LeadInfoDialog = (props) => {
   const { open, onClose, lead } = props;
+  const mounted = useMounted();
+
+  const [sourceOptions, setSourceOptions] = useState({ isLoading: true, data: [] });
+
+  const getData = useCallback(async () => {
+    setSourceOptions(() => ({ isLoading: true, data: [] }));
+
+    try {
+      const sourcesAPI = await bpmAPI.getLeadSources();
+      const sourcesResult = sourcesAPI.map((row) => {
+        return ({
+          source_id: row.source_id,
+          source_name: row.source_name
+        });
+      });
+
+      if (mounted.current) {
+        setSourceOptions(() => ({
+          isLoading: false,
+          data: sourcesResult
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+
+      if (mounted.current) {
+        setSourceOptions(() => ({
+          isLoading: false,
+          error: err.message
+        }));
+      }
+    }
+  }, [mounted]);
+
+  useEffect(() => {
+    getData().catch(console.error);
+  }, [getData]);
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -42,7 +64,7 @@ export const LeadInfoDialog = (props) => {
       address: lead?.address || '',
       email: lead?.email || '',
       phone: lead?.phone || '',
-      source: lead?.source || '',
+      source: lead?.source_id || '',
       comment: lead?.comment || '',
       submit: null
     },
@@ -51,7 +73,7 @@ export const LeadInfoDialog = (props) => {
       address: Yup.string().max(255).required('Address is required'),
       email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
       phone: Yup.string().max(255).required('Phone number is required'),
-      source: Yup.string().max(255).required('Lead source is required'),
+      source: Yup.number().required('Lead source is required'),
       comment: Yup.string().max(255).default(''),
     }),
     onSubmit: async (values, helpers) => {
@@ -157,22 +179,22 @@ export const LeadInfoDialog = (props) => {
             xs={12}
           >
             <InputField
-              error={Boolean(formik.touched.source && formik.errors.source)}
+              error={Boolean(formik.touched.source_id && formik.errors.source_id)}
               fullWidth
-              helperText={formik.touched.source && formik.errors.source}
+              helperText={formik.touched.source_id && formik.errors.source_id}
               label="Source"
               name="source"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               select
-              value={formik.values.source}
+              value={formik.values.source_id}
             >
-              {sourceOptions.map((option) => (
+              {sourceOptions.data.map((option) => (
                 <MenuItem
-                  key={option.value}
-                  value={option.value}
+                  key={option.source_id}
+                  value={option.source_id}
                 >
-                  {option.label}
+                  {option.source_name}
                 </MenuItem>
               ))}
             </InputField>

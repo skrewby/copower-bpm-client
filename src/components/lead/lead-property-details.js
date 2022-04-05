@@ -3,76 +3,8 @@ import { Button, Card, CardHeader, Divider, Grid } from '@mui/material';
 import { PropertyList } from '../property-list';
 import { PropertyListItem } from '../property-list-item';
 
-const phasesOptions = [
-  {
-    value: 1,
-    label: '1'
-  },
-  {
-    value: 2,
-    label: '2'
-  },
-  {
-    value: 3,
-    label: '3'
-  }
-];
-
-const storyOptions = [
-  {
-    value: '1',
-    label: '1'
-  },
-  {
-    value: '2',
-    label: '2'
-  },
-  {
-    value: '3+',
-    label: '3+'
-  }
-];
-
-const roofTypeOptions = [
-  {
-    value: 'Tile',
-    label: 'Tile'
-  },
-  {
-    value: 'Colourbond',
-    label: 'Colourbond'
-  },
-  {
-    value: 'Klip-Lok',
-    label: 'Klip-Lok'
-  }
-];
-
-const existingSystemOptions = [
-  {
-    value: 'New',
-    label: 'New'
-  },
-  {
-    value: 'Additional',
-    label: 'Additional'
-  },
-  {
-    value: 'Replace',
-    label: 'Replace'
-  }
-];
-
 export const LeadPropertyDetails = (props) => {
   const { onEdit, lead, ...other } = props;
-  const phaseOption = phasesOptions
-    .find((option) => option.value === lead.phase);
-  const storyOption = storyOptions
-    .find((option) => option.value === lead.story);
-  const roofTypeOption = roofTypeOptions
-    .find((option) => option.value === lead.roof);
-  const existingSystemOption = existingSystemOptions
-    .find((option) => option.value === lead.existingSystem);
 
   return (
     <Card
@@ -101,15 +33,15 @@ export const LeadPropertyDetails = (props) => {
           <PropertyList>
             <PropertyListItem
               label="Phases"
-              value={phaseOption.label}
+              value={`${lead.phase ?? ''}`}
             />
             <PropertyListItem
               label="Story"
-              value={storyOption.label}
+              value={lead.story}
             />
             <PropertyListItem
               label="Roof Type"
-              value={roofTypeOption.label}
+              value={lead.roof_type}
             />
             <PropertyListItem
               label="NMI"
@@ -117,7 +49,7 @@ export const LeadPropertyDetails = (props) => {
             />
             <PropertyListItem
               label="Comment"
-              value={lead.propertyComment}
+              value={lead.property_comment}
             />
           </PropertyList>
         </Grid>
@@ -129,7 +61,7 @@ export const LeadPropertyDetails = (props) => {
           <PropertyList>
             <PropertyListItem
               label="Existing System"
-              value={existingSystemOption.label}
+              value={lead.existing_system}
             />
             <PropertyListItem
               label="Retailer"

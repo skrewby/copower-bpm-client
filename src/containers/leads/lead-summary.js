@@ -9,42 +9,13 @@ import { LeadPropertyDetails } from '../../components/lead/lead-property-details
 import { LeadPropertyDialog } from '../../components/lead/lead-property-dialog';
 import { LeadProgress } from '../../components/lead/lead-progress';
 import { LeadFiles } from '../../components/lead/lead-files';
-import { useMounted } from '../../hooks/use-mounted';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
+import { useOutletContext } from "react-router-dom";
 
 export const LeadSummary = () => {
-  const mounted = useMounted();
-  const [leadState, setLeadState] = useState({ isLoading: true });
+  const [leadState, setLeadState] = useOutletContext();
   const [openInfoDialog, setOpenInfoDialog] = useState(false);
   const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
-
-  const getLead = useCallback(async () => {
-    setLeadState(() => ({ isLoading: true }));
-
-    try {
-      const result = await leadApi.getLead();
-
-      if (mounted.current) {
-        setLeadState(() => ({
-          isLoading: false,
-          data: result
-        }));
-      }
-    } catch (err) {
-      console.error(err);
-
-      if (mounted.current) {
-        setLeadState(() => ({
-          isLoading: false,
-          error: err.message
-        }));
-      }
-    }
-  }, [mounted]);
-
-  useEffect(() => {
-    getLead().catch(console.error);
-  }, [getLead]);
 
   const renderContent = () => {
     if (leadState.isLoading) {
@@ -114,12 +85,6 @@ export const LeadSummary = () => {
                 lead={leadState.data}
               />
             </Grid>
-            <Grid
-              item
-              xs={12}
-            >
-              <LeadFiles files={leadState.data?.files} />
-            </Grid>
           </Grid>
           <Grid
             container
@@ -163,7 +128,7 @@ export const LeadSummary = () => {
         }}
       >
         <Container
-          maxWidth="lg"
+          maxWidth="xl"
           sx={{
             display: 'flex',
             flexDirection: 'column',

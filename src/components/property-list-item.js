@@ -37,7 +37,7 @@ export const PropertyListItem = (props) => {
                 color="textSecondary"
                 variant="body2"
               >
-                {value}
+                {value ?? ' '}
               </Typography>
             )}
           </Box>

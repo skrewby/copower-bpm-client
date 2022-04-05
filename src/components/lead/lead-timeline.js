@@ -36,10 +36,10 @@ const getDotStyles = (value) => {
 
 // NOTE: Items should be generated on order data to display information such as ordered date
 const getItems = (status) => {
-  const statusMapping = ['new', 'contacted', 'quotation', 'complete'];
+  const statusMapping = ['New', 'Contacted', 'Quotation', 'Complete'];
   const currentStatusIndex = statusMapping.indexOf(status) + 1;
   const items = [
-    { title: 'Created at 10/30/2021 03:16' },
+    { title: 'Created' },
     { title: 'Contacted' },
     { title: 'Quotation' },
     { title: 'Complete' }
@@ -59,8 +59,8 @@ const getItems = (status) => {
 };
 
 export const LeadTimeline = (props) => {
-  const { status, ...other } = props;
-  const items = getItems(status);
+  const { lead, ...other } = props;
+  const items = getItems(lead.status);
 
   return (
     <Timeline
@@ -126,5 +126,5 @@ export const LeadTimeline = (props) => {
 };
 
 LeadTimeline.propTypes = {
-  status: PropTypes.oneOf(['new', 'contacted', 'quotation', 'complete']).isRequired
+  lead: PropTypes.object.isRequired
 };

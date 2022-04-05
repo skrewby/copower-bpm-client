@@ -98,7 +98,6 @@ export const LeadsFilter = (props) => {
     onQueryChange,
     onViewChange,
     query,
-    selectedLeads,
     view
   } = props;
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
@@ -136,26 +135,13 @@ export const LeadsFilter = (props) => {
             display: 'grid',
             gap: 2,
             gridTemplateColumns: {
-              sm: selectedLeads.length > 0 ? 'auto 1fr auto' : '1fr auto',
+              sm: '1fr auto',
               xs: 'auto'
             },
             justifyItems: 'flex-start',
             p: 3
           }}
         >
-          <BulkActionsMenu
-            disabled={disabled}
-            onArchive={() => { }}
-            onDelete={() => { }}
-            selectedCount={selectedLeads.length}
-            sx={{
-              display: selectedLeads.length > 0 ? 'flex' : 'none',
-              order: {
-                sm: 1,
-                xs: 2
-              }
-            }}
-          />
           <Query
             disabled={disabled}
             onChange={onQueryChange}
@@ -194,7 +180,6 @@ export const LeadsFilter = (props) => {
 
 LeadsFilter.defaultProps = {
   filters: [],
-  selectedInvoices: [],
   view: 'all'
 };
 
@@ -206,6 +191,5 @@ LeadsFilter.propTypes = {
   onQueryChange: PropTypes.func,
   onViewChange: PropTypes.func,
   query: PropTypes.string,
-  selectedInvoices: PropTypes.array,
   view: PropTypes.string
 };

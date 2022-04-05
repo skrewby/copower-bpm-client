@@ -1,37 +1,36 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
+import { Link as RouterLink, Outlet, useLocation, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { Box, Button, Container, Skeleton, Typography, Tab, Tabs, Divider } from '@mui/material';
-import { leadApi } from '../../api/lead';
+import { bpmAPI } from '../../api/bpmAPI';
 import { ActionsMenu } from '../../components/actions-menu';
 import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
-// NOTE: This should be generated based on product data because "/1" represents "/:id" from routing
-// //  strategy where ":id" is dynamic depending on current product id
-const tabs = [
-  {
-    href: '/bpm/leads/1',
-    label: 'Summary'
-  },
-  {
-    href: '/bpm/leads/1/quotation',
-    label: 'Quotation'
-  }
-];
-
 export const Lead = () => {
+  let { leadID } = useParams();
   const mounted = useMounted();
   const [leadState, setLeadState] = useState({ isLoading: true });
   const location = useLocation();
+
+  const tabs = [
+    {
+      href: `/bpm/leads/${leadID}`,
+      label: 'Summary'
+    },
+    {
+      href: `/bpm/leads/${leadID}/quotation`,
+      label: 'Quotation'
+    }
+  ];
 
   const getLead = useCallback(async () => {
     setLeadState(() => ({ isLoading: true }));
 
     try {
-      const result = await leadApi.getLead();
+      const result = await bpmAPI.getLead(leadID);
 
       if (mounted.current) {
         setLeadState(() => ({
@@ -142,7 +141,7 @@ export const Lead = () => {
               color="textPrimary"
               variant="h4"
             >
-              {`${leadState.data.refID} - ${leadState.data.name}`}
+              {`#${leadState.data.lead_id} - ${leadState.data.name}`}
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
             <ActionsMenu actions={actions} />
@@ -164,7 +163,7 @@ export const Lead = () => {
           </Tabs>
           <Divider />
         </Box>
-        <Outlet />
+        <Outlet context={[leadState, setLeadState]}/>
       </>
     );
   };
@@ -181,7 +180,7 @@ export const Lead = () => {
         }}
       >
         <Container
-          maxWidth="lg"
+          maxWidth="xl"
           sx={{
             display: 'flex',
             flexDirection: 'column',

@@ -62,13 +62,13 @@ class BPMAPi {
 
         const queriedLeads = leads.filter((_lead) => {
             // If query exists, it looks in lead name and address
-            if (!!query && 
+            if (!!query &&
                 (!_lead.first_name?.toLowerCase().includes(query.toLowerCase()) &&
-                !_lead.last_name?.toLowerCase().includes(query.toLowerCase()) &&
-                !_lead.address?.toLowerCase().includes(query.toLowerCase()))) {
+                    !_lead.last_name?.toLowerCase().includes(query.toLowerCase()) &&
+                    !_lead.address?.toLowerCase().includes(query.toLowerCase()))) {
                 return false;
             }
-            
+
             // No need to look for any resource fields
             if (typeof view === 'undefined' || view === 'all') {
                 return true;
@@ -87,6 +87,19 @@ class BPMAPi {
         });
     }
 
+    async getLead(id) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const data = await api.url(`/leads/${id}`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return Promise.resolve(data[0]);
+    }
+
     /* ------------------------------------------------------------------------------------
                                             INFO
     --------------------------------------------------------------------------------------- */
@@ -102,6 +115,46 @@ class BPMAPi {
 
     async getLeadStatusOptions(options) {
         const data = await api.url("/lead_status")
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return data;
+    }
+
+    async getPhasesOptions(options) {
+        const data = await api.url("/phases")
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return data;
+    }
+
+    async getStoryOptions(options) {
+        const data = await api.url("/stories")
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return data;
+    }
+
+    async getRoofTypeOptions(options) {
+        const data = await api.url("/roof_types")
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return data;
+    }
+
+    async getExistingSystemOptions(options) {
+        const data = await api.url("/existing_system")
             .get()
             .json((response) => {
                 return response;
