@@ -10,7 +10,7 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
-import { Scrollbar } from './scrollbar';
+import { Scrollbar } from '../../scrollbar';
 
 export const InstallSummary = (props) => {
   const { install, ...other } = props;

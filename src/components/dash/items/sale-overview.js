@@ -12,8 +12,8 @@ import {
   Typography
 } from '@mui/material';
 import { useTheme } from '@mui/system';
-import { StatusBadge } from './status-badge';
-import { ActionsMenu } from './actions-menu';
+import { StatusBadge } from '../../status-badge';
+import { ActionsMenu } from '../../actions-menu';
 
 const series = [
   {

@@ -4,7 +4,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Box, Collapse, Divider, IconButton, Link, ListItem, Typography } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Status } from './status';
+import { Status } from '../../status';
 import { InstallSummary } from './install-summary';
 import toast from 'react-hot-toast';
 
