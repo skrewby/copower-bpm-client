@@ -1,9 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import {
-    Box,
-    Container,
-    Typography
-} from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 
 export const OperationsDashboard = () => {
     return (
@@ -14,7 +10,7 @@ export const OperationsDashboard = () => {
             <Box
                 sx={{
                     backgroundColor: 'background.default',
-                    flexGrow: 1
+                    flexGrow: 1,
                 }}
             >
                 <Container
@@ -22,20 +18,17 @@ export const OperationsDashboard = () => {
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        height: '100%'
+                        height: '100%',
                     }}
                 >
                     <Box sx={{ py: 4 }}>
                         <Box
                             sx={{
                                 alignItems: 'center',
-                                display: 'flex'
+                                display: 'flex',
                             }}
                         >
-                            <Typography
-                                color="textPrimary"
-                                variant="h4"
-                            >
+                            <Typography color="textPrimary" variant="h4">
                                 Operations Dashboard
                             </Typography>
                         </Box>

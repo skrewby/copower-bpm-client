@@ -8,19 +8,19 @@ import routes from './routes';
 import { createCustomTheme } from './theme';
 
 export const App = () => {
-  const { settings } = useSettings();
-  const { isInitialized } = useAuth();
-  const content = useRoutes(routes);
+    const { settings } = useSettings();
+    const { isInitialized } = useAuth();
+    const content = useRoutes(routes);
 
-  const theme = createCustomTheme({
-    direction: settings.direction,
-    theme: settings.theme
-  });
+    const theme = createCustomTheme({
+        direction: settings.direction,
+        theme: settings.theme,
+    });
 
-  return (
-    <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {isInitialized && content}
-    </ThemeProvider>
-  );
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {isInitialized && content}
+        </ThemeProvider>
+    );
 };

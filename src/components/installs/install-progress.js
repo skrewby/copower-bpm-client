@@ -10,47 +10,48 @@ import { ConfirmationDialog } from '../confirmation-dialog';
 import { InstallTimeline } from './install-timeline';
 
 export const InstallProgress = (props) => {
-  const { install, ...other } = props;
-  const [cancelInstallOpen, handleOpenCancelInstall, handleCloseCancelInstall] = useDialog();
-  const [status, setStatus] = useState(install?.status);
+    const { install, ...other } = props;
+    const [
+        cancelInstallOpen,
+        handleOpenCancelInstall,
+        handleCloseCancelInstall,
+    ] = useDialog();
+    const [status, setStatus] = useState(install?.status);
 
-  const handleCancelInstall = () => {
-    handleCloseCancelInstall();
-    toast.error('Not implemented yet');
-  };
+    const handleCancelInstall = () => {
+        handleCloseCancelInstall();
+        toast.error('Not implemented yet');
+    };
 
-  return (
-    <>
-      <Card
-        variant="outlined"
-        {...other}
-      >
-        <CardHeader title="Progress" />
-        <Divider />
-        <CardContent>
-          <InstallTimeline status={status} />
-        </CardContent>
-        <Divider />
-        <ActionList>
-          <ActionListItem
-            icon={XCircleIcon}
-            label="Cancel"
-            onClick={handleOpenCancelInstall}
-          />
-        </ActionList>
-      </Card>
-      <ConfirmationDialog
-        message="Are you sure you want to cancel this install?"
-        onCancel={handleCloseCancelInstall}
-        onConfirm={handleCancelInstall}
-        open={cancelInstallOpen}
-        title="Cancel Install"
-        variant="warning"
-      />
-    </>
-  );
+    return (
+        <>
+            <Card variant="outlined" {...other}>
+                <CardHeader title="Progress" />
+                <Divider />
+                <CardContent>
+                    <InstallTimeline status={status} />
+                </CardContent>
+                <Divider />
+                <ActionList>
+                    <ActionListItem
+                        icon={XCircleIcon}
+                        label="Cancel"
+                        onClick={handleOpenCancelInstall}
+                    />
+                </ActionList>
+            </Card>
+            <ConfirmationDialog
+                message="Are you sure you want to cancel this install?"
+                onCancel={handleCloseCancelInstall}
+                onConfirm={handleCancelInstall}
+                open={cancelInstallOpen}
+                title="Cancel Install"
+                variant="warning"
+            />
+        </>
+    );
 };
 
 InstallProgress.propTypes = {
-  install: PropTypes.object
+    install: PropTypes.object,
 };

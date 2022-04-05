@@ -1,19 +1,18 @@
 .App {
     font-family: sans-serif;
     text-align: center;
-  }
-  
-  .error {
+}
+
+.error {
     display: none;
-  }
-  .error.active {
+}
+.error.active {
     display: block;
     color: red;
-  }
-  
-  .fade-out {
+}
+
+.fade-out {
     visibility: hidden;
     opacity: 0;
     transition: visibility 1s 0.5s, opacity 0.5s;
-  }
-  
+}

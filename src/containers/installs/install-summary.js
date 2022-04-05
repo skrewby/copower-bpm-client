@@ -14,175 +14,161 @@ import { useMounted } from '../../hooks/use-mounted';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
 export const InstallSummary = () => {
-  const mounted = useMounted();
-  const [installState, setInstallState] = useState({ isLoading: true });
-  const [openInfoDialog, setOpenInfoDialog] = useState(false);
-  const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
+    const mounted = useMounted();
+    const [installState, setInstallState] = useState({ isLoading: true });
+    const [openInfoDialog, setOpenInfoDialog] = useState(false);
+    const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
 
-  const getInstall = useCallback(async () => {
-    setInstallState(() => ({ isLoading: true }));
+    const getInstall = useCallback(async () => {
+        setInstallState(() => ({ isLoading: true }));
 
-    try {
-      const result = await installApi.getInstall();
+        try {
+            const result = await installApi.getInstall();
 
-      if (mounted.current) {
-        setInstallState(() => ({
-          isLoading: false,
-          data: result
-        }));
-      }
-    } catch (err) {
-      console.error(err);
+            if (mounted.current) {
+                setInstallState(() => ({
+                    isLoading: false,
+                    data: result,
+                }));
+            }
+        } catch (err) {
+            console.error(err);
 
-      if (mounted.current) {
-        setInstallState(() => ({
-          isLoading: false,
-          error: err.message
-        }));
-      }
-    }
-  }, [mounted]);
+            if (mounted.current) {
+                setInstallState(() => ({
+                    isLoading: false,
+                    error: err.message,
+                }));
+            }
+        }
+    }, [mounted]);
 
-  useEffect(() => {
-    getInstall().catch(console.error);
-  }, [getInstall]);
+    useEffect(() => {
+        getInstall().catch(console.error);
+    }, [getInstall]);
 
-  const renderContent = () => {
-    if (installState.isLoading) {
-      return (
-        <Box sx={{ py: 4 }}>
-          <Skeleton height={42} />
-          <Skeleton />
-          <Skeleton />
-        </Box>
-      );
-    }
+    const renderContent = () => {
+        if (installState.isLoading) {
+            return (
+                <Box sx={{ py: 4 }}>
+                    <Skeleton height={42} />
+                    <Skeleton />
+                    <Skeleton />
+                </Box>
+            );
+        }
 
-    if (installState.error) {
-      return (
-        <Box sx={{ py: 4 }}>
-          <Box
-            sx={{
-              alignItems: 'center',
-              backgroundColor: 'background.default',
-              display: 'flex',
-              flexDirection: 'column',
-              p: 3
-            }}
-          >
-            <PriorityHighOutlinedIcon />
-            <Typography
-              color="textSecondary"
-              sx={{ mt: 2 }}
-              variant="body2"
-            >
-              {installState.error}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    }
+        if (installState.error) {
+            return (
+                <Box sx={{ py: 4 }}>
+                    <Box
+                        sx={{
+                            alignItems: 'center',
+                            backgroundColor: 'background.default',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            p: 3,
+                        }}
+                    >
+                        <PriorityHighOutlinedIcon />
+                        <Typography
+                            color="textSecondary"
+                            sx={{ mt: 2 }}
+                            variant="body2"
+                        >
+                            {installState.error}
+                        </Typography>
+                    </Box>
+                </Box>
+            );
+        }
+
+        return (
+            <>
+                <Grid container spacing={3}>
+                    <Grid
+                        container
+                        item
+                        lg={8}
+                        spacing={3}
+                        sx={{ height: 'fit-content' }}
+                        xs={12}
+                    >
+                        <Grid item xs={12}>
+                            <InstallInfo
+                                onEdit={() => setOpenInfoDialog(true)}
+                                install={installState.data}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <InstallPropertyDetails
+                                onEdit={() =>
+                                    toast.error('Not implemented yet')
+                                }
+                                install={installState.data}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <InstallSystemSummary
+                                onEdit={() =>
+                                    toast.error('Not implemented yet')
+                                }
+                                install={installState.data}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <LeadFiles files={installState.data?.files} />
+                        </Grid>
+                    </Grid>
+                    <Grid
+                        container
+                        item
+                        lg={4}
+                        spacing={3}
+                        sx={{ height: 'fit-content' }}
+                        xs={12}
+                    >
+                        <Grid item xs={12}>
+                            <InstallProgress install={installState.data} />
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <InstallInfoDialog
+                    onClose={() => setOpenInfoDialog(false)}
+                    open={openInfoDialog}
+                    lead={installState.data}
+                />
+                <LeadPropertyDialog
+                    onClose={() => setOpenPropertyDialog(false)}
+                    open={openPropertyDialog}
+                    lead={installState.data}
+                />
+            </>
+        );
+    };
 
     return (
-      <>
-        <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            container
-            item
-            lg={8}
-            spacing={3}
-            sx={{ height: 'fit-content' }}
-            xs={12}
-          >
-            <Grid
-              item
-              xs={12}
+        <>
+            <Helmet>
+                <title>Install | Copower BPM</title>
+            </Helmet>
+            <Box
+                sx={{
+                    backgroundColor: 'background.default',
+                    flexGrow: 1,
+                }}
             >
-              <InstallInfo
-                onEdit={() => setOpenInfoDialog(true)}
-                install={installState.data}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-            >
-              <InstallPropertyDetails
-                onEdit={() => toast.error('Not implemented yet')}
-                install={installState.data}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-            >
-              <InstallSystemSummary
-                onEdit={() => toast.error('Not implemented yet')}
-                install={installState.data}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-            >
-              <LeadFiles files={installState.data?.files} />
-            </Grid>
-          </Grid>
-          <Grid
-            container
-            item
-            lg={4}
-            spacing={3}
-            sx={{ height: 'fit-content' }}
-            xs={12}
-          >
-            <Grid
-              item
-              xs={12}
-            >
-              <InstallProgress install={installState.data} />
-            </Grid>
-          </Grid>
-        </Grid>
-        <InstallInfoDialog
-          onClose={() => setOpenInfoDialog(false)}
-          open={openInfoDialog}
-          lead={installState.data}
-        />
-        <LeadPropertyDialog
-          onClose={() => setOpenPropertyDialog(false)}
-          open={openPropertyDialog}
-          lead={installState.data}
-        />
-      </>
+                <Container
+                    maxWidth="lg"
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100%',
+                    }}
+                >
+                    {renderContent()}
+                </Container>
+            </Box>
+        </>
     );
-  };
-
-  return (
-    <>
-      <Helmet>
-        <title>Install | Copower BPM</title>
-      </Helmet>
-      <Box
-        sx={{
-          backgroundColor: 'background.default',
-          flexGrow: 1
-        }}
-      >
-        <Container
-          maxWidth="lg"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%'
-          }}
-        >
-          {renderContent()}
-        </Container>
-      </Box>
-    </>
-  );
 };

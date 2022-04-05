@@ -8,115 +8,109 @@ import { useMounted } from '../../hooks/use-mounted';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
 export const LeadQuotation = () => {
-  const mounted = useMounted();
-  const [leadState, setLeadState] = useState({ isLoading: true });
+    const mounted = useMounted();
+    const [leadState, setLeadState] = useState({ isLoading: true });
 
-  const getLead = useCallback(async () => {
-    setLeadState(() => ({ isLoading: true }));
+    const getLead = useCallback(async () => {
+        setLeadState(() => ({ isLoading: true }));
 
-    try {
-      const result = await leadApi.getLead();
+        try {
+            const result = await leadApi.getLead();
 
-      if (mounted.current) {
-        setLeadState(() => ({
-          isLoading: false,
-          data: result
-        }));
-      }
-    } catch (err) {
-      console.error(err);
+            if (mounted.current) {
+                setLeadState(() => ({
+                    isLoading: false,
+                    data: result,
+                }));
+            }
+        } catch (err) {
+            console.error(err);
 
-      if (mounted.current) {
-        setLeadState(() => ({
-          isLoading: false,
-          error: err.message
-        }));
-      }
-    }
-  }, [mounted]);
+            if (mounted.current) {
+                setLeadState(() => ({
+                    isLoading: false,
+                    error: err.message,
+                }));
+            }
+        }
+    }, [mounted]);
 
-  useEffect(() => {
-    getLead().catch(console.error);
-  }, [getLead]);
+    useEffect(() => {
+        getLead().catch(console.error);
+    }, [getLead]);
 
-  const renderContent = () => {
-    if (leadState.isLoading) {
-      return (
-        <Box sx={{ py: 4 }}>
-          <Skeleton height={42} />
-          <Skeleton />
-          <Skeleton />
-        </Box>
-      );
-    }
+    const renderContent = () => {
+        if (leadState.isLoading) {
+            return (
+                <Box sx={{ py: 4 }}>
+                    <Skeleton height={42} />
+                    <Skeleton />
+                    <Skeleton />
+                </Box>
+            );
+        }
 
-    if (leadState.error) {
-      return (
-        <Box sx={{ py: 4 }}>
-          <Box
-            sx={{
-              alignItems: 'center',
-              backgroundColor: 'background.default',
-              display: 'flex',
-              flexDirection: 'column',
-              p: 3
-            }}
-          >
-            <PriorityHighOutlinedIcon />
-            <Typography
-              color="textSecondary"
-              sx={{ mt: 2 }}
-              variant="body2"
-            >
-              {leadState.error}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    }
+        if (leadState.error) {
+            return (
+                <Box sx={{ py: 4 }}>
+                    <Box
+                        sx={{
+                            alignItems: 'center',
+                            backgroundColor: 'background.default',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            p: 3,
+                        }}
+                    >
+                        <PriorityHighOutlinedIcon />
+                        <Typography
+                            color="textSecondary"
+                            sx={{ mt: 2 }}
+                            variant="body2"
+                        >
+                            {leadState.error}
+                        </Typography>
+                    </Box>
+                </Box>
+            );
+        }
+
+        return (
+            <>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <LeadSystemItems
+                            onEdit={() => toast.error('Not implemented yet')}
+                            lead={leadState.data}
+                        />
+                    </Grid>
+                </Grid>
+            </>
+        );
+    };
 
     return (
-      <>
-        <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            item
-            xs={12}
-          >
-            <LeadSystemItems
-              onEdit={() => toast.error('Not implemented yet')}
-              lead={leadState.data}
-            />
-          </Grid>
-        </Grid>
-      </>
+        <>
+            <Helmet>
+                <title>Lead | Copower BPM</title>
+            </Helmet>
+            <Box
+                sx={{
+                    backgroundColor: 'background.default',
+                    flexGrow: 1,
+                }}
+            >
+                <Container
+                    maxWidth="xl"
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100%',
+                    }}
+                >
+                    {renderContent()}
+                </Container>
+            </Box>
+        </>
     );
-  };
-
-  return (
-    <>
-      <Helmet>
-        <title>Lead | Copower BPM</title>
-      </Helmet>
-      <Box
-        sx={{
-          backgroundColor: 'background.default',
-          flexGrow: 1
-        }}
-      >
-        <Container
-          maxWidth="xl"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%'
-          }}
-        >
-          {renderContent()}
-        </Container>
-      </Box>
-    </>
-  );
 };

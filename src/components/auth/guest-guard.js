@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 import { useAuth } from '../../hooks/use-auth';
 
 export const GuestGuard = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuth();
 
-  if (isAuthenticated) {
-    return <Navigate to="/bpm/dashboard" />;
-  }
+    if (isAuthenticated) {
+        return <Navigate to="/bpm/dashboard" />;
+    }
 
-  return <>{children}</>;
+    return <>{children}</>;
 };
 
 GuestGuard.propTypes = {
-  children: PropTypes.node
+    children: PropTypes.node,
 };

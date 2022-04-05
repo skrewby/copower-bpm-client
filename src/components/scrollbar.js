@@ -4,32 +4,28 @@ import SimpleBar from 'simplebar-react';
 import { Box } from '@mui/material';
 
 export const Scrollbar = forwardRef((props, ref) => {
-  const { children, ...other } = props;
+    const { children, ...other } = props;
 
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+        );
 
-  if (isMobile) {
+    if (isMobile) {
+        return (
+            <Box ref={ref} sx={{ overflowX: 'auto' }} {...other}>
+                {children}
+            </Box>
+        );
+    }
+
     return (
-      <Box
-        ref={ref}
-        sx={{ overflowX: 'auto' }}
-        {...other}
-      >
-        {children}
-      </Box>
+        <SimpleBar ref={ref} {...other}>
+            {children}
+        </SimpleBar>
     );
-  }
-
-  return (
-    <SimpleBar
-      ref={ref}
-      {...other}
-    >
-      {children}
-    </SimpleBar>
-  );
 });
 
 Scrollbar.propTypes = {
-  children: PropTypes.node
+    children: PropTypes.node,
 };

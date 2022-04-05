@@ -3,20 +3,20 @@ import NProgress from 'nprogress';
 import { Box } from '@mui/material';
 
 export const LoadingScreen = () => {
-  useEffect(() => {
-    NProgress.start();
+    useEffect(() => {
+        NProgress.start();
 
-    return () => {
-      NProgress.done();
-    };
-  }, []);
+        return () => {
+            NProgress.done();
+        };
+    }, []);
 
-  return (
-    <Box
-      sx={{
-        backgroundColor: 'background.default',
-        flexGrow: 1
-      }}
-    />
-  );
+    return (
+        <Box
+            sx={{
+                backgroundColor: 'background.default',
+                flexGrow: 1,
+            }}
+        />
+    );
 };

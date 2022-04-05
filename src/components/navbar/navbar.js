@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
-import { AppBar, Box, Divider, IconButton, Stack, Toolbar, useMediaQuery } from '@mui/material';
+import {
+    AppBar,
+    Box,
+    Divider,
+    IconButton,
+    Stack,
+    Toolbar,
+    useMediaQuery,
+} from '@mui/material';
 import { useLocation, matchPath } from 'react-router-dom';
 
 // Icons
@@ -25,38 +33,38 @@ const items = [
     {
         icon: HomeOutlinedIcon,
         title: 'Dashboard',
-        href: '/bpm/dashboard'
+        href: '/bpm/dashboard',
     },
     {
         icon: CalendarMonthOutlinedIcon,
         title: 'Calendar',
-        href: '/bpm/calendar'
+        href: '/bpm/calendar',
     },
     {
         icon: HeadsetMicOutlinedIcon,
         title: 'Leads',
-        href: '/bpm/leads'
+        href: '/bpm/leads',
     },
     {
         icon: WbSunnyOutlinedIcon,
         title: 'Installs',
-        href: '/bpm/installs'
+        href: '/bpm/installs',
     },
     {
         icon: BuildOutlinedIcon,
         title: 'Services',
-        href: '/bpm/services'
+        href: '/bpm/services',
     },
     {
         icon: PersonOutlinedIcon,
         title: 'Customers',
-        href: '/bpm/customers'
+        href: '/bpm/customers',
     },
     {
         icon: WarehouseOutlinedIcon,
         title: 'Stock',
-        href: '/bpm/stock'
-    }
+        href: '/bpm/stock',
+    },
 ];
 
 export const Navbar = () => {
@@ -70,7 +78,7 @@ export const Navbar = () => {
     const handleSwitchTheme = () => {
         saveSettings({
             ...settings,
-            theme: settings.theme === 'light' ? 'dark' : 'light'
+            theme: settings.theme === 'light' ? 'dark' : 'light',
         });
 
         setDarkMode(settings.theme === 'light');
@@ -80,7 +88,10 @@ export const Navbar = () => {
         items.forEach((item) => {
             if (item.items) {
                 for (let index = 0; index < item.items.length; index++) {
-                    const active = matchPath({ path: item.items[index].href, end: true }, pathname);
+                    const active = matchPath(
+                        { path: item.items[index].href, end: true },
+                        pathname
+                    );
 
                     if (active) {
                         setActiveItem(item);
@@ -88,7 +99,10 @@ export const Navbar = () => {
                     }
                 }
             } else {
-                const active = !!matchPath({ path: item.href, end: true }, pathname);
+                const active = !!matchPath(
+                    { path: item.href, end: true },
+                    pathname
+                );
 
                 if (active) {
                     setActiveItem(item);
@@ -98,10 +112,7 @@ export const Navbar = () => {
     }, [pathname]);
 
     return (
-        <AppBar
-            elevation={0}
-            sx={{ backgroundColor: '#1e212a' }}
-        >
+        <AppBar elevation={0} sx={{ backgroundColor: '#1e212a' }}>
             <Toolbar
                 disableGutters
                 sx={{
@@ -109,17 +120,18 @@ export const Navbar = () => {
                     display: 'flex',
                     minHeight: 64,
                     px: 3,
-                    py: 1
+                    py: 1,
                 }}
             >
                 <Stack direction="row" spacing={2}>
-                    {activeItem && (items.map((item) => (
-                        <NavbarItem
-                            active={activeItem?.title === item.title}
-                            key={item.title}
-                            {...item}
-                        />
-                    )))}
+                    {activeItem &&
+                        items.map((item) => (
+                            <NavbarItem
+                                active={activeItem?.title === item.title}
+                                key={item.title}
+                                {...item}
+                            />
+                        ))}
                 </Stack>
                 <Box sx={{ flexGrow: 1 }} />
                 <IconButton
@@ -129,13 +141,11 @@ export const Navbar = () => {
                         mx: 2,
                         display: {
                             md: 'inline-flex',
-                            xs: 'none'
-                        }
+                            xs: 'none',
+                        },
                     }}
                 >
-                    {darkMode
-                        ? <SunIcon />
-                        : <MoonIcon />}
+                    {darkMode ? <SunIcon /> : <MoonIcon />}
                 </IconButton>
                 <NotificationsPopover sx={{ mr: 2 }} />
                 <AccountPopover
@@ -145,4 +155,4 @@ export const Navbar = () => {
             </Toolbar>
         </AppBar>
     );
-}
+};

@@ -1,12 +1,8 @@
-import { Look } from './calendar/look.js';
+import { Look } from '../components/calendar/look';
 import { Helmet } from 'react-helmet-async';
-import {
-    Box,
-    Container,
-    Grid
-} from '@mui/material';
+import { Box, Container, Grid } from '@mui/material';
 
-export function ViewCalendar () {
+export function ViewCalendar() {
     return (
         <>
             <Helmet>
@@ -15,35 +11,26 @@ export function ViewCalendar () {
             <Box
                 sx={{
                     backgroundColor: 'background.default',
-                    flexGrow: 1
+                    flexGrow: 1,
                 }}
             >
-                <Container
-                    maxWidth="xl"
-                >
+                <Container maxWidth="xl">
                     <Box sx={{ py: 2, backgroundColor: 'background.default' }}>
                         <Box
                             sx={{
                                 alignItems: 'center',
                                 display: 'flex',
-                                py: 2
+                                py: 2,
                             }}
-                        >
-                        </Box>
-                        <Grid
-                        container
-                        spacing={3}
-                        >
-                        <Grid
-                        item
-                        xs={12}
-                        >
-                        <Look />
-                        </Grid>
+                        ></Box>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <Look />
+                            </Grid>
                         </Grid>
                     </Box>
                 </Container>
             </Box>
         </>
     );
-};
+}

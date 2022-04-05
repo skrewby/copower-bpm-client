@@ -16,19 +16,19 @@ import { SettingsProvider } from './contexts/settings-context';
 import { AuthProvider } from './contexts/firebase-auth-context';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <BrowserRouter>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <SettingsProvider>
-            <AuthProvider>
-              <App />
-              <Toaster position="bottom-right" />
-            </AuthProvider>
-          </SettingsProvider>
-        </LocalizationProvider>
-      </BrowserRouter>
-    </HelmetProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <HelmetProvider>
+            <BrowserRouter>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <SettingsProvider>
+                        <AuthProvider>
+                            <App />
+                            <Toaster position="bottom-right" />
+                        </AuthProvider>
+                    </SettingsProvider>
+                </LocalizationProvider>
+            </BrowserRouter>
+        </HelmetProvider>
+    </React.StrictMode>,
+    document.getElementById('root')
 );

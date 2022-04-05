@@ -1,4 +1,4 @@
-import wretch from "wretch"
+import wretch from 'wretch';
 import firebase from '../lib/firebase';
 
 import { parseISO, subDays } from 'date-fns';
@@ -8,20 +8,20 @@ import { applyPagination } from '../utils/apply-pagination';
 import { applySort } from '../utils/apply-sort';
 import { wait } from '../utils/wait';
 
-
 // Cross origin authenticated requests on an external API
 const api = wretch()
     // Set the base url
-    .url("http://localhost:3001/api")
+    .url('http://localhost:3001/api')
     // Cors fetch options
-    .options({ mode: "cors" });
+    .options({ mode: 'cors' });
 
 class BPMAPi {
     /* ------------------------------------------------------------------------------------
                                             USERS
     --------------------------------------------------------------------------------------- */
     async getUsers(options) {
-        const data = await api.url("/users")
+        const data = await api
+            .url('/users')
             .get()
             .json((response) => {
                 return response;
@@ -35,10 +35,11 @@ class BPMAPi {
     --------------------------------------------------------------------------------------- */
     async createLead(lead) {
         const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
-        const response = await api.url("/leads")
+        const response = await api
+            .url('/leads')
             .auth(`Bearer ${fb_auth.token}`)
             .post(lead)
-            .res(response => response);
+            .res((response) => response);
 
         return response;
     }
@@ -47,7 +48,8 @@ class BPMAPi {
         const { filters, sort, sortBy, page, query, view } = options;
         const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
 
-        const data = await api.url("/leads")
+        const data = await api
+            .url('/leads')
             .auth(`Bearer ${fb_auth.token}`)
             .get()
             .json((response) => {
@@ -62,10 +64,14 @@ class BPMAPi {
 
         const queriedLeads = leads.filter((_lead) => {
             // If query exists, it looks in lead name and address
-            if (!!query &&
-                (!_lead.first_name?.toLowerCase().includes(query.toLowerCase()) &&
-                    !_lead.last_name?.toLowerCase().includes(query.toLowerCase()) &&
-                    !_lead.address?.toLowerCase().includes(query.toLowerCase()))) {
+            if (
+                !!query &&
+                !_lead.first_name
+                    ?.toLowerCase()
+                    .includes(query.toLowerCase()) &&
+                !_lead.last_name?.toLowerCase().includes(query.toLowerCase()) &&
+                !_lead.address?.toLowerCase().includes(query.toLowerCase())
+            ) {
                 return false;
             }
 
@@ -83,14 +89,15 @@ class BPMAPi {
 
         return Promise.resolve({
             leads: paginatedLeads,
-            leadsCount: filteredLeads.length
+            leadsCount: filteredLeads.length,
         });
     }
 
     async getLead(id) {
         const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
 
-        const data = await api.url(`/leads/${id}`)
+        const data = await api
+            .url(`/leads/${id}`)
             .auth(`Bearer ${fb_auth.token}`)
             .get()
             .json((response) => {
@@ -103,10 +110,11 @@ class BPMAPi {
     async updateLead(id, values) {
         const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
 
-        const response = await api.url(`/leads/${id}`)
+        const response = await api
+            .url(`/leads/${id}`)
             .auth(`Bearer ${fb_auth.token}`)
             .put(values)
-            .res(response => response);
+            .res((response) => response);
 
         return response;
     }
@@ -115,7 +123,8 @@ class BPMAPi {
                                             INFO
     --------------------------------------------------------------------------------------- */
     async getLeadSources(options) {
-        const data = await api.url("/lead_sources")
+        const data = await api
+            .url('/lead_sources')
             .get()
             .json((response) => {
                 return response;
@@ -125,7 +134,8 @@ class BPMAPi {
     }
 
     async getLeadStatusOptions(options) {
-        const data = await api.url("/lead_status")
+        const data = await api
+            .url('/lead_status')
             .get()
             .json((response) => {
                 return response;
@@ -135,7 +145,8 @@ class BPMAPi {
     }
 
     async getPhasesOptions(options) {
-        const data = await api.url("/phases")
+        const data = await api
+            .url('/phases')
             .get()
             .json((response) => {
                 return response;
@@ -145,7 +156,8 @@ class BPMAPi {
     }
 
     async getStoryOptions(options) {
-        const data = await api.url("/stories")
+        const data = await api
+            .url('/stories')
             .get()
             .json((response) => {
                 return response;
@@ -155,7 +167,8 @@ class BPMAPi {
     }
 
     async getRoofTypeOptions(options) {
-        const data = await api.url("/roof_types")
+        const data = await api
+            .url('/roof_types')
             .get()
             .json((response) => {
                 return response;
@@ -165,7 +178,8 @@ class BPMAPi {
     }
 
     async getExistingSystemOptions(options) {
-        const data = await api.url("/existing_system")
+        const data = await api
+            .url('/existing_system')
             .get()
             .json((response) => {
                 return response;

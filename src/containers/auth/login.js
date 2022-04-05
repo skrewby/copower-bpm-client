@@ -12,7 +12,7 @@ export const Login = () => {
                 sx={{
                     backgroundColor: 'background.default',
                     minHeight: '100%',
-                    pt: '64px'
+                    pt: '64px',
                 }}
             >
                 <Box sx={{ py: 9 }}>

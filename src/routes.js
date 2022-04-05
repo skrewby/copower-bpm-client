@@ -9,39 +9,107 @@ import { GuestGuard } from './components/auth/guest-guard';
 // Containers
 import { BPMLayout } from './containers/bpm-layout';
 
-const Loadable = (Component) => (props) => (
-    <Suspense fallback={<LoadingScreen />}>
-        <Component {...props} />
-    </Suspense>
-);
+const Loadable = (Component) => (props) =>
+    (
+        <Suspense fallback={<LoadingScreen />}>
+            <Component {...props} />
+        </Suspense>
+    );
 
 // Auth pages
-const Login = Loadable(lazy(() => import('./containers/auth/login').then((module) => ({ default: module.Login }))));
-const PasswordRecovery = Loadable(lazy(() => import('./containers/auth/password-recovery').then((module) => ({ default: module.PasswordRecovery }))));
+const Login = Loadable(
+    lazy(() =>
+        import('./containers/auth/login').then((module) => ({
+            default: module.Login,
+        }))
+    )
+);
+const PasswordRecovery = Loadable(
+    lazy(() =>
+        import('./containers/auth/password-recovery').then((module) => ({
+            default: module.PasswordRecovery,
+        }))
+    )
+);
 
 // BPM pages
-const NotFound = Loadable(lazy(() => import('./containers/not-found').then((module) => ({ default: module.NotFound }))));
-const Dashboard = Loadable(lazy(() => import('./containers/dashboard/dashboard').then((module) => ({ default: module.Dashboard }))));
-const Calendar = Loadable(lazy(() => import('./containers/dashboard/office-calendar').then((module) => ({ default: module.ViewCalendar }))));
+const NotFound = Loadable(
+    lazy(() =>
+        import('./containers/not-found').then((module) => ({
+            default: module.NotFound,
+        }))
+    )
+);
+const Dashboard = Loadable(
+    lazy(() =>
+        import('./containers/dashboard/dashboard').then((module) => ({
+            default: module.Dashboard,
+        }))
+    )
+);
+const Calendar = Loadable(
+    lazy(() =>
+        import('./containers/office-calendar').then((module) => ({
+            default: module.ViewCalendar,
+        }))
+    )
+);
 
-const Leads = Loadable(lazy(() => import('./containers/leads/leads').then((module) => ({ default: module.Leads }))));
-const Lead = Loadable(lazy(() => import('./containers/leads/lead').then((module) => ({ default: module.Lead }))));
-const LeadSummary = Loadable(lazy(() => import('./containers/leads/lead-summary').then((module) => ({ default: module.LeadSummary }))));
-const LeadQuotation = Loadable(lazy(() => import('./containers/leads/lead-quotation').then((module) => ({ default: module.LeadQuotation }))));
+const Leads = Loadable(
+    lazy(() =>
+        import('./containers/leads/leads').then((module) => ({
+            default: module.Leads,
+        }))
+    )
+);
+const Lead = Loadable(
+    lazy(() =>
+        import('./containers/leads/lead').then((module) => ({
+            default: module.Lead,
+        }))
+    )
+);
+const LeadSummary = Loadable(
+    lazy(() =>
+        import('./containers/leads/lead-summary').then((module) => ({
+            default: module.LeadSummary,
+        }))
+    )
+);
+const LeadQuotation = Loadable(
+    lazy(() =>
+        import('./containers/leads/lead-quotation').then((module) => ({
+            default: module.LeadQuotation,
+        }))
+    )
+);
 
-const Installs = Loadable(lazy(() => import('./containers/installs/installs').then((module) => ({ default: module.Installs }))));
-const Install = Loadable(lazy(() => import('./containers/installs/install').then((module) => ({ default: module.Install }))));
-const InstallSummary = Loadable(lazy(() => import('./containers/installs/install-summary').then((module) => ({ default: module.InstallSummary }))));
+const Installs = Loadable(
+    lazy(() =>
+        import('./containers/installs/installs').then((module) => ({
+            default: module.Installs,
+        }))
+    )
+);
+const Install = Loadable(
+    lazy(() =>
+        import('./containers/installs/install').then((module) => ({
+            default: module.Install,
+        }))
+    )
+);
+const InstallSummary = Loadable(
+    lazy(() =>
+        import('./containers/installs/install-summary').then((module) => ({
+            default: module.InstallSummary,
+        }))
+    )
+);
 
 const routes = [
     {
         path: '/',
-        element: (
-            <Navigate
-                to="/bpm"
-                replace
-            />
-        ),
+        element: <Navigate to="/bpm" replace />,
     },
     {
         path: 'login',
@@ -49,7 +117,7 @@ const routes = [
             <GuestGuard>
                 <Login />
             </GuestGuard>
-        )
+        ),
     },
     {
         path: 'password-recovery',
@@ -57,10 +125,10 @@ const routes = [
             <GuestGuard>
                 <PasswordRecovery />
             </GuestGuard>
-        )
+        ),
     },
     {
-        path: "bpm",
+        path: 'bpm',
         element: (
             <AuthGuard>
                 <BPMLayout />
@@ -69,27 +137,22 @@ const routes = [
         children: [
             {
                 path: '',
-                element: (
-                    <Navigate
-                        to="/bpm/dashboard"
-                        replace
-                    />
-                )
+                element: <Navigate to="/bpm/dashboard" replace />,
             },
             {
                 path: 'dashboard',
-                element: <Dashboard />
+                element: <Dashboard />,
             },
             {
                 path: 'calendar',
-                element: <Calendar />
+                element: <Calendar />,
             },
             {
                 path: 'leads',
                 children: [
                     {
                         path: '',
-                        element: <Leads />
+                        element: <Leads />,
                     },
                     {
                         path: ':leadID',
@@ -97,22 +160,22 @@ const routes = [
                         children: [
                             {
                                 path: '',
-                                element: <LeadSummary />
+                                element: <LeadSummary />,
                             },
                             {
                                 path: 'quotation',
-                                element: <LeadQuotation />
-                            }
-                        ]
-                    }
-                ]
+                                element: <LeadQuotation />,
+                            },
+                        ],
+                    },
+                ],
             },
             {
                 path: 'installs',
                 children: [
                     {
                         path: '',
-                        element: <Installs />
+                        element: <Installs />,
                     },
                     {
                         path: ':installID',
@@ -120,18 +183,18 @@ const routes = [
                         children: [
                             {
                                 path: '',
-                                element: <InstallSummary />
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
+                                element: <InstallSummary />,
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
     },
     {
         path: '*',
-        element: <NotFound />
-    }
+        element: <NotFound />,
+    },
 ];
 
 export default routes;

@@ -5,32 +5,30 @@ import { useAuth } from '../../hooks/use-auth';
 import { Login } from '../../containers/auth/login';
 
 export const AuthGuard = (props) => {
-  const { children } = props;
-  const auth = useAuth();
-  const location = useLocation();
-  const [requestedLocation, setRequestedLocation] = useState(null);
+    const { children } = props;
+    const auth = useAuth();
+    const location = useLocation();
+    const [requestedLocation, setRequestedLocation] = useState(null);
 
-  if (!auth.isAuthenticated) {
-    if (location.pathname !== requestedLocation) {
-      setRequestedLocation(location.pathname);
+    if (!auth.isAuthenticated) {
+        if (location.pathname !== requestedLocation) {
+            setRequestedLocation(location.pathname);
+        }
+
+        return <Login />;
     }
 
-    return (
-      <Login />
-    );
-  }
+    // This is done so that in case the route changes by any chance through other
+    // means between the moment of request and the render we navigate to the initially
+    // requested route.
+    if (requestedLocation && location.pathname !== requestedLocation) {
+        setRequestedLocation(null);
+        return <Navigate to={requestedLocation} />;
+    }
 
-  // This is done so that in case the route changes by any chance through other
-  // means between the moment of request and the render we navigate to the initially
-  // requested route.
-  if (requestedLocation && location.pathname !== requestedLocation) {
-    setRequestedLocation(null);
-    return <Navigate to={requestedLocation} />;
-  }
-
-  return <>{children}</>;
+    return <>{children}</>;
 };
 
 AuthGuard.propTypes = {
-  children: PropTypes.node
+    children: PropTypes.node,
 };

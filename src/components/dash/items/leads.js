@@ -5,40 +5,37 @@ import { InstallPreviewItem } from './deposit-preview-item';
 import { InstallPreviewList } from './install-preview-list';
 
 export const LatestLeads = (props) => {
-  const { installs } = props;
+    const { installs } = props;
 
-  return (
-    <Card
-      variant="outlined"
-      {...props}
-    >
-      <CardHeader
-        action={(
-          <Button
-            color="primary"
-            component={RouterLink}
-            to="#"
-            variant="text"
-          >
-            Go to leads
-          </Button>
-        )}
-        title="Recent Leads"
-      />
-      <Divider />
-      <InstallPreviewList>
-        {installs.map((install, index) => (
-          <InstallPreviewItem
-            divider={installs.length > index + 1}
-            key={install.id}
-            install={install}
-          />
-        ))}
-      </InstallPreviewList>
-    </Card>
-  );
+    return (
+        <Card variant="outlined" {...props}>
+            <CardHeader
+                action={
+                    <Button
+                        color="primary"
+                        component={RouterLink}
+                        to="#"
+                        variant="text"
+                    >
+                        Go to leads
+                    </Button>
+                }
+                title="Recent Leads"
+            />
+            <Divider />
+            <InstallPreviewList>
+                {installs.map((install, index) => (
+                    <InstallPreviewItem
+                        divider={installs.length > index + 1}
+                        key={install.id}
+                        install={install}
+                    />
+                ))}
+            </InstallPreviewList>
+        </Card>
+    );
 };
 
 LatestLeads.propTypes = {
-  installs: PropTypes.array
+    installs: PropTypes.array,
 };

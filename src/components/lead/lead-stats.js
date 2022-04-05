@@ -1,6 +1,14 @@
 import Chart from 'react-apexcharts';
 import numeral from 'numeral';
-import { Box, Card, CardContent, Grid, List, ListItem, Typography } from '@mui/material';
+import {
+    Box,
+    Card,
+    CardContent,
+    Grid,
+    List,
+    ListItem,
+    Typography,
+} from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { StatusBadge } from '../status-badge';
 
@@ -11,23 +19,23 @@ export const LeadStats = () => {
         {
             color: theme.palette.info.main,
             data: 13,
-            name: 'Open'
+            name: 'Open',
         },
         {
             color: theme.palette.success.main,
             data: 12,
-            name: 'Win'
+            name: 'Win',
         },
         {
             color: theme.palette.error.main,
             data: 30,
-            name: 'Rejected'
+            name: 'Rejected',
         },
         {
             color: theme.palette.warning.main,
             data: 5,
-            name: 'Closed'
-        }
+            name: 'Closed',
+        },
     ];
 
     const chartOptions = {
@@ -35,35 +43,35 @@ export const LeadStats = () => {
             background: 'transparent',
             stacked: false,
             toolbar: {
-                show: false
+                show: false,
             },
             zoom: {
-                enabled: false
-            }
+                enabled: false,
+            },
         },
         colors: series.map((item) => item.color),
         dataLabels: {
-            enabled: false
+            enabled: false,
         },
         grid: {
             padding: {
                 left: 0,
-                right: 0
-            }
+                right: 0,
+            },
         },
         labels: series.map((item) => item.name),
         legend: {
-            show: false
+            show: false,
         },
         stroke: {
-            width: 0
+            width: 0,
         },
         theme: {
-            mode: theme.palette.mode
+            mode: theme.palette.mode,
         },
         tooltip: {
-            theme: theme.palette.mode
-        }
+            theme: theme.palette.mode,
+        },
     };
 
     const chartSeries = series.map((item) => item.data);
@@ -73,23 +81,13 @@ export const LeadStats = () => {
             elevation={0}
             sx={{
                 backgroundColor: alpha(theme.palette.info.main, 0.1),
-                mb: 4
+                mb: 4,
             }}
         >
             <CardContent>
-                <Grid
-                    container
-                    spacing={2}
-                >
-                    <Grid
-                        item
-                        md={6}
-                        xs={12}
-                    >
-                        <Typography
-                            color="textSecondary"
-                            variant="overline"
-                        >
+                <Grid container spacing={2}>
+                    <Grid item md={6} xs={12}>
+                        <Typography color="textSecondary" variant="overline">
                             Leads this week
                         </Typography>
                         <Typography
@@ -99,14 +97,8 @@ export const LeadStats = () => {
                         >
                             60
                         </Typography>
-                        <Typography
-                            color="textSecondary"
-                            variant="body2"
-                        >
-                            Converted
-                            {' '}
-                            <strong>20%</strong>
-                            {' '}
+                        <Typography color="textSecondary" variant="body2">
+                            Converted <strong>20%</strong>{' '}
                         </Typography>
                     </Grid>
                     <Grid
@@ -117,8 +109,8 @@ export const LeadStats = () => {
                             display: 'flex',
                             flexDirection: {
                                 sm: 'row',
-                                xs: 'column'
-                            }
+                                xs: 'column',
+                            },
                         }}
                     >
                         <Chart

@@ -5,12 +5,7 @@ import { Button, Typography } from '@mui/material';
 import { lightNeutral } from '../../colors';
 
 export const NavbarItem = (props) => {
-    const {
-        active,
-        href,
-        icon: Icon,
-        title
-    } = props;
+    const { active, href, icon: Icon, title } = props;
 
     return (
         <Button
@@ -25,13 +20,13 @@ export const NavbarItem = (props) => {
                 py: 1.25,
                 '& .MuiButton-startIcon': {
                     color: active ? lightNeutral[200] : lightNeutral[500],
-                    margin: 0
+                    margin: 0,
                 },
                 '& .MuiButton-endIcon': {
                     color: 'action.disabled',
                     display: 'none',
-                    marginLeft: 'auto'
-                }
+                    marginLeft: 'auto',
+                },
             }}
             to={href}
             variant="text"
@@ -41,7 +36,7 @@ export const NavbarItem = (props) => {
                 sx={{
                     color: active ? lightNeutral[200] : lightNeutral[500],
                     display: 'flex',
-                    ml: 1.25
+                    ml: 1.25,
                 }}
                 variant="inherit"
             >
@@ -49,11 +44,11 @@ export const NavbarItem = (props) => {
             </Typography>
         </Button>
     );
-}
+};
 
 NavbarItem.propTypes = {
     active: PropTypes.bool,
     href: PropTypes.string,
     icon: PropTypes.elementType,
-    title: PropTypes.string
+    title: PropTypes.string,
 };
