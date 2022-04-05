@@ -22,6 +22,7 @@ const PasswordRecovery = Loadable(lazy(() => import('./containers/auth/password-
 // BPM pages
 const NotFound = Loadable(lazy(() => import('./containers/not-found').then((module) => ({ default: module.NotFound }))));
 const Dashboard = Loadable(lazy(() => import('./containers/dashboard/dashboard').then((module) => ({ default: module.Dashboard }))));
+const Calendar = Loadable(lazy(() => import('./containers/dashboard/office-calendar').then((module) => ({ default: module.ViewCalendar }))));
 
 const Leads = Loadable(lazy(() => import('./containers/leads/leads').then((module) => ({ default: module.Leads }))));
 const Lead = Loadable(lazy(() => import('./containers/leads/lead').then((module) => ({ default: module.Lead }))));
@@ -78,6 +79,10 @@ const routes = [
             {
                 path: 'dashboard',
                 element: <Dashboard />
+            },
+            {
+                path: 'calendar',
+                element: <Calendar />
             },
             {
                 path: 'leads',
