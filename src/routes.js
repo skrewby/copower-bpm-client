@@ -22,7 +22,15 @@ const PasswordRecovery = Loadable(lazy(() => import('./containers/auth/password-
 // BPM pages
 const NotFound = Loadable(lazy(() => import('./containers/not-found').then((module) => ({ default: module.NotFound }))));
 const Dashboard = Loadable(lazy(() => import('./containers/dashboard/dashboard').then((module) => ({ default: module.Dashboard }))));
-const Calendar = Loadable(lazy(() => import('./containers/dashboard/office-calendar').then((module) => ({ default: module.ViewCalendar }))));
+
+const Leads = Loadable(lazy(() => import('./containers/leads/leads').then((module) => ({ default: module.Leads }))));
+const Lead = Loadable(lazy(() => import('./containers/leads/lead').then((module) => ({ default: module.Lead }))));
+const LeadSummary = Loadable(lazy(() => import('./containers/leads/lead-summary').then((module) => ({ default: module.LeadSummary }))));
+const LeadQuotation = Loadable(lazy(() => import('./containers/leads/lead-quotation').then((module) => ({ default: module.LeadQuotation }))));
+
+const Installs = Loadable(lazy(() => import('./containers/installs/installs').then((module) => ({ default: module.Installs }))));
+const Install = Loadable(lazy(() => import('./containers/installs/install').then((module) => ({ default: module.Install }))));
+const InstallSummary = Loadable(lazy(() => import('./containers/installs/install-summary').then((module) => ({ default: module.InstallSummary }))));
 
 const routes = [
     {
@@ -72,9 +80,47 @@ const routes = [
                 element: <Dashboard />
             },
             {
-                path: 'calendar',
-                element: <Calendar />
+                path: 'leads',
+                children: [
+                    {
+                        path: '',
+                        element: <Leads />
+                    },
+                    {
+                        path: ':leadID',
+                        element: <Lead />,
+                        children: [
+                            {
+                                path: '',
+                                element: <LeadSummary />
+                            },
+                            {
+                                path: 'quotation',
+                                element: <LeadQuotation />
+                            }
+                        ]
+                    }
+                ]
             },
+            {
+                path: 'installs',
+                children: [
+                    {
+                        path: '',
+                        element: <Installs />
+                    },
+                    {
+                        path: ':installID',
+                        element: <Install />,
+                        children: [
+                            {
+                                path: '',
+                                element: <InstallSummary />
+                            }
+                        ]
+                    }
+                ]
+            }
         ]
     },
     {

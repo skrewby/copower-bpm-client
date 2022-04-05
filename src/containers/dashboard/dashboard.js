@@ -34,7 +34,6 @@ export const Dashboard = () => {
     useEffect(() => {
         firebase.auth().currentUser.getIdTokenResult()
             .then((idTokenResult) => {
-                console.log(idTokenResult.claims);
                 const userRoles = {
                     admin: idTokenResult.claims.roleAdmin,
                     operations: idTokenResult.claims.roleOperations,
