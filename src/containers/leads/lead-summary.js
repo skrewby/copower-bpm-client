@@ -106,6 +106,7 @@ export const LeadSummary = () => {
           onClose={() => setOpenInfoDialog(false)}
           open={openInfoDialog}
           lead={leadState.data}
+          refresh={setRefresh}
         />
         <LeadPropertyDialog
           onClose={() => setOpenPropertyDialog(false)}

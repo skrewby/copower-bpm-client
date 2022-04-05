@@ -18,7 +18,7 @@ import { bpmAPI } from '../../api/bpmAPI';
 import { useMounted } from '../../hooks/use-mounted';
 
 export const LeadInfoDialog = (props) => {
-  const { open, onClose, lead } = props;
+  const { open, onClose, lead, refresh } = props;
   const mounted = useMounted();
 
   const [sourceOptions, setSourceOptions] = useState({ isLoading: true, data: [] });
@@ -60,25 +60,34 @@ export const LeadInfoDialog = (props) => {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      name: lead?.name || '',
+      first_name: lead?.first_name || '',
+      last_name: lead?.last_name || '',
       address: lead?.address || '',
       email: lead?.email || '',
       phone: lead?.phone || '',
-      source: lead?.source_id || '',
+      source_id: lead?.source_id || '',
       comment: lead?.comment || '',
       submit: null
     },
     validationSchema: Yup.object().shape({
-      name: Yup.string().max(255).required('Name is required'),
+      first_name: Yup.string().max(255).required('First name is required'),
+      last_name: Yup.string().max(255).required('Last name is required'),
       address: Yup.string().max(255).required('Address is required'),
       email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
       phone: Yup.string().max(255).required('Phone number is required'),
-      source: Yup.number().required('Lead source is required'),
+      source_id: Yup.number().required('Lead source is required'),
       comment: Yup.string().max(255).default(''),
     }),
     onSubmit: async (values, helpers) => {
       try {
-        toast.success('Lead updated');
+        const res = await bpmAPI.updateLead(lead.lead_id, values);
+        if(res.status === 200) {
+          toast.success('Lead updated');
+        } else {
+          toast.error('Something went wrong');
+        }
+        refresh();
+        
         helpers.setStatus({ success: true });
         helpers.setSubmitting(false);
         onClose?.();
@@ -114,18 +123,34 @@ export const LeadInfoDialog = (props) => {
         >
           <Grid
             item
-            xs={12}
+            xs={6}
           >
             <InputField
-              error={Boolean(formik.touched.name && formik.errors.name)}
+              error={Boolean(formik.touched.first_name && formik.errors.first_name)}
               fullWidth
-              helperText={formik.touched.name && formik.errors.name}
-              label="Name"
-              name="name"
+              helperText={formik.touched.first_name && formik.errors.first_name}
+              label="First Name"
+              name="first_name"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="name"
-              value={formik.values.name}
+              value={formik.values.first_name}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={6}
+          >
+            <InputField
+              error={Boolean(formik.touched.last_name && formik.errors.last_name)}
+              fullWidth
+              helperText={formik.touched.last_name && formik.errors.last_name}
+              label="Last Name"
+              name="last_name"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type="name"
+              value={formik.values.last_name}
             />
           </Grid>
           <Grid
@@ -183,7 +208,7 @@ export const LeadInfoDialog = (props) => {
               fullWidth
               helperText={formik.touched.source_id && formik.errors.source_id}
               label="Source"
-              name="source"
+              name="source_id"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               select
