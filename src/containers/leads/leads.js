@@ -24,11 +24,7 @@ export const Leads = () => {
   });
   const [leadsState, setLeadsState] = useState({ isLoading: true });
   const [openCreateDialog, setOpenCreateDialog] = useState();
-  const [
-    selectedLeads,
-    handleSelect,
-    handleSelectAll
-  ] = useSelection(leadsState.data?.invoices);
+  const [refresh, setRefresh] = useState(false);
 
   const getData = useCallback(async () => {
     setLeadsState(() => ({ isLoading: true }));
@@ -63,7 +59,7 @@ export const Leads = () => {
 
   useEffect(() => {
     getData().catch(console.error);
-  }, [controller, getData]);
+  }, [controller, getData, refresh]);
 
   const handleViewChange = (newView) => {
     setController({
@@ -181,7 +177,6 @@ export const Leads = () => {
               onQueryChange={handleQueryChange}
               onViewChange={handleViewChange}
               query={controller.query}
-              selectedLeads={selectedLeads}
               view={controller.view}
             />
             <Divider />
@@ -191,11 +186,8 @@ export const Leads = () => {
               leadsCount={leadsState.data?.leadsCount}
               isLoading={leadsState.isLoading}
               onPageChange={handlePageChange}
-              onSelect={handleSelect}
-              onSelectAll={handleSelectAll}
               onSortChange={handleSortChange}
               page={controller.page + 1}
-              selectedInvoices={selectedLeads}
               sort={controller.sort}
               sortBy={controller.sortBy}
             />
@@ -204,6 +196,7 @@ export const Leads = () => {
       </Box>
       <LeadCreateDialog
         onClose={() => setOpenCreateDialog(false)}
+        refresh={setRefresh}
         open={openCreateDialog}
       />
     </>

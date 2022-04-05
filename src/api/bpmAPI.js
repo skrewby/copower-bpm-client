@@ -40,7 +40,7 @@ class BPMAPi {
             .post(lead)
             .res(response => response);
 
-        console.log(response);
+        return response;
     }
 
     async getLeads(options) {

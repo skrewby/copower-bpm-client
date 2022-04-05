@@ -20,7 +20,7 @@ import { useMounted } from '../../hooks/use-mounted';
 import { bpmAPI } from '../../api/bpmAPI';
 
 export const LeadCreateDialog = (props) => {
-  const { open, onClose, ...other } = props;
+  const { open, onClose, refresh, ...other } = props;
   const mounted = useMounted();
 
   const [users, setUsers] = useState({ isLoading: true, data: [] });
@@ -126,9 +126,10 @@ export const LeadCreateDialog = (props) => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        toast.success(`Lead Created`);
         formik.values.created_by = creator.data;
-        bpmAPI.createLead(formik.values);
+        const res = await bpmAPI.createLead(formik.values, refresh).then(refresh());
+        console.log(res);
+        toast.success(`Lead Created`);
         helpers.resetForm();
         helpers.setStatus({ success: true });
         helpers.setSubmitting(false);
