@@ -13,7 +13,7 @@ import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import { useOutletContext } from "react-router-dom";
 
 export const LeadSummary = () => {
-  const [leadState, setLeadState] = useOutletContext();
+  const [leadState, setRefresh] = useOutletContext();
   const [openInfoDialog, setOpenInfoDialog] = useState(false);
   const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
 
@@ -98,7 +98,7 @@ export const LeadSummary = () => {
               item
               xs={12}
             >
-              <LeadProgress lead={leadState.data} />
+              <LeadProgress lead={leadState.data} refresh={setRefresh} />
             </Grid>
           </Grid>
         </Grid>

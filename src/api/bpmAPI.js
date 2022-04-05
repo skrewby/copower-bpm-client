@@ -100,6 +100,17 @@ class BPMAPi {
         return Promise.resolve(data[0]);
     }
 
+    async updateLead(id, values) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const response = await api.url(`/leads/${id}`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .put(values)
+            .res(response => response);
+
+        return response;
+    }
+
     /* ------------------------------------------------------------------------------------
                                             INFO
     --------------------------------------------------------------------------------------- */

@@ -127,9 +127,12 @@ export const LeadCreateDialog = (props) => {
     onSubmit: async (values, helpers) => {
       try {
         formik.values.created_by = creator.data;
-        const res = await bpmAPI.createLead(formik.values, refresh).then(refresh());
-        console.log(res);
-        toast.success(`Lead Created`);
+        const res = await bpmAPI.createLead(formik.values, refresh).then(refresh(true));
+        if(res.status === 201) {
+          toast.success(`Lead Created`);
+        } else {
+          toast.error(`Something went wrong`);
+        }
         helpers.resetForm();
         helpers.setStatus({ success: true });
         helpers.setSubmitting(false);

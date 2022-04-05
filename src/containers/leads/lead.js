@@ -13,6 +13,7 @@ export const Lead = () => {
   let { leadID } = useParams();
   const mounted = useMounted();
   const [leadState, setLeadState] = useState({ isLoading: true });
+  const [refresh, setRefresh] = useState(false);
   const location = useLocation();
 
   const tabs = [
@@ -48,11 +49,12 @@ export const Lead = () => {
         }));
       }
     }
-  }, [mounted]);
+  }, [leadID, mounted]);
 
   useEffect(() => {
+    setRefresh(false);
     getLead().catch(console.error);
-  }, [getLead]);
+  }, [getLead, refresh]);
 
   const handleSendQuote = () => {
     toast.error('Not implemented yet. It should create a pdf similar to Pylon quote and send it to customer by email');
@@ -163,7 +165,7 @@ export const Lead = () => {
           </Tabs>
           <Divider />
         </Box>
-        <Outlet context={[leadState, setLeadState]}/>
+        <Outlet context={[leadState, setRefresh]}/>
       </>
     );
   };

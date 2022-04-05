@@ -58,6 +58,7 @@ export const Leads = () => {
   }, [controller.filters, controller.page, controller.query, controller.sort, controller.sortBy, controller.view, mounted]);
 
   useEffect(() => {
+    setRefresh(false);
     getData().catch(console.error);
   }, [controller, getData, refresh]);
 

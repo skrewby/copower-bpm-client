@@ -16,9 +16,10 @@ import { StatusSelect } from '../status-select';
 import { LeadTimeline } from './lead-timeline';
 import { bpmAPI } from '../../api/bpmAPI';
 import { useMounted } from '../../hooks/use-mounted';
+import parseISO from 'date-fns/parseISO';
 
 export const LeadProgress = (props) => {
-  const { lead, ...other } = props;
+  const { lead, refresh, ...other } = props;
   const [sendToOperationsOpen, handleOpenSendToOperations, handleCloseSendToOperations] = useDialog();
   const [rejectLeadOpen, handleOpenRejectLead, handleCloseRejectLead] = useDialog();
   const [closeLeadOpen, handleOpenCloseLead, handleCloseCloseLead] = useDialog();
@@ -61,11 +62,9 @@ export const LeadProgress = (props) => {
   }, [getData]);
 
   const handleStatusChange = (event) => {
-
-  };
-
-  const handleSaveChanges = () => {
-    toast.success('Changes saved');
+    const new_status_id = event.target.value;
+    bpmAPI.updateLead(lead.lead_id, {status_id: new_status_id});
+    refresh(true);
   };
 
   const handleSendToOperations = () => {
@@ -104,7 +103,7 @@ export const LeadProgress = (props) => {
             }}
             variant="caption"
           >
-            {`Updated ${format(new Date(), 'dd/MM/yyyy HH:mm')}`}
+            {`Updated ${format(parseISO(lead.last_updated), 'dd MMM yyyy HH:mm')}`}
           </Typography>
           <Divider sx={{ my: 2 }} />
           <LeadTimeline lead={lead} />
