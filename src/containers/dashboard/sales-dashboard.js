@@ -3,7 +3,7 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 
 import { OrdersOverview } from '../../components/dash/items/sale-overview.js';
 import { TargetsOverview } from '../../components/dash/items/target-overview.js';
-import { Look } from '../../components/calendar/look';
+import { BPMCalendar } from '../../components/calendar/calendar';
 import { LatestSales } from '../../components/dash/items/sales';
 import { LatestLeads } from '../../components/dash/items/leads';
 import { LatestInstalls } from '../../components/dash/items/installs';
@@ -217,7 +217,7 @@ export const SalesDashboard = () => {
                         </Box>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
-                                <Look />
+                                <BPMCalendar />
                             </Grid>
                             <Grid item md={6} xs={12}>
                                 <OrdersOverview />

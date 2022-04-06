@@ -12,7 +12,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { Look } from '../../components/calendar/look.js';
+import { BPMCalendar } from '../../components/calendar/calendar.js';
 import { OrdersOverview } from '../../components/dash/items/leads-overview.js';
 import { LatestInstalls } from '../../components/dash/items/installs';
 import { LatestInstall } from '../../components/dash/items/deposits';
@@ -225,7 +225,7 @@ export const AdminDashboard = () => {
                         </Box>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
-                                <Look />
+                                <BPMCalendar />
                             </Grid>
                             <Grid item md={5} xs={12}>
                                 <OrdersOverview />
