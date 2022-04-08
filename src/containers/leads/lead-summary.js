@@ -72,9 +72,7 @@ export const LeadSummary = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <LeadPropertyDetails
-                                onEdit={() =>
-                                    toast.error('Not implemented yet')
-                                }
+                                onEdit={() => setOpenPropertyDialog(true)}
                                 lead={leadState.data}
                             />
                         </Grid>

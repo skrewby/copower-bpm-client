@@ -33,12 +33,20 @@ export const LeadInfo = (props) => {
                             value={lead.name}
                         />
                         <PropertyListItem
+                            label="Company Name"
+                            value={lead.company_name}
+                        />
+                        <PropertyListItem
                             label="Email Address"
                             value={lead.email}
                         />
                         <PropertyListItem
-                            label="Phone Number"
-                            value={lead.phone}
+                            label="Assigned Sales"
+                            value={lead.sales}
+                        />
+                        <PropertyListItem
+                            label="Comment"
+                            value={lead.comment}
                         />
                     </PropertyList>
                 </Grid>
@@ -48,11 +56,15 @@ export const LeadInfo = (props) => {
                             label="Address"
                             value={lead.address}
                         />
-                        <PropertyListItem label="Source" value={lead.source} />
                         <PropertyListItem
-                            label="Comment"
-                            value={lead.comment}
+                            label="Company ABN"
+                            value={lead.company_abn}
                         />
+                        <PropertyListItem
+                            label="Phone Number"
+                            value={lead.phone}
+                        />
+                        <PropertyListItem label="Source" value={lead.source} />
                     </PropertyList>
                 </Grid>
             </Grid>

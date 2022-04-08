@@ -65,6 +65,8 @@ export const LeadInfoDialog = (props) => {
         initialValues: {
             first_name: lead?.first_name || '',
             last_name: lead?.last_name || '',
+            company_name: lead?.company_name || '',
+            company_abn: lead?.company_abn || '',
             address: lead?.address || '',
             email: lead?.email || '',
             phone: lead?.phone || '',
@@ -77,6 +79,8 @@ export const LeadInfoDialog = (props) => {
                 .max(255)
                 .required('First name is required'),
             last_name: Yup.string().max(255).required('Last name is required'),
+            company_name: Yup.string().max(255),
+            company_abn: Yup.string().max(255),
             address: Yup.string().max(255).required('Address is required'),
             email: Yup.string()
                 .email('Must be a valid email')
@@ -160,6 +164,42 @@ export const LeadInfoDialog = (props) => {
                             onChange={formik.handleChange}
                             type="name"
                             value={formik.values.last_name}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <InputField
+                            error={Boolean(
+                                formik.touched.company_name &&
+                                    formik.errors.company_name
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.company_name &&
+                                formik.errors.company_name
+                            }
+                            label="Company Name"
+                            name="company_name"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            value={formik.values.company_name}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <InputField
+                            error={Boolean(
+                                formik.touched.company_abn &&
+                                    formik.errors.company_abn
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.company_abn &&
+                                formik.errors.company_abn
+                            }
+                            label="Company ABN"
+                            name="company_abn"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            value={formik.values.company_abn}
                         />
                     </Grid>
                     <Grid item xs={12}>

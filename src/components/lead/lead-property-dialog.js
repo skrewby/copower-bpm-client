@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -13,56 +14,93 @@ import {
     MenuItem,
 } from '@mui/material';
 import { InputField } from '../form/input-field';
-
-const paymentStatusOptions = [
-    {
-        value: 'paid',
-        label: 'Paid',
-    },
-    {
-        value: 'not-paid',
-        label: 'Not paid',
-    },
-];
-
-const paymentMethodOptions = [
-    {
-        value: 'debit',
-        label: 'Direct debit',
-    },
-    {
-        value: 'paypal',
-        label: 'Paypal',
-    },
-];
-
-const courierOptions = ['DHL', 'UPS', 'FedEx', 'Purolator'];
+import { bpmAPI } from '../../api/bpmAPI';
+import { useMounted } from '../../hooks/use-mounted';
 
 export const LeadPropertyDialog = (props) => {
-    const { open, onClose, lead } = props;
+    const { open, onClose, lead, refresh } = props;
+    const mounted = useMounted();
+
+    const [sourceOptions, setSourceOptions] = useState({
+        isLoading: true,
+        data: [],
+    });
+
+    const getData = useCallback(async () => {
+        setSourceOptions(() => ({ isLoading: true, data: [] }));
+
+        try {
+            const sourcesAPI = await bpmAPI.getLeadSources();
+            const sourcesResult = sourcesAPI.map((row) => {
+                return {
+                    source_id: row.source_id,
+                    source_name: row.source_name,
+                };
+            });
+
+            if (mounted.current) {
+                setSourceOptions(() => ({
+                    isLoading: false,
+                    data: sourcesResult,
+                }));
+            }
+        } catch (err) {
+            console.error(err);
+
+            if (mounted.current) {
+                setSourceOptions(() => ({
+                    isLoading: false,
+                    error: err.message,
+                }));
+            }
+        }
+    }, [mounted]);
+
+    useEffect(() => {
+        getData().catch(console.error);
+    }, [getData]);
+
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
-            paymentStatus: lead?.paymentStatus || '',
-            courier: lead?.courier || '',
-            paymentMethod: lead?.paymentMethod || '',
+            phase_id: lead?.phase_id || '',
+            first_name: lead?.first_name || '',
+            last_name: lead?.last_name || '',
+            company_name: lead?.company_name || '',
+            company_abn: lead?.company_abn || '',
+            address: lead?.address || '',
+            email: lead?.email || '',
+            phone: lead?.phone || '',
+            source_id: lead?.source_id || '',
+            comment: lead?.comment || '',
             submit: null,
-            trackingCode: lead?.trackingCode || '',
         },
         validationSchema: Yup.object().shape({
-            paymentStatus: Yup.string()
+            first_name: Yup.string()
                 .max(255)
-                .required('Payment status is required'),
-            courier: Yup.string().max(255).required('Courier is required'),
-            paymentMethod: Yup.string()
+                .required('First name is required'),
+            last_name: Yup.string().max(255).required('Last name is required'),
+            company_name: Yup.string().max(255),
+            company_abn: Yup.string().max(255),
+            address: Yup.string().max(255).required('Address is required'),
+            email: Yup.string()
+                .email('Must be a valid email')
                 .max(255)
-                .required('Payment method is required'),
-            trackingCode: Yup.string()
-                .max(255)
-                .required('Tracking is required'),
+                .required('Email is required'),
+            phone: Yup.string().max(255).required('Phone number is required'),
+            source_id: Yup.number().required('Lead source is required'),
+            comment: Yup.string().max(255).default(''),
         }),
         onSubmit: async (values, helpers) => {
             try {
-                toast.success('Order updated');
+                const res = await bpmAPI.updateLead(lead.lead_id, values);
+                if (res.status === 200) {
+                    toast.success('Lead updated');
+                } else {
+                    toast.error('Something went wrong');
+                }
+                refresh();
+
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);
                 onClose?.();
@@ -88,42 +126,156 @@ export const LeadPropertyDialog = (props) => {
                 onExited: () => formik.resetForm(),
             }}
         >
-            <DialogTitle>Edit order</DialogTitle>
+            <DialogTitle>Edit Lead</DialogTitle>
             <DialogContent>
                 <Grid container spacing={2}>
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                         <InputField
-                            disabled
+                            error={Boolean(
+                                formik.touched.first_name &&
+                                    formik.errors.first_name
+                            )}
                             fullWidth
-                            label="Stripe Payment ID"
-                            name="paymentId"
-                            value={lead.paymentId}
+                            helperText={
+                                formik.touched.first_name &&
+                                formik.errors.first_name
+                            }
+                            label="First Name"
+                            name="first_name"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            type="name"
+                            value={formik.values.first_name}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <InputField
+                            error={Boolean(
+                                formik.touched.last_name &&
+                                    formik.errors.last_name
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.last_name &&
+                                formik.errors.last_name
+                            }
+                            label="Last Name"
+                            name="last_name"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            type="name"
+                            value={formik.values.last_name}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <InputField
+                            error={Boolean(
+                                formik.touched.company_name &&
+                                    formik.errors.company_name
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.company_name &&
+                                formik.errors.company_name
+                            }
+                            label="Company Name"
+                            name="company_name"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            value={formik.values.company_name}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <InputField
+                            error={Boolean(
+                                formik.touched.company_abn &&
+                                    formik.errors.company_abn
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.company_abn &&
+                                formik.errors.company_abn
+                            }
+                            label="Company ABN"
+                            name="company_abn"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            value={formik.values.company_abn}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <InputField
                             error={Boolean(
-                                formik.touched.paymentStatus &&
-                                    formik.errors.paymentStatus
+                                formik.touched.address && formik.errors.address
                             )}
                             fullWidth
                             helperText={
-                                formik.touched.paymentStatus &&
-                                formik.errors.paymentStatus
+                                formik.touched.address && formik.errors.address
                             }
-                            label="Payment status"
-                            name="paymentStatus"
+                            label="Address"
+                            name="address"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            value={formik.values.address}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <InputField
+                            error={Boolean(
+                                formik.touched.email && formik.errors.email
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.email && formik.errors.email
+                            }
+                            label="Email"
+                            name="email"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            type="email"
+                            value={formik.values.email}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <InputField
+                            error={Boolean(
+                                formik.touched.phone && formik.errors.phone
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.phone && formik.errors.phone
+                            }
+                            label="Phone number"
+                            name="phone"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            value={formik.values.phone}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <InputField
+                            error={Boolean(
+                                formik.touched.source_id &&
+                                    formik.errors.source_id
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.source_id &&
+                                formik.errors.source_id
+                            }
+                            label="Source"
+                            name="source_id"
                             onBlur={formik.handleBlur}
                             onChange={formik.handleChange}
                             select
-                            value={formik.values.paymentStatus}
+                            value={formik.values.source_id}
                         >
-                            {paymentStatusOptions.map((option) => (
+                            {sourceOptions.data.map((option) => (
                                 <MenuItem
-                                    key={option.value}
-                                    value={option.value}
+                                    key={option.source_id}
+                                    value={option.source_id}
                                 >
-                                    {option.label}
+                                    {option.source_name}
                                 </MenuItem>
                             ))}
                         </InputField>
@@ -131,70 +283,17 @@ export const LeadPropertyDialog = (props) => {
                     <Grid item xs={12}>
                         <InputField
                             error={Boolean(
-                                formik.touched.paymentMethod &&
-                                    formik.errors.paymentMethod
+                                formik.touched.comment && formik.errors.comment
                             )}
                             fullWidth
                             helperText={
-                                formik.touched.paymentMethod &&
-                                formik.errors.paymentMethod
+                                formik.touched.comment && formik.errors.comment
                             }
-                            label="Payment method"
-                            name="paymentMethod"
+                            label="Comment"
+                            name="comment"
                             onBlur={formik.handleBlur}
                             onChange={formik.handleChange}
-                            select
-                            value={formik.values.paymentMethod}
-                        >
-                            {paymentMethodOptions.map((option) => (
-                                <MenuItem
-                                    key={option.value}
-                                    value={option.value}
-                                >
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </InputField>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <InputField
-                            error={Boolean(
-                                formik.touched.courier && formik.errors.courier
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.courier && formik.errors.courier
-                            }
-                            label="Courier"
-                            name="courier"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            select
-                            value={formik.values.courier}
-                        >
-                            {courierOptions.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </InputField>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <InputField
-                            error={Boolean(
-                                formik.touched.trackingCode &&
-                                    formik.errors.trackingCode
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.trackingCode &&
-                                formik.errors.trackingCode
-                            }
-                            label="Tracking"
-                            name="trackingCode"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.trackingCode}
+                            value={formik.values.comment}
                         />
                     </Grid>
                     {formik.errors.submit && (
@@ -231,5 +330,5 @@ LeadPropertyDialog.defaultProps = {
 LeadPropertyDialog.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
-    lead: PropTypes.object.isRequired,
+    lead: PropTypes.object,
 };
