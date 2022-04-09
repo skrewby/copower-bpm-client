@@ -218,7 +218,7 @@ export const LeadInfoDialog = (props) => {
                             value={formik.values.address}
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                         <InputField
                             error={Boolean(
                                 formik.touched.email && formik.errors.email
@@ -235,7 +235,7 @@ export const LeadInfoDialog = (props) => {
                             value={formik.values.email}
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                         <InputField
                             error={Boolean(
                                 formik.touched.phone && formik.errors.phone

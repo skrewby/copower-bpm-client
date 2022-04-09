@@ -52,7 +52,7 @@ export const LeadPropertyDetails = (props) => {
                         />
                         <PropertyListItem
                             label="Meter Number"
-                            value={lead.meterNum}
+                            value={lead.meter}
                         />
                     </PropertyList>
                 </Grid>
