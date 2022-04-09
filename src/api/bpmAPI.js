@@ -30,6 +30,19 @@ class BPMAPi {
         return data;
     }
 
+    async getCurrentUser(options) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+        const data = await api
+            .url('/user')
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return data;
+    }
+
     /* ------------------------------------------------------------------------------------
                                             LEADS
     --------------------------------------------------------------------------------------- */

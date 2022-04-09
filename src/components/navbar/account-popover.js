@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -18,12 +19,32 @@ import { ChevronDown as ChevronDownIcon } from '../../icons/chevron-down';
 import { Logout as LogoutIcon } from '../../icons/logout';
 import { User as UserIcon } from '../../icons/user';
 import { lightNeutral } from '../../colors';
+import { bpmAPI } from '../../api/bpmAPI';
+import { useMounted } from '../../hooks/use-mounted';
 
 export const AccountPopover = (props) => {
     const { darkMode, onSwitchTheme, ...other } = props;
     const navigate = useNavigate();
     const { logout } = useAuth();
     const [anchorRef, open, handleOpen, handleClose] = usePopover();
+    const [userName, setUserName] = useState('User');
+    const mounted = useMounted();
+
+    const getData = useCallback(async () => {
+        try {
+            const user = await bpmAPI.getCurrentUser();
+            if (mounted.current) {
+                setUserName(user.user_name);
+            }
+        } catch (err) {
+            console.log(err);
+            setUserName('User');
+        }
+    }, [mounted]);
+
+    useEffect(() => {
+        getData().catch(console.error);
+    }, [getData]);
 
     const handleLogout = async () => {
         try {
@@ -50,7 +71,7 @@ export const AccountPopover = (props) => {
                 {...other}
             >
                 <Avatar
-                    src="/static/user-pedro.png"
+                    src="/static/user.png"
                     variant="rounded"
                     sx={{
                         height: 40,
@@ -82,7 +103,7 @@ export const AccountPopover = (props) => {
                             sx={{ color: 'primary.contrastText' }}
                             variant="subtitle2"
                         >
-                            Pedro Alves
+                            {userName}
                         </Typography>
                     </div>
                     <ChevronDownIcon
@@ -113,13 +134,10 @@ export const AccountPopover = (props) => {
                 <List>
                     <ListItem divider>
                         <ListItemAvatar>
-                            <Avatar
-                                variant="rounded"
-                                src="/static/user-pedro.png"
-                            />
+                            <Avatar variant="rounded" src="/static/user.png" />
                         </ListItemAvatar>
                         <ListItemText
-                            primary="Pedro Alves"
+                            primary={userName}
                             secondary="Space Solar Service"
                         />
                     </ListItem>

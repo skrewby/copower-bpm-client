@@ -47,7 +47,8 @@ export const LeadProgress = (props) => {
 
         try {
             const statusAPI = await bpmAPI.getLeadStatusOptions();
-            const statusResult = statusAPI.map((row) => {
+            const statusFiltered = statusAPI.filter((row) => row.status_id < 4);
+            const statusResult = statusFiltered.map((row) => {
                 return {
                     status_id: row.status_id,
                     status_name: row.status_name,
@@ -131,9 +132,8 @@ export const LeadProgress = (props) => {
                 <Divider />
                 <ActionList>
                     <ActionListItem
-                        disabled={lead.progress !== 'complete'}
                         icon={CheckCircleIcon}
-                        label="Send to Operations"
+                        label="Win"
                         onClick={handleOpenSendToOperations}
                     />
                     <ActionListItem
@@ -153,7 +153,7 @@ export const LeadProgress = (props) => {
                 onCancel={handleCloseSendToOperations}
                 onConfirm={handleSendToOperations}
                 open={sendToOperationsOpen}
-                title="Send to Operations"
+                title="Mark as Win"
                 variant="error"
             />
             <ConfirmationDialog
