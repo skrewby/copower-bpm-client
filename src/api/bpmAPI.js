@@ -7,11 +7,14 @@ import { applyFilters } from '../utils/apply-filters';
 import { applyPagination } from '../utils/apply-pagination';
 import { applySort } from '../utils/apply-sort';
 import { wait } from '../utils/wait';
+require("dotenv").config();
+
+const server_url = process.env.SERVER_URL || 'http://localhost:5000/api';
 
 // Cross origin authenticated requests on an external API
 const api = wretch()
     // Set the base url
-    .url('https://copower-server.herokuapp.com/api')
+    .url(server_url)
     // Cors fetch options
     .options({ mode: 'cors' });
 
