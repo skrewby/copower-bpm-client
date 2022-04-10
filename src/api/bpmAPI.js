@@ -164,6 +164,20 @@ class BPMAPi {
     }
 
     /* ------------------------------------------------------------------------------------
+                                            INSTALLS
+    --------------------------------------------------------------------------------------- */
+    async createInstall(install) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+        const response = await api
+            .url('/installs')
+            .auth(`Bearer ${fb_auth.token}`)
+            .post(install)
+            .json((id) => id[0]);
+
+        return response;
+    }
+
+    /* ------------------------------------------------------------------------------------
                                             INFO
     --------------------------------------------------------------------------------------- */
     async getLeadSources(options) {

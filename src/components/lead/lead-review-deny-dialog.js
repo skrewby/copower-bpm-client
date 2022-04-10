@@ -15,7 +15,7 @@ import {
 import { InputField } from '../form/input-field';
 import { bpmAPI } from '../../api/bpmAPI';
 
-export const LeadRejectDenyDialog = (props) => {
+export const LeadReviewDenyDialog = (props) => {
     const { open, onClose, leadID, refresh } = props;
 
     const formik = useFormik({
@@ -33,15 +33,15 @@ export const LeadRejectDenyDialog = (props) => {
             try {
                 await bpmAPI.createLeadLog(
                     leadID,
-                    `Denied reject request. Reason: ${values.reject_reason}`,
+                    `Marked review as failed. Reason: ${values.reject_reason}`,
                     true
                 );
                 const res = await bpmAPI
-                    .updateLead(leadID, { status_id: 1 })
+                    .updateLead(leadID, { status_id: 3 })
                     .then(refresh(true));
 
                 if (res.status === 200) {
-                    toast.success('Denied reject request');
+                    toast.success('Denied lead submission request');
                 } else {
                     toast.error('Something went wrong');
                 }
@@ -70,7 +70,7 @@ export const LeadRejectDenyDialog = (props) => {
                 onExited: () => formik.resetForm(),
             }}
         >
-            <DialogTitle>Deny Lead Reject</DialogTitle>
+            <DialogTitle>Deny Lead Submission</DialogTitle>
             <DialogContent>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -118,11 +118,11 @@ export const LeadRejectDenyDialog = (props) => {
     );
 };
 
-LeadRejectDenyDialog.defaultProps = {
+LeadReviewDenyDialog.defaultProps = {
     open: false,
 };
 
-LeadRejectDenyDialog.propTypes = {
+LeadReviewDenyDialog.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     leadID: PropTypes.number,

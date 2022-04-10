@@ -24,6 +24,7 @@ import { LeadTimeline } from './lead-timeline';
 import { LeadRejectDialog } from './lead-reject-dialog';
 import { LeadRejectDenyDialog } from './lead-reject-deny-dialog';
 import { LeadStatusDisplay } from './lead-status-display';
+import { LeadReviewDenyDialog } from './lead-review-deny-dialog';
 import { bpmAPI } from '../../api/bpmAPI';
 import { useMounted } from '../../hooks/use-mounted';
 import parseISO from 'date-fns/parseISO';
@@ -44,8 +45,15 @@ export const LeadProgress = (props) => {
         handleOpenRejectLeadApprove,
         handleCloseRejectLeadApprove,
     ] = useDialog();
+    const [
+        reviewLeadApproveOpen,
+        handleOpenReviewLeadApprove,
+        handleCloseReviewLeadApprove,
+    ] = useDialog();
     const [openLeadRejectDialog, setOpenLeadRejectDialog] = useState(false);
     const [openLeadRejectDenyDialog, setOpenLeadRejectDenyDialog] =
+        useState(false);
+    const [openLeadReviewDenyDialog, setOpenLeadReviewDenyDialog] =
         useState(false);
 
     const mounted = useMounted();
@@ -124,7 +132,8 @@ export const LeadProgress = (props) => {
 
     const handleCloseLead = () => {
         handleCloseCloseLead();
-        toast.error('Not implemented yet');
+        bpmAPI.createLeadLog(lead.lead_id, `Closed lead`, true);
+        bpmAPI.updateLead(lead.lead_id, { status_id: 9 }).then(refresh(true));
     };
 
     const handleRejectLeadApproved = () => {
@@ -133,10 +142,14 @@ export const LeadProgress = (props) => {
         handleCloseRejectLeadApprove();
     };
 
-    const handleRejectLeadDenied = () => {
-        bpmAPI.createLeadLog(lead.lead_id, `Denied reject request`, true);
-        bpmAPI.updateLead(lead.lead_id, { status_id: 1 }).then(refresh(true));
-        handleCloseRejectLeadApprove();
+    const handleReviewDeny = () => {
+        setOpenLeadReviewDenyDialog(true);
+    };
+
+    const handleReviewApprove = () => {
+        handleCloseReviewLeadApprove();
+        bpmAPI.createInstall(lead);
+        toast.error('Not implemented yet');
     };
 
     const ActionListDefault = () => {
@@ -178,16 +191,37 @@ export const LeadProgress = (props) => {
         );
     };
 
-    const ActionListRejected = () => {
+    const ActionListReview = () => {
+        return (
+            <ActionList>
+                <ActionListItem
+                    icon={CheckCircleIcon}
+                    label="Approve"
+                    onClick={handleOpenReviewLeadApprove}
+                />
+                <ActionListItem
+                    icon={XCircleIcon}
+                    label="Deny"
+                    onClick={handleReviewDeny}
+                />
+            </ActionList>
+        );
+    };
+
+    const ActionListNothing = () => {
         return null;
     };
 
     const ChooseActionList = () => {
         switch (lead.status_id) {
+            case 5:
+                return <ActionListReview />;
             case 6:
-                return <ActionListRejected />;
+                return <ActionListNothing />;
             case 8:
                 return <ActionListRejectPending />;
+            case 9:
+                return <ActionListNothing />;
             default:
                 return <ActionListDefault />;
         }
@@ -265,6 +299,14 @@ export const LeadProgress = (props) => {
                 title="Approve reject request"
                 variant="warning"
             />
+            <ConfirmationDialog
+                message="Approve lead submission?"
+                onCancel={handleCloseReviewLeadApprove}
+                onConfirm={handleReviewApprove}
+                open={reviewLeadApproveOpen}
+                title="Approve lead submission"
+                variant="warning"
+            />
             <LeadRejectDialog
                 onClose={() => setOpenLeadRejectDialog(false)}
                 open={openLeadRejectDialog}
@@ -274,6 +316,12 @@ export const LeadProgress = (props) => {
             <LeadRejectDenyDialog
                 onClose={() => setOpenLeadRejectDenyDialog(false)}
                 open={openLeadRejectDenyDialog}
+                leadID={lead.lead_id}
+                refresh={refresh}
+            />
+            <LeadReviewDenyDialog
+                onClose={() => setOpenLeadReviewDenyDialog(false)}
+                open={openLeadReviewDenyDialog}
                 leadID={lead.lead_id}
                 refresh={refresh}
             />
