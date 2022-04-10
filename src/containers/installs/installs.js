@@ -9,7 +9,7 @@ import {
     Divider,
     Typography,
 } from '@mui/material';
-import { installApi } from '../../api/install';
+import { bpmAPI } from '../../api/bpmAPI';
 import { InstallsFilter } from '../../components/installs/installs-filter';
 import { InstallsTable } from '../../components/installs/installs-table';
 import { useMounted } from '../../hooks/use-mounted';
@@ -36,7 +36,7 @@ export const Installs = () => {
         setInstallsState(() => ({ isLoading: true }));
 
         try {
-            const result = await installApi.getInstalls({
+            const result = await bpmAPI.getInstalls({
                 filters: controller.filters,
                 page: controller.page,
                 query: controller.query,
@@ -148,7 +148,7 @@ export const Installs = () => {
                 }}
             >
                 <Container
-                    maxWidth="lg"
+                    maxWidth="xl"
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',

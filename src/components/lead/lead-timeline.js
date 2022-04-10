@@ -44,7 +44,7 @@ export const LeadTimeline = (props) => {
             'Contacted',
             'Quotation',
             'Review',
-            'Complete',
+            'Win',
         ];
         const currentStatusIndex = statusMapping.indexOf(status);
 
@@ -54,10 +54,14 @@ export const LeadTimeline = (props) => {
             { title: 'Contacted' },
             { title: 'Quotation' },
             { title: 'Review' },
-            { title: 'Complete' },
+            { title: 'Win' },
         ];
 
         return items.map((item, index) => {
+            if (currentStatusIndex === 5) {
+                return { ...item, value: 'complete' };
+            }
+
             if (currentStatusIndex > index) {
                 return { ...item, value: 'complete' };
             }

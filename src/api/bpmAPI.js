@@ -166,6 +166,56 @@ class BPMAPi {
     /* ------------------------------------------------------------------------------------
                                             INSTALLS
     --------------------------------------------------------------------------------------- */
+    async getInstalls(options) {
+        const { filters, sort, sortBy, page, query, view } = options;
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const data = await api
+            .url('/installs')
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        const installs = data.map((install) => {
+            install.create_date = parseISO(install.create_date);
+            install.last_updated = parseISO(install.last_updated);
+            return install;
+        });
+
+        const queriedInstalls = installs.filter((_install) => {
+            if (
+                !!query &&
+                !_install.name?.toLowerCase().includes(query.toLowerCase()) &&
+                !_install.email?.toLowerCase().includes(query.toLowerCase()) &&
+                !_install.phone?.toLowerCase().includes(query.toLowerCase()) &&
+                !_install.address?.toLowerCase().includes(query.toLowerCase())
+            ) {
+                return false;
+            }
+
+            // No need to look for any resource fields
+            if (typeof view === 'undefined' || view === 'all') {
+                return true;
+            }
+
+            // In this case, the view represents the resource status
+            return _install.status === view;
+        });
+        const filteredInstalls = applyFilters(queriedInstalls, filters);
+        const sortedInstalls = applySort(filteredInstalls, sort, sortBy);
+        const paginatedInstalls = applyPagination(sortedInstalls, page);
+
+        return Promise.resolve({
+            installs: paginatedInstalls,
+            installsCount: filteredInstalls.length,
+        });
+    }
+
+    /* ------------------------------------------------------------------------------------
+                                            CUSTOMERS
+    --------------------------------------------------------------------------------------- */
     async createInstall(install) {
         const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
         const response = await api

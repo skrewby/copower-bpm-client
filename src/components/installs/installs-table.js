@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Proptypes from 'prop-types';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
     Box,
@@ -22,81 +22,36 @@ import { Status } from '../status';
 
 const columns = [
     {
-        id: 'reference',
-        disablePadding: true,
-        label: 'Reference',
+        id: 'install_id',
+        label: 'ID',
     },
     {
         id: 'name',
         label: 'Name',
     },
     {
-        id: 'streetAddress',
+        id: 'address',
         label: 'Address',
     },
     {
-        id: 'contactNum',
+        id: 'email',
+        label: 'Email',
+    },
+    {
+        id: 'phone',
         label: 'Phone',
     },
     {
-        id: 'createdDate',
+        id: 'create_date',
         label: 'Created',
     },
     {
-        id: 'lastUpdated',
+        id: 'last_updated',
         label: 'Updated',
     },
     {
         id: 'status',
         label: 'Status',
-    },
-];
-
-const statusVariants = [
-    {
-        color: '#7680c4',
-        label: 'New',
-        value: 'new',
-    },
-    {
-        color: '#c476c0',
-        label: 'Deposit',
-        value: 'deposit',
-    },
-    {
-        color: '#c47683',
-        label: 'PTC',
-        value: 'ptc',
-    },
-    {
-        color: '#bcc476',
-        label: 'Schedule',
-        value: 'schedule',
-    },
-    {
-        color: '#c49176',
-        label: 'Review',
-        value: 'review',
-    },
-    {
-        color: '#c47676',
-        label: 'Payment',
-        value: 'payment',
-    },
-    {
-        color: '#87ab6f',
-        label: 'Retailer',
-        value: 'retailer',
-    },
-    {
-        color: '#936fab',
-        label: 'STC',
-        value: 'stc',
-    },
-    {
-        color: 'success.main',
-        label: 'Complete',
-        value: 'complete',
     },
 ];
 
@@ -107,18 +62,16 @@ export const InstallsTable = (props) => {
         installsCount,
         isLoading,
         onPageChange,
-        onSelect,
-        onSelectAll,
         onSortChange,
         page,
-        selectedLeads,
         sort,
         sortBy,
     } = props;
-    const [installs, setLeads] = useState(installsProp);
+    const [installs, setInstalls] = useState(installsProp);
+    let navigate = useNavigate();
 
     useEffect(() => {
-        setLeads(installsProp);
+        setInstalls(installsProp);
     }, [installsProp]);
 
     const displayLoading = isLoading;
@@ -138,20 +91,6 @@ export const InstallsTable = (props) => {
             <Table sx={{ minWidth: 1000, height: 'fit-content' }}>
                 <TableHead>
                     <TableRow>
-                        <TableCell padding="checkbox">
-                            <Checkbox
-                                checked={
-                                    installs.length > 0 &&
-                                    selectedLeads.length === installs.length
-                                }
-                                disabled={isLoading}
-                                indeterminate={
-                                    selectedLeads.length > 0 &&
-                                    selectedLeads.length < installs.length
-                                }
-                                onChange={onSelectAll}
-                            />
-                        </TableCell>
                         {columns.map((column) => (
                             <TableCell key={column.id}>
                                 <TableSortLabel
@@ -173,59 +112,34 @@ export const InstallsTable = (props) => {
                 </TableHead>
                 <TableBody>
                     {installs.map((install) => {
-                        const statusVariant = statusVariants.find(
-                            (variant) => variant.value === install.status
-                        );
-
                         return (
                             <TableRow
                                 hover
-                                key={install.id}
-                                selected={
-                                    !!selectedLeads.find(
-                                        (selectedCustomer) =>
-                                            selectedCustomer === install.id
-                                    )
-                                }
+                                key={install.install_id}
+                                onClick={() => {
+                                    navigate(
+                                        `/bpm/installs/${install.install_id}`
+                                    );
+                                }}
                             >
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                        checked={
-                                            !!selectedLeads.find(
-                                                (selectedCustomer) =>
-                                                    selectedCustomer ===
-                                                    install.id
-                                            )
-                                        }
-                                        onChange={(event) =>
-                                            onSelect(event, install.id)
-                                        }
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <Link
-                                        color="inherit"
-                                        component={RouterLink}
-                                        to="/bpm/installs/1"
-                                        underline="none"
-                                        variant="subtitle2"
-                                    >
-                                        {install.reference}
-                                    </Link>
-                                </TableCell>
+                                <TableCell>{install.install_id}</TableCell>
                                 <TableCell>{install.name}</TableCell>
-                                <TableCell>{install.streetAddress}</TableCell>
-                                <TableCell>{install.contactNum}</TableCell>
+                                <TableCell>{install.address}</TableCell>
+                                <TableCell>{install.email}</TableCell>
+                                <TableCell>{install.phone}</TableCell>
                                 <TableCell>
-                                    {format(install.createdDate, 'dd MMM yyyy')}
+                                    {format(install.create_date, 'dd MMM yyyy')}
                                 </TableCell>
                                 <TableCell>
-                                    {format(install.updatedDate, 'dd MMM yyyy')}
+                                    {format(
+                                        install.last_updated,
+                                        'dd MMM yyyy'
+                                    )}
                                 </TableCell>
                                 <TableCell>
                                     <Status
-                                        color={statusVariant.color}
-                                        label={statusVariant.label}
+                                        color={install.status_colour}
+                                        label={install.status}
                                     />
                                 </TableCell>
                             </TableRow>
@@ -272,19 +186,16 @@ InstallsTable.defaultProps = {
     installs: [],
     installsCount: 0,
     page: 1,
-    selectedLeads: [],
     sort: 'desc',
-    sortBy: 'createdDate',
+    sortBy: 'id',
 };
 
 InstallsTable.propTypes = {
     installs: Proptypes.array,
-    leadsCount: Proptypes.number,
+    installsCount: Proptypes.number,
     error: Proptypes.string,
     isLoading: Proptypes.bool,
     onPageChange: Proptypes.func,
-    onSelect: Proptypes.func,
-    onSelectAll: Proptypes.func,
     onSortChange: Proptypes.func,
     page: Proptypes.number,
     selectedInvoices: Proptypes.array,

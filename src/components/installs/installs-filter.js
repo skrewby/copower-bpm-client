@@ -27,39 +27,39 @@ const views = [
     },
     {
         label: 'Awaiting Deposit',
-        value: 'deposit',
+        value: 'Awaiting Deposit',
     },
     {
         label: 'PTC',
-        value: 'ptc',
+        value: 'PTC',
     },
     {
         label: 'Schedule',
-        value: 'schedule',
+        value: 'Schedule',
     },
     {
         label: 'Review',
-        value: 'review',
+        value: 'Review',
     },
     {
         label: 'Awaiting Payment',
-        value: 'payment',
+        value: 'Awaiting Payment',
     },
     {
         label: 'Retailer Notification',
-        value: 'retailer',
+        value: 'Retailer Notification',
     },
     {
         label: 'STC',
-        value: 'stc',
+        value: 'STC',
     },
     {
         label: 'Complete',
-        value: 'complete',
+        value: 'Complete',
     },
     {
         label: 'Cancelled',
-        value: 'cancelled',
+        value: 'Cancelled',
     },
 ];
 
