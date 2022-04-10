@@ -2,50 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { Box, Container, Grid, Skeleton, Typography } from '@mui/material';
-import { installApi } from '../../api/install';
-import { InstallInfo } from '../../components/installs/install-info';
-import { InstallInfoDialog } from '../../components/installs/install-info-dialog';
-import { InstallPropertyDetails } from '../../components/installs/install-property-details';
-import { LeadPropertyDialog } from '../../components/lead/lead-property-dialog';
 import { InstallProgress } from '../../components/installs/install-progress';
-import { LeadFiles } from '../../components/lead/lead-files';
-import { InstallSystemSummary } from '../../components/installs/install-system-summary';
-import { useMounted } from '../../hooks/use-mounted';
+import { InstallCustomer } from '../../components/installs/install-customer';
+import { InstallPropertyDetails } from '../../components/installs/install-property-details';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
+import { useOutletContext } from 'react-router-dom';
 
 export const InstallSummary = () => {
-    const mounted = useMounted();
-    const [installState, setInstallState] = useState({ isLoading: true });
-    const [openInfoDialog, setOpenInfoDialog] = useState(false);
-    const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
-
-    const getInstall = useCallback(async () => {
-        setInstallState(() => ({ isLoading: true }));
-
-        try {
-            const result = await installApi.getInstall();
-
-            if (mounted.current) {
-                setInstallState(() => ({
-                    isLoading: false,
-                    data: result,
-                }));
-            }
-        } catch (err) {
-            console.error(err);
-
-            if (mounted.current) {
-                setInstallState(() => ({
-                    isLoading: false,
-                    error: err.message,
-                }));
-            }
-        }
-    }, [mounted]);
-
-    useEffect(() => {
-        getInstall().catch(console.error);
-    }, [getInstall]);
+    const [installState, setRefresh] = useOutletContext();
 
     const renderContent = () => {
         if (installState.isLoading) {
@@ -95,8 +59,10 @@ export const InstallSummary = () => {
                         xs={12}
                     >
                         <Grid item xs={12}>
-                            <InstallInfo
-                                onEdit={() => setOpenInfoDialog(true)}
+                            <InstallCustomer
+                                onEdit={() =>
+                                    toast.error('Not implemented yet')
+                                }
                                 install={installState.data}
                             />
                         </Grid>
@@ -107,17 +73,6 @@ export const InstallSummary = () => {
                                 }
                                 install={installState.data}
                             />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <InstallSystemSummary
-                                onEdit={() =>
-                                    toast.error('Not implemented yet')
-                                }
-                                install={installState.data}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <LeadFiles files={installState.data?.files} />
                         </Grid>
                     </Grid>
                     <Grid
@@ -133,16 +88,6 @@ export const InstallSummary = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <InstallInfoDialog
-                    onClose={() => setOpenInfoDialog(false)}
-                    open={openInfoDialog}
-                    lead={installState.data}
-                />
-                <LeadPropertyDialog
-                    onClose={() => setOpenPropertyDialog(false)}
-                    open={openPropertyDialog}
-                    lead={installState.data}
-                />
             </>
         );
     };
@@ -159,7 +104,7 @@ export const InstallSummary = () => {
                 }}
             >
                 <Container
-                    maxWidth="lg"
+                    maxWidth="xl"
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',

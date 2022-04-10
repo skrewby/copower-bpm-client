@@ -16,7 +16,6 @@ export const InstallProgress = (props) => {
         handleOpenCancelInstall,
         handleCloseCancelInstall,
     ] = useDialog();
-    const [status, setStatus] = useState(install?.status);
 
     const handleCancelInstall = () => {
         handleCloseCancelInstall();
@@ -29,7 +28,7 @@ export const InstallProgress = (props) => {
                 <CardHeader title="Progress" />
                 <Divider />
                 <CardContent>
-                    <InstallTimeline status={status} />
+                    <InstallTimeline install={install} />
                 </CardContent>
                 <Divider />
                 <ActionList>

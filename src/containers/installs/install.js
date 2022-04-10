@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
+import {
+    Link as RouterLink,
+    Outlet,
+    useLocation,
+    useParams,
+} from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import {
@@ -12,55 +17,39 @@ import {
     Tabs,
     Divider,
 } from '@mui/material';
-import { installApi } from '../../api/install';
+import { bpmAPI } from '../../api/bpmAPI';
 import { ActionsMenu } from '../../components/actions-menu';
 import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
-// NOTE: This should be generated based on product data because "/1" represents "/:id" from routing
-// //  strategy where ":id" is dynamic depending on current product id
-const tabs = [
-    {
-        href: '/bpm/installs/1',
-        label: 'Summary',
-    },
-    {
-        href: '/bpm/installs/1/ptc',
-        label: 'PTC',
-    },
-    {
-        href: '/bpm/installs/1/schedule',
-        label: 'Schedule',
-    },
-    {
-        href: '/bpm/installs/1/review',
-        label: 'Review',
-    },
-    {
-        href: '/bpm/installs/1/retailer',
-        label: 'Retailer Notification',
-    },
-    {
-        href: '/bpm/installs/1/stc',
-        label: 'STC Submission',
-    },
-    {
-        href: '/bpm/installs/1/finance',
-        label: 'Finance',
-    },
-];
-
 export const Install = () => {
+    let { installID } = useParams();
     const mounted = useMounted();
     const [installState, setInstallState] = useState({ isLoading: true });
+    const [refresh, setRefresh] = useState(false);
     const location = useLocation();
+
+    const tabs = [
+        {
+            href: `/bpm/installs/${installID}`,
+            label: 'Summary',
+        },
+        {
+            href: `/bpm/installs/${installID}/finance`,
+            label: 'Finance',
+        },
+        {
+            href: `/bpm/installs/${installID}/log`,
+            label: 'Log',
+        },
+    ];
 
     const getInstall = useCallback(async () => {
         setInstallState(() => ({ isLoading: true }));
 
         try {
-            const result = await installApi.getInstall();
+            const result = await bpmAPI.getInstall(installID);
 
             if (mounted.current) {
                 setInstallState(() => ({
@@ -78,22 +67,14 @@ export const Install = () => {
                 }));
             }
         }
-    }, [mounted]);
+    }, [installID, mounted]);
 
     useEffect(() => {
+        setRefresh(false);
         getInstall().catch(console.error);
-    }, [getInstall]);
+    }, [getInstall, refresh]);
 
-    const handleInstallerPack = () => {
-        toast.error('Not implemented yet.');
-    };
-
-    const actions = [
-        {
-            label: 'Download Installer Pack',
-            onClick: handleInstallerPack,
-        },
-    ];
+    const actions = [];
 
     const renderContent = () => {
         if (installState.isLoading) {
@@ -152,7 +133,7 @@ export const Install = () => {
                         }}
                     >
                         <Typography color="textPrimary" variant="h4">
-                            {`${installState.data.reference} - ${installState.data.name}`}
+                            {`#${installState.data.install_id} - ${installState.data.name}`}
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
                         <ActionsMenu actions={actions} />
@@ -176,7 +157,7 @@ export const Install = () => {
                     </Tabs>
                     <Divider />
                 </Box>
-                <Outlet />
+                <Outlet context={[installState, setRefresh]} />
             </>
         );
     };
@@ -193,7 +174,7 @@ export const Install = () => {
                 }}
             >
                 <Container
-                    maxWidth="lg"
+                    maxWidth="xl"
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',

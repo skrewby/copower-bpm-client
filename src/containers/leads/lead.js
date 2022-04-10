@@ -80,30 +80,10 @@ export const Lead = () => {
         );
     };
 
-    const handleReject = () => {
-        toast.error(
-            'Not implemented yet. This option will be shown to operations when sales sends lead to operations. A wizard will appear where operations can leave a comment'
-        );
-    };
-
-    const handleAccept = () => {
-        toast.error(
-            'Not implemented yet. This option will be shown to operations when sales sends lead to operations'
-        );
-    };
-
     const actions = [
         {
             label: 'Send Quote',
             onClick: handleSendQuote,
-        },
-        {
-            label: 'Accept Sale',
-            onClick: handleAccept,
-        },
-        {
-            label: 'Reject Sale',
-            onClick: handleReject,
         },
     ];
 

@@ -213,9 +213,20 @@ class BPMAPi {
         });
     }
 
-    /* ------------------------------------------------------------------------------------
-                                            CUSTOMERS
-    --------------------------------------------------------------------------------------- */
+    async getInstall(id) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const data = await api
+            .url(`/installs/${id}`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return Promise.resolve(data[0]);
+    }
+
     async createInstall(install) {
         const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
         const response = await api
@@ -225,6 +236,71 @@ class BPMAPi {
             .json((id) => id[0]);
 
         return response;
+    }
+
+    async getInstallLogs(id) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const data = await api
+            .url(`/installs/${id}/logs`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return Promise.resolve(data);
+    }
+
+    async createInstallLog(id, entry, action) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const body = {
+            content: entry,
+            action: action,
+        };
+
+        const response = await api
+            .url(`/installs/${id}/logs`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .post(body)
+            .res((response) => response);
+
+        return response;
+    }
+
+    /* ------------------------------------------------------------------------------------
+                                            CUSTOMERS
+    --------------------------------------------------------------------------------------- */
+    async getCustomer(id) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const data = await api
+            .url(`/customers/${id}`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return Promise.resolve(data[0]);
+    }
+
+    /* ------------------------------------------------------------------------------------
+                                            PROPERTIES
+    --------------------------------------------------------------------------------------- */
+    async getProperty(id) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const data = await api
+            .url(`/properties/${id}`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return Promise.resolve(data[0]);
     }
 
     /* ------------------------------------------------------------------------------------

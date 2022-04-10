@@ -148,14 +148,17 @@ export const LeadProgress = (props) => {
 
     const handleReviewApprove = () => {
         handleCloseReviewLeadApprove();
-        bpmAPI.createInstall(lead);
-        bpmAPI.createLeadLog(
-            lead.lead_id,
-            `Lead approved. Sent to installs`,
-            true
-        );
-        bpmAPI.updateLead(lead.lead_id, { status_id: 4 }).then(refresh(true));
-        toast.error('Not implemented yet');
+        bpmAPI.createInstall(lead).then((res) => {
+            bpmAPI.createInstallLog(res.install_id, `Install created`, true);
+            bpmAPI.createLeadLog(
+                lead.lead_id,
+                `Lead approved. Sent to installs`,
+                true
+            );
+            bpmAPI
+                .updateLead(lead.lead_id, { status_id: 4 })
+                .then(refresh(true));
+        });
     };
 
     const ActionListDefault = () => {

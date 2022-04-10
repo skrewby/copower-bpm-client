@@ -37,19 +37,19 @@ const getDotStyles = (value) => {
 // NOTE: Items should be generated on order data to display information such as ordered date
 const getItems = (status) => {
     const statusMapping = [
-        'new',
-        'deposit',
-        'ptc',
-        'schedule',
-        'review',
-        'payment',
-        'retailer',
-        'stc',
-        'complete',
+        'Created',
+        'Awaiting Deposit',
+        'PTC',
+        'Schedule',
+        'Review',
+        'Awaiting Payment',
+        'Retailer Notification',
+        'STC',
+        'Complete',
     ];
-    const currentStatusIndex = statusMapping.indexOf(status) + 1;
+    const currentStatusIndex = statusMapping.indexOf(status);
     const items = [
-        { title: 'Created - 25/03/2022' },
+        { title: 'Created' },
         { title: 'Awaiting Deposit' },
         { title: 'Apply for PTC' },
         { title: 'Schedule Install' },
@@ -74,8 +74,9 @@ const getItems = (status) => {
 };
 
 export const InstallTimeline = (props) => {
-    const { status, ...other } = props;
-    const items = getItems(status);
+    const { install, ...other } = props;
+
+    const items = getItems(install.status);
 
     return (
         <Timeline
@@ -147,15 +148,5 @@ export const InstallTimeline = (props) => {
 };
 
 InstallTimeline.propTypes = {
-    status: PropTypes.oneOf([
-        'new',
-        'deposit',
-        'ptc',
-        'schedule',
-        'review',
-        'payment',
-        'retailer',
-        'stc',
-        'complete',
-    ]).isRequired,
+    install: PropTypes.object.isRequired,
 };

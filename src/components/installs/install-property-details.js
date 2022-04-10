@@ -1,82 +1,33 @@
+import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, CardHeader, Divider, Grid } from '@mui/material';
 import { PropertyList } from '../property-list';
 import { PropertyListItem } from '../property-list-item';
-
-const phasesOptions = [
-    {
-        value: 1,
-        label: '1',
-    },
-    {
-        value: 2,
-        label: '2',
-    },
-    {
-        value: 3,
-        label: '3',
-    },
-];
-
-const storyOptions = [
-    {
-        value: '1',
-        label: '1',
-    },
-    {
-        value: '2',
-        label: '2',
-    },
-    {
-        value: '3+',
-        label: '3+',
-    },
-];
-
-const roofTypeOptions = [
-    {
-        value: 'Tile',
-        label: 'Tile',
-    },
-    {
-        value: 'Colourbond',
-        label: 'Colourbond',
-    },
-    {
-        value: 'Klip-Lok',
-        label: 'Klip-Lok',
-    },
-];
-
-const existingSystemOptions = [
-    {
-        value: 'New',
-        label: 'New',
-    },
-    {
-        value: 'Additional',
-        label: 'Additional',
-    },
-    {
-        value: 'Replace',
-        label: 'Replace',
-    },
-];
+import { bpmAPI } from '../../api/bpmAPI';
+import { useMounted } from '../../hooks/use-mounted';
 
 export const InstallPropertyDetails = (props) => {
     const { onEdit, install, ...other } = props;
-    const phaseOption = phasesOptions.find(
-        (option) => option.value === install.phase
-    );
-    const storyOption = storyOptions.find(
-        (option) => option.value === install.story
-    );
-    const roofTypeOption = roofTypeOptions.find(
-        (option) => option.value === install.roof
-    );
-    const existingSystemOption = existingSystemOptions.find(
-        (option) => option.value === install.existingSystem
-    );
+    const [property, setProperty] = useState({});
+    const mounted = useMounted();
+
+    const getData = useCallback(async () => {
+        setProperty({});
+
+        try {
+            const result = await bpmAPI.getProperty(install.property_id);
+
+            if (mounted.current) {
+                setProperty(result);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }, [install.property_id, mounted]);
+
+    useEffect(() => {
+        getData().catch(console.error);
+    }, [getData]);
 
     return (
         <Card variant="outlined" {...other}>
@@ -93,21 +44,25 @@ export const InstallPropertyDetails = (props) => {
                 <Grid item sm={6} xs={12}>
                     <PropertyList>
                         <PropertyListItem
+                            label="Address"
+                            value={property.address}
+                        />
+                        <PropertyListItem
                             label="Phases"
-                            value={phaseOption.label}
+                            value={`${property.phase ?? ''}`}
                         />
                         <PropertyListItem
                             label="Story"
-                            value={storyOption.label}
+                            value={property.story}
                         />
+                        <PropertyListItem label="NMI" value={property.nmi} />
                         <PropertyListItem
                             label="Roof Type"
-                            value={roofTypeOption.label}
+                            value={property.roof_type}
                         />
-                        <PropertyListItem label="NMI" value={install.nmi} />
                         <PropertyListItem
                             label="Comment"
-                            value={install.propertyComment}
+                            value={property.comment}
                         />
                     </PropertyList>
                 </Grid>
@@ -115,19 +70,23 @@ export const InstallPropertyDetails = (props) => {
                     <PropertyList>
                         <PropertyListItem
                             label="Existing System"
-                            value={existingSystemOption.label}
+                            value={property.existing_system}
                         />
                         <PropertyListItem
                             label="Retailer"
-                            value={install.retailer}
+                            value={property.retailer}
                         />
                         <PropertyListItem
                             label="Distributor"
-                            value={install.distributor}
+                            value={property.distributor}
                         />
                         <PropertyListItem
                             label="Meter Number"
-                            value={install.meterNum}
+                            value={property.meter}
+                        />
+                        <PropertyListItem
+                            label="Roof Pitch"
+                            value={property.roof_pitch}
                         />
                     </PropertyList>
                 </Grid>

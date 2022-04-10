@@ -112,6 +112,13 @@ const InstallSummary = Loadable(
         }))
     )
 );
+const InstallLog = Loadable(
+    lazy(() =>
+        import('./containers/installs/install-log').then((module) => ({
+            default: module.InstallLog,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -195,6 +202,10 @@ const routes = [
                             {
                                 path: '',
                                 element: <InstallSummary />,
+                            },
+                            {
+                                path: 'log',
+                                element: <InstallLog />,
                             },
                         ],
                     },
