@@ -52,7 +52,7 @@ class BPMAPi {
             .url('/leads')
             .auth(`Bearer ${fb_auth.token}`)
             .post(lead)
-            .res((response) => response);
+            .json((id) => id[0]);
 
         return response;
     }
@@ -144,6 +144,23 @@ class BPMAPi {
             });
 
         return Promise.resolve(data);
+    }
+
+    async createLeadLog(id, entry, action) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const body = {
+            content: entry,
+            action: action,
+        };
+
+        const response = await api
+            .url(`/leads/${id}/logs`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .post(body)
+            .res((response) => response);
+
+        return response;
     }
 
     /* ------------------------------------------------------------------------------------

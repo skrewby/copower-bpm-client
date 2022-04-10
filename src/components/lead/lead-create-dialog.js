@@ -140,6 +140,7 @@ export const LeadCreateDialog = (props) => {
                     .createLead(formik.values, refresh)
                     .then(refresh(true));
                 if (res.status === 201) {
+                    bpmAPI.createLeadLog(res.lead_id, 'Created Lead', true);
                     toast.success(`Lead Created`);
                 } else {
                     toast.error(`Something went wrong`);

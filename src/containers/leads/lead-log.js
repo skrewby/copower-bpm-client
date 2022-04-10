@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { Box, Container, Grid, Skeleton, Typography } from '@mui/material';
+import {
+    Box,
+    Container,
+    fabClasses,
+    Grid,
+    Skeleton,
+    Typography,
+} from '@mui/material';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import { useOutletContext, useParams } from 'react-router-dom';
 import { useMounted } from '../../hooks/use-mounted';
@@ -47,7 +54,7 @@ export const LeadLog = () => {
 
     const handleCreateLog = (content) => {
         setRefresh(true);
-        console.log(content);
+        bpmAPI.createLeadLog(leadID, content, false);
         toast.success('Log added');
     };
 
@@ -94,7 +101,7 @@ export const LeadLog = () => {
                         <Box
                             sx={{
                                 display: 'grid',
-                                gap: 3,
+                                gap: 1,
                             }}
                         >
                             <LeadLogAdd onSend={handleCreateLog} />

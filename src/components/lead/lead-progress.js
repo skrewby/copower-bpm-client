@@ -80,6 +80,13 @@ export const LeadProgress = (props) => {
 
     const handleStatusChange = (event) => {
         const new_status_id = event.target.value;
+        bpmAPI.createLeadLog(
+            lead.lead_id,
+            `Changed status to ${
+                statusOptions.data[event.target.value - 1].status_name
+            }`,
+            true
+        );
         bpmAPI.updateLead(lead.lead_id, { status_id: new_status_id });
         refresh(true);
     };
