@@ -132,6 +132,20 @@ class BPMAPi {
         return response;
     }
 
+    async getLeadLogs(id) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const data = await api
+            .url(`/leads/${id}/logs`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return Promise.resolve(data);
+    }
+
     /* ------------------------------------------------------------------------------------
                                             INFO
     --------------------------------------------------------------------------------------- */

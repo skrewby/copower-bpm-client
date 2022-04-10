@@ -83,6 +83,13 @@ const LeadQuotation = Loadable(
         }))
     )
 );
+const LeadLog = Loadable(
+    lazy(() =>
+        import('./containers/leads/lead-log').then((module) => ({
+            default: module.LeadLog,
+        }))
+    )
+);
 
 const Installs = Loadable(
     lazy(() =>
@@ -165,6 +172,10 @@ const routes = [
                             {
                                 path: 'quotation',
                                 element: <LeadQuotation />,
+                            },
+                            {
+                                path: 'log',
+                                element: <LeadLog />,
                             },
                         ],
                     },

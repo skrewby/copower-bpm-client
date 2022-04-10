@@ -97,7 +97,7 @@ export const AccountPopover = (props) => {
                             }}
                             variant="caption"
                         >
-                            Operations
+                            Logged in as
                         </Typography>
                         <Typography
                             sx={{ color: 'primary.contrastText' }}

@@ -39,6 +39,10 @@ export const Lead = () => {
             href: `/bpm/leads/${leadID}/quotation`,
             label: 'Quotation',
         },
+        {
+            href: `/bpm/leads/${leadID}/log`,
+            label: 'Log',
+        },
     ];
 
     const getLead = useCallback(async () => {
