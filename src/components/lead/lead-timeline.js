@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Typography } from '@mui/material';
 import {
@@ -34,32 +34,41 @@ const getDotStyles = (value) => {
     };
 };
 
-// NOTE: Items should be generated on order data to display information such as ordered date
-const getItems = (status) => {
-    const statusMapping = ['New', 'Contacted', 'Quotation', 'Complete'];
-    const currentStatusIndex = statusMapping.indexOf(status) + 1;
-    const items = [
-        { title: 'Created' },
-        { title: 'Contacted' },
-        { title: 'Quotation' },
-        { title: 'Complete' },
-    ];
-
-    return items.map((item, index) => {
-        if (currentStatusIndex > index) {
-            return { ...item, value: 'complete' };
-        }
-
-        if (currentStatusIndex === index) {
-            return { ...item, value: 'active' };
-        }
-
-        return { ...item, value: 'inactive' };
-    });
-};
-
 export const LeadTimeline = (props) => {
     const { lead, ...other } = props;
+
+    const getItems = (status) => {
+        const statusMapping = [
+            'Created',
+            'New',
+            'Contacted',
+            'Quotation',
+            'Review',
+            'Complete',
+        ];
+        const currentStatusIndex = statusMapping.indexOf(status);
+
+        const items = [
+            { title: 'Created' },
+            { title: 'New' },
+            { title: 'Contacted' },
+            { title: 'Quotation' },
+            { title: 'Review' },
+            { title: 'Complete' },
+        ];
+
+        return items.map((item, index) => {
+            if (currentStatusIndex > index) {
+                return { ...item, value: 'complete' };
+            }
+
+            if (currentStatusIndex === index) {
+                return { ...item, value: 'active' };
+            }
+
+            return { ...item, value: 'inactive' };
+        });
+    };
     const items = getItems(lead.status);
 
     return (

@@ -38,6 +38,14 @@ const views = [
         value: 'Quotation',
     },
     {
+        label: 'Review',
+        value: 'Review',
+    },
+    {
+        label: 'Rejected - Pending',
+        value: 'Rejected - Pending',
+    },
+    {
         label: 'Rejected',
         value: 'Rejected',
     },

@@ -98,7 +98,7 @@ export const LeadInfoDialog = (props) => {
                 } else {
                     toast.error('Something went wrong');
                 }
-                refresh();
+                refresh(true);
 
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);

@@ -21,6 +21,9 @@ import { ActionListItem } from '../action-list-item';
 import { ConfirmationDialog } from '../confirmation-dialog';
 import { StatusSelect } from '../status-select';
 import { LeadTimeline } from './lead-timeline';
+import { LeadRejectDialog } from './lead-reject-dialog';
+import { LeadRejectDenyDialog } from './lead-reject-deny-dialog';
+import { LeadStatusDisplay } from './lead-status-display';
 import { bpmAPI } from '../../api/bpmAPI';
 import { useMounted } from '../../hooks/use-mounted';
 import parseISO from 'date-fns/parseISO';
@@ -36,6 +39,14 @@ export const LeadProgress = (props) => {
         useDialog();
     const [closeLeadOpen, handleOpenCloseLead, handleCloseCloseLead] =
         useDialog();
+    const [
+        rejectLeadApproveOpen,
+        handleOpenRejectLeadApprove,
+        handleCloseRejectLeadApprove,
+    ] = useDialog();
+    const [openLeadRejectDialog, setOpenLeadRejectDialog] = useState(false);
+    const [openLeadRejectDenyDialog, setOpenLeadRejectDenyDialog] =
+        useState(false);
 
     const mounted = useMounted();
     const [statusOptions, setStatusOptions] = useState({
@@ -87,23 +98,99 @@ export const LeadProgress = (props) => {
             }`,
             true
         );
-        bpmAPI.updateLead(lead.lead_id, { status_id: new_status_id });
-        refresh(true);
+        bpmAPI
+            .updateLead(lead.lead_id, { status_id: new_status_id })
+            .then(refresh(true));
     };
 
     const handleSendToOperations = () => {
         handleCloseSendToOperations();
-        toast.error('Not implemented yet');
+        bpmAPI.createLeadLog(
+            lead.lead_id,
+            `Marked lead as Win - Awaiting review`,
+            true
+        );
+        bpmAPI.updateLead(lead.lead_id, { status_id: 5 }).then(refresh(true));
     };
 
     const handleRejectLead = () => {
         handleCloseRejectLead();
-        toast.error('Not implemented yet');
+        setOpenLeadRejectDialog(true);
+    };
+
+    const handleRejectDenyLead = () => {
+        setOpenLeadRejectDenyDialog(true);
     };
 
     const handleCloseLead = () => {
         handleCloseCloseLead();
         toast.error('Not implemented yet');
+    };
+
+    const handleRejectLeadApproved = () => {
+        bpmAPI.createLeadLog(lead.lead_id, `Approved reject request`, true);
+        bpmAPI.updateLead(lead.lead_id, { status_id: 6 }).then(refresh(true));
+        handleCloseRejectLeadApprove();
+    };
+
+    const handleRejectLeadDenied = () => {
+        bpmAPI.createLeadLog(lead.lead_id, `Denied reject request`, true);
+        bpmAPI.updateLead(lead.lead_id, { status_id: 1 }).then(refresh(true));
+        handleCloseRejectLeadApprove();
+    };
+
+    const ActionListDefault = () => {
+        return (
+            <ActionList>
+                <ActionListItem
+                    icon={CheckCircleIcon}
+                    label="Win"
+                    onClick={handleOpenSendToOperations}
+                />
+                <ActionListItem
+                    icon={XCircleIcon}
+                    label="Reject"
+                    onClick={handleOpenRejectLead}
+                />
+                <ActionListItem
+                    icon={ArchiveIcon}
+                    label="Close"
+                    onClick={handleOpenCloseLead}
+                />
+            </ActionList>
+        );
+    };
+
+    const ActionListRejectPending = () => {
+        return (
+            <ActionList>
+                <ActionListItem
+                    icon={CheckCircleIcon}
+                    label="Approve"
+                    onClick={handleOpenRejectLeadApprove}
+                />
+                <ActionListItem
+                    icon={XCircleIcon}
+                    label="Deny"
+                    onClick={handleRejectDenyLead}
+                />
+            </ActionList>
+        );
+    };
+
+    const ActionListRejected = () => {
+        return null;
+    };
+
+    const ChooseActionList = () => {
+        switch (lead.status_id) {
+            case 6:
+                return <ActionListRejected />;
+            case 8:
+                return <ActionListRejectPending />;
+            default:
+                return <ActionListDefault />;
+        }
     };
 
     return (
@@ -112,15 +199,18 @@ export const LeadProgress = (props) => {
                 <CardHeader title="Lead Progress" />
                 <Divider />
                 <CardContent>
-                    <StatusSelect
-                        onChange={handleStatusChange}
-                        options={statusOptions.data}
-                        value={
-                            statusOptions.data.filter(
-                                (status) => status.status_id === lead.status_id
-                            )[0]?.status_id || ''
-                        }
-                    />
+                    {lead.status_id < 4 && (
+                        <StatusSelect
+                            onChange={handleStatusChange}
+                            options={statusOptions.data}
+                            value={
+                                statusOptions.data.filter(
+                                    (status) =>
+                                        status.status_id === lead.status_id
+                                )[0]?.status_id || ''
+                            }
+                        />
+                    )}
                     <Typography
                         sx={{
                             color: 'text.secondary',
@@ -134,34 +224,22 @@ export const LeadProgress = (props) => {
                         )}`}
                     </Typography>
                     <Divider sx={{ my: 2 }} />
-                    <LeadTimeline lead={lead} />
+                    {lead.status_id < 6 ? (
+                        <LeadTimeline lead={lead} />
+                    ) : (
+                        <LeadStatusDisplay lead={lead} />
+                    )}
                 </CardContent>
                 <Divider />
-                <ActionList>
-                    <ActionListItem
-                        icon={CheckCircleIcon}
-                        label="Win"
-                        onClick={handleOpenSendToOperations}
-                    />
-                    <ActionListItem
-                        icon={XCircleIcon}
-                        label="Reject"
-                        onClick={handleOpenRejectLead}
-                    />
-                    <ActionListItem
-                        icon={ArchiveIcon}
-                        label="Close"
-                        onClick={handleOpenCloseLead}
-                    />
-                </ActionList>
+                {ChooseActionList()}
             </Card>
             <ConfirmationDialog
-                message="You cannot send this lead to operations yet. Missing: Meterbox photo"
+                message="Are you sure you want to mark this lead as Win?"
                 onCancel={handleCloseSendToOperations}
                 onConfirm={handleSendToOperations}
                 open={sendToOperationsOpen}
                 title="Mark as Win"
-                variant="error"
+                variant="warning"
             />
             <ConfirmationDialog
                 message="Are you sure you want to reject this lead?"
@@ -178,6 +256,26 @@ export const LeadProgress = (props) => {
                 open={closeLeadOpen}
                 title="Close Lead"
                 variant="warning"
+            />
+            <ConfirmationDialog
+                message="Approve reject request?"
+                onCancel={handleCloseRejectLeadApprove}
+                onConfirm={handleRejectLeadApproved}
+                open={rejectLeadApproveOpen}
+                title="Approve reject request"
+                variant="warning"
+            />
+            <LeadRejectDialog
+                onClose={() => setOpenLeadRejectDialog(false)}
+                open={openLeadRejectDialog}
+                leadID={lead.lead_id}
+                refresh={refresh}
+            />
+            <LeadRejectDenyDialog
+                onClose={() => setOpenLeadRejectDenyDialog(false)}
+                open={openLeadRejectDenyDialog}
+                leadID={lead.lead_id}
+                refresh={refresh}
             />
         </>
     );
