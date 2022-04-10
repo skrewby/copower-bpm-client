@@ -11,7 +11,7 @@ import { wait } from '../utils/wait';
 // Cross origin authenticated requests on an external API
 const api = wretch()
     // Set the base url
-    .url('http://localhost:3001/api')
+    .url('https://copower-server.herokuapp.com/api')
     // Cors fetch options
     .options({ mode: 'cors' });
 
