@@ -92,7 +92,10 @@ export const LeadInfoDialog = (props) => {
         }),
         onSubmit: async (values, helpers) => {
             try {
-                const res = await bpmAPI.updateLead(lead.lead_id, values);
+                // Remove empty strings and null values
+                let lead_values = Object.fromEntries(Object.entries(values).filter(([_, v]) => (v !== null && v !== "")));
+
+                const res = await bpmAPI.updateLead(lead.lead_id, lead_values);
                 if (res.status === 200) {
                     toast.success('Lead updated');
                 } else {

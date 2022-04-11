@@ -5,11 +5,14 @@ import { Box, Container, Grid, Skeleton, Typography } from '@mui/material';
 import { InstallProgress } from '../../components/installs/install-progress';
 import { InstallCustomer } from '../../components/installs/install-customer';
 import { InstallPropertyDetails } from '../../components/installs/install-property-details';
+import { InstallPropertyDialog } from '../../components/installs/install-property-dialog';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import { useOutletContext } from 'react-router-dom';
 
 export const InstallSummary = () => {
     const [installState, setRefresh] = useOutletContext();
+
+    const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
 
     const renderContent = () => {
         if (installState.isLoading) {
@@ -68,9 +71,7 @@ export const InstallSummary = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <InstallPropertyDetails
-                                onEdit={() =>
-                                    toast.error('Not implemented yet')
-                                }
+                                onEdit={() => setOpenPropertyDialog(true)}
                                 install={installState.data}
                             />
                         </Grid>
@@ -88,6 +89,12 @@ export const InstallSummary = () => {
                         </Grid>
                     </Grid>
                 </Grid>
+                <InstallPropertyDialog
+                    onClose={() => setOpenPropertyDialog(false)}
+                    open={openPropertyDialog}
+                    install={installState.data}
+                    refresh={setRefresh}
+                />
             </>
         );
     };

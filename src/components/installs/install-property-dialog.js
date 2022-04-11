@@ -17,20 +17,24 @@ import { InputField } from '../form/input-field';
 import { bpmAPI } from '../../api/bpmAPI';
 import { useMounted } from '../../hooks/use-mounted';
 
-export const LeadPropertyDialog = (props) => {
-    const { open, onClose, lead, refresh } = props;
+export const InstallPropertyDialog = (props) => {
+    const { open, onClose, install, refresh } = props;
     const mounted = useMounted();
 
     const [phaseOptions, setPhaseOptions] = useState([]);
     const [existingSystemOptions, setExistingSystemOptions] = useState([]);
     const [storyOptions, setStoryOptions] = useState([]);
     const [roofTypeOptions, setRoofTypeOptions] = useState([]);
+    const [roofPitchOptions, setRoofPitchOptions] = useState([]);
+    const [property, setProperty] = useState([]);
 
     const getData = useCallback(async () => {
         setPhaseOptions([]);
         setExistingSystemOptions([]);
         setStoryOptions([]);
         setRoofTypeOptions([]);
+        setRoofPitchOptions([]);
+        setProperty([]);
 
         try {
             const phasesAPI = await bpmAPI.getPhasesOptions();
@@ -61,12 +65,23 @@ export const LeadPropertyDialog = (props) => {
                     roof_type_name: row.roof_type_name,
                 };
             });
+            const roofPitchAPI = await bpmAPI.getRoofPitchOptions();
+            const roofPitchResult = roofPitchAPI.map((row) => {
+                return {
+                    roof_pitch_id: row.roof_pitch_id,
+                    roof_pitch_name: row.roof_pitch_name,
+                };
+            });
+
+            const propertyResult = await bpmAPI.getProperty(install.property_id);
 
             if (mounted.current) {
                 setPhaseOptions(phasesResult);
                 setExistingSystemOptions(existingSystemResult);
                 setStoryOptions(storyOptionsResult);
                 setRoofTypeOptions(roofTypeResult);
+                setRoofPitchOptions(roofPitchResult);
+                setProperty(propertyResult);
             }
         } catch (err) {
             console.error(err);
@@ -76,9 +91,10 @@ export const LeadPropertyDialog = (props) => {
                 setExistingSystemOptions(() => ({ error: err.message }));
                 setStoryOptions(() => ({ error: err.message }));
                 setRoofTypeOptions(() => ({ error: err.message }));
+                setRoofPitchOptions(() => ({ error: err.message }));
             }
         }
-    }, [mounted]);
+    }, [install.property_id, mounted]);
 
     useEffect(() => {
         getData().catch(console.error);
@@ -87,36 +103,40 @@ export const LeadPropertyDialog = (props) => {
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
-            phase_id: lead?.phase_id || '',
-            existing_system_id: lead?.existing_system_id || '',
-            story_id: lead?.story_id || '',
-            retailer: lead?.retailer || '',
-            roof_type_id: lead?.roof_type_id || '',
-            distributor: lead?.distributor || '',
-            nmi: lead?.nmi || '',
-            meter: lead?.meter || '',
-            property_comment: lead?.property_comment || '',
+            address: property?.address || '',
+            phase_id: property?.phase_id || '',
+            existing_system_id: property?.existing_system_id || '',
+            story_id: property?.story_id || '',
+            retailer: property?.retailer || '',
+            roof_type_id: property?.roof_type_id || '',
+            roof_pitch_id: property?.roof_pitch_id || '',
+            distributor: property?.distributor || '',
+            nmi: property?.nmi || '',
+            meter: property?.meter || '',
+            comment: property?.comment || '',
             submit: null,
         },
         validationSchema: Yup.object().shape({
+            address: Yup.string(),
             phase_id: Yup.number(),
             existing_system_id: Yup.number(),
             story_id: Yup.number(),
             retailer: Yup.string(),
             roof_type_id: Yup.number(),
+            roof_pitch_id: Yup.number(),
             distributor: Yup.string(),
             nmi: Yup.string(),
             meter: Yup.string(),
-            property_comment: Yup.string(),
+            comment: Yup.string(),
         }),
         onSubmit: async (values, helpers) => {
             try {
                 // Remove empty strings and null values
                 let property_values = Object.fromEntries(Object.entries(values).filter(([_, v]) => (v !== null && v !== "")));
 
-                const res = await bpmAPI.updateLead(lead.lead_id, property_values);
+                const res = await bpmAPI.updateProperty(install.property_id, property_values);
                 if (res.status === 200) {
-                    toast.success('Lead updated');
+                    toast.success('Property updated');
                 } else {
                     toast.error('Something went wrong');
                 }
@@ -147,9 +167,28 @@ export const LeadPropertyDialog = (props) => {
                 onExited: () => formik.resetForm(),
             }}
         >
-            <DialogTitle>Edit Lead</DialogTitle>
+            <DialogTitle>Edit Property</DialogTitle>
             <DialogContent>
                 <Grid container spacing={2}>
+                <Grid item xs={12}>
+                        <InputField
+                            error={Boolean(
+                                formik.touched.address &&
+                                    formik.errors.address
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.address &&
+                                formik.errors.address
+                            }
+                            label="Address"
+                            name="address"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            value={formik.values.address}
+                        />
+                    </Grid>
+
                     <Grid item xs={6}>
                         <InputField
                             error={Boolean(
@@ -288,6 +327,35 @@ export const LeadPropertyDialog = (props) => {
                     <Grid item xs={6}>
                         <InputField
                             error={Boolean(
+                                formik.touched.roof_pitch_id &&
+                                    formik.errors.roof_pitch_id
+                            )}
+                            fullWidth
+                            helperText={
+                                formik.touched.roof_pitch_id &&
+                                formik.errors.roof_pitch_id
+                            }
+                            label="Roof Pitch"
+                            name="roof_pitch_id"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            select
+                            value={formik.values.roof_pitch_id}
+                        >
+                            {roofPitchOptions.map((option) => (
+                                <MenuItem
+                                    key={option.roof_pitch_id}
+                                    value={option.roof_pitch_id}
+                                >
+                                    {option.roof_pitch_name}
+                                </MenuItem>
+                            ))}
+                        </InputField>
+                    </Grid>
+
+                    <Grid item xs={6}>
+                        <InputField
+                            error={Boolean(
                                 formik.touched.distributor &&
                                     formik.errors.distributor
                             )}
@@ -339,19 +407,19 @@ export const LeadPropertyDialog = (props) => {
                     <Grid item xs={12}>
                         <InputField
                             error={Boolean(
-                                formik.touched.property_comment &&
-                                    formik.errors.property_comment
+                                formik.touched.comment &&
+                                    formik.errors.comment
                             )}
                             fullWidth
                             helperText={
-                                formik.touched.property_comment &&
-                                formik.errors.property_comment
+                                formik.touched.comment &&
+                                formik.errors.comment
                             }
                             label="Comment"
-                            name="property_comment"
+                            name="comment"
                             onBlur={formik.handleBlur}
                             onChange={formik.handleChange}
-                            value={formik.values.property_comment}
+                            value={formik.values.comment}
                         />
                     </Grid>
                     {formik.errors.submit && (
@@ -381,11 +449,11 @@ export const LeadPropertyDialog = (props) => {
     );
 };
 
-LeadPropertyDialog.defaultProps = {
+InstallPropertyDialog.defaultProps = {
     open: false,
 };
 
-LeadPropertyDialog.propTypes = {
+InstallPropertyDialog.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     lead: PropTypes.object,

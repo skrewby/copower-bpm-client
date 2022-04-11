@@ -127,7 +127,7 @@ class BPMAPi {
 
     async updateLead(id, values) {
         const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
-
+        console.log(values);
         const response = await api
             .url(`/leads/${id}`)
             .auth(`Bearer ${fb_auth.token}`)
@@ -308,6 +308,18 @@ class BPMAPi {
         return Promise.resolve(data[0]);
     }
 
+    async updateProperty(id, values) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+        
+        const response = await api
+            .url(`/properties/${id}`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .put(values)
+            .res((response) => response);
+
+        return response;
+    }
+
     /* ------------------------------------------------------------------------------------
                                             INFO
     --------------------------------------------------------------------------------------- */
@@ -358,6 +370,17 @@ class BPMAPi {
     async getRoofTypeOptions(options) {
         const data = await api
             .url('/roof_types')
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return data;
+    }
+
+    async getRoofPitchOptions(options) {
+        const data = await api
+            .url('/roof_pitch')
             .get()
             .json((response) => {
                 return response;
