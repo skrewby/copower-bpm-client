@@ -3,7 +3,7 @@ import { Avatar, Box, Card, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
-export const InstallLogEntry = (props) => {
+export const CustomerLogEntry = (props) => {
     const { log, sx, ...other } = props;
 
     return (
@@ -53,13 +53,7 @@ export const InstallLogEntry = (props) => {
                         {`${format(
                             parseISO(log.create_date),
                             'dd MMM yyyy HH:mm'
-                        )} - Install state:`}
-                    </Typography>
-                    <Typography color="textSecondary" variant="caption">
-                        &nbsp;
-                    </Typography>
-                    <Typography color={log.status_colour} variant="caption">
-                        {log.status}
+                        )}`}
                     </Typography>
                 </Box>
             </Box>
@@ -67,7 +61,7 @@ export const InstallLogEntry = (props) => {
     );
 };
 
-InstallLogEntry.propTypes = {
+CustomerLogEntry.propTypes = {
     log: PropTypes.object.isRequired,
     sx: PropTypes.object,
 };

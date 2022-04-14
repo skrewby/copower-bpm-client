@@ -409,6 +409,17 @@ class BPMAPi {
         return response;
     }
 
+    async updateCustomer(id, values) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+        const response = await api
+            .url(`/customers/${id}`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .put(values)
+            .res((response) => response);
+
+        return response;
+    }
+
     /* ------------------------------------------------------------------------------------
                                             PROPERTIES
     --------------------------------------------------------------------------------------- */
