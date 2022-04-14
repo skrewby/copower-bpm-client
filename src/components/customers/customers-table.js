@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import Proptypes from 'prop-types';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
     Box,
-    Checkbox,
     Divider,
-    Link,
     Skeleton,
     Table,
     TableBody,
@@ -18,11 +16,10 @@ import {
 import { Pagination } from '../pagination';
 import { ResourceError } from '../resource-error';
 import { ResourceUnavailable } from '../resource-unavailable';
-import { Status } from '../status';
 
 const columns = [
     {
-        id: 'install_id',
+        id: 'customer_id',
         label: 'ID',
     },
     {
@@ -31,11 +28,11 @@ const columns = [
     },
     {
         id: 'company_name',
-        label: 'Company Name',
+        label: 'Company',
     },
     {
-        id: 'address',
-        label: 'Address',
+        id: 'email',
+        label: 'Email',
     },
     {
         id: 'phone',
@@ -47,19 +44,15 @@ const columns = [
     },
     {
         id: 'last_updated',
-        label: 'Updated',
-    },
-    {
-        id: 'status',
-        label: 'Status',
+        label: 'Last Updated',
     },
 ];
 
-export const InstallsTable = (props) => {
+export const CustomersTable = (props) => {
     const {
         error,
-        installs: installsProp,
-        installsCount,
+        customers: customersProp,
+        customersCount,
         isLoading,
         onPageChange,
         onSortChange,
@@ -67,18 +60,16 @@ export const InstallsTable = (props) => {
         sort,
         sortBy,
     } = props;
-    const [installs, setInstalls] = useState(installsProp);
+    const [customers, setCustomers] = useState(customersProp);
     let navigate = useNavigate();
 
     useEffect(() => {
-        setInstalls(installsProp);
-    }, [installsProp]);
+        setCustomers(customersProp);
+    }, [customersProp]);
 
     const displayLoading = isLoading;
     const displayError = Boolean(!isLoading && error);
-    const displayUnavailable = Boolean(
-        !isLoading && !error && !installs?.length
-    );
+    const displayUnavailable = Boolean(!isLoading && !error && !customers?.length);
 
     return (
         <Box
@@ -111,36 +102,25 @@ export const InstallsTable = (props) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {installs.map((install) => {
+                    {customers.map((customers) => {
                         return (
                             <TableRow
                                 hover
-                                key={install.install_id}
+                                key={customers.customer_id}
                                 onClick={() => {
-                                    navigate(
-                                        `/bpm/installs/${install.install_id}`
-                                    );
+                                    navigate(`/bpm/customers/${customers.customer_id}`);
                                 }}
                             >
-                                <TableCell>{install.install_id}</TableCell>
-                                <TableCell>{install.name}</TableCell>
-                                <TableCell>{install.company_name}</TableCell>
-                                <TableCell>{install.address}</TableCell>
-                                <TableCell>{install.phone}</TableCell>
+                                <TableCell>{customers.customer_id}</TableCell>
+                                <TableCell>{customers.name}</TableCell>
+                                <TableCell>{customers.company_name}</TableCell>
+                                <TableCell>{customers.email}</TableCell>
+                                <TableCell>{customers.phone}</TableCell>
                                 <TableCell>
-                                    {format(install.create_date, 'dd MMM yyyy')}
+                                    {format(customers.create_date, 'dd MMM yyyy')}
                                 </TableCell>
                                 <TableCell>
-                                    {format(
-                                        install.last_updated,
-                                        'dd MMM yyyy'
-                                    )}
-                                </TableCell>
-                                <TableCell>
-                                    <Status
-                                        color={install.status_colour}
-                                        label={install.status}
-                                    />
+                                    {format(customers.last_updated, 'dd MMM yyyy')}
                                 </TableCell>
                             </TableRow>
                         );
@@ -176,23 +156,23 @@ export const InstallsTable = (props) => {
                 disabled={isLoading}
                 onPageChange={onPageChange}
                 page={page}
-                rowsCount={installsCount}
+                rowsCount={customersCount}
             />
         </Box>
     );
 };
 
-InstallsTable.defaultProps = {
-    installs: [],
-    installsCount: 0,
+CustomersTable.defaultProps = {
+    customers: [],
+    customersCount: 0,
     page: 1,
     sort: 'desc',
     sortBy: 'id',
 };
 
-InstallsTable.propTypes = {
-    installs: Proptypes.array,
-    installsCount: Proptypes.number,
+CustomersTable.propTypes = {
+    customers: Proptypes.array,
+    customersCount: Proptypes.number,
     error: Proptypes.string,
     isLoading: Proptypes.bool,
     onPageChange: Proptypes.func,

@@ -6,6 +6,7 @@ import { InstallProgress } from '../../components/installs/install-progress';
 import { InstallCustomer } from '../../components/installs/install-customer';
 import { InstallPropertyDetails } from '../../components/installs/install-property-details';
 import { InstallPropertyDialog } from '../../components/installs/install-property-dialog';
+import { InstallChooseCustomerDialog } from '../../components/installs/install-choose-customer-dialog';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import { useOutletContext } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ export const InstallSummary = () => {
     const [installState, setRefresh] = useOutletContext();
 
     const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
+    const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
 
     const renderContent = () => {
         if (installState.isLoading) {
@@ -63,9 +65,7 @@ export const InstallSummary = () => {
                     >
                         <Grid item xs={12}>
                             <InstallCustomer
-                                onEdit={() =>
-                                    toast.error('Not implemented yet')
-                                }
+                                onEdit={() => setOpenCustomerDialog(true)}
                                 install={installState.data}
                             />
                         </Grid>
@@ -89,6 +89,12 @@ export const InstallSummary = () => {
                         </Grid>
                     </Grid>
                 </Grid>
+                <InstallChooseCustomerDialog
+                    onClose={() => setOpenCustomerDialog(false)}
+                    open={openCustomerDialog}
+                    install={installState.data}
+                    refresh={setRefresh}
+                />
                 <InstallPropertyDialog
                     onClose={() => setOpenPropertyDialog(false)}
                     open={openPropertyDialog}

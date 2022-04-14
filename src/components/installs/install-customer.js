@@ -43,7 +43,7 @@ export const InstallCustomer = (props) => {
             <CardHeader
                 action={
                     <Button color="primary" onClick={onEdit} variant="text">
-                        Edit
+                        Change
                     </Button>
                 }
                 title="Customer"

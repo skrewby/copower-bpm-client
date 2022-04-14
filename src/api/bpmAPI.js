@@ -127,7 +127,6 @@ class BPMAPi {
 
     async updateLead(id, values) {
         const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
-        console.log(values);
         const response = await api
             .url(`/leads/${id}`)
             .auth(`Bearer ${fb_auth.token}`)
@@ -274,6 +273,17 @@ class BPMAPi {
         return response;
     }
 
+    async updateInstall(id, values) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+        const response = await api
+            .url(`/installs/${id}`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .put(values)
+            .res((response) => response);
+
+        return response;
+    }
+
     /* ------------------------------------------------------------------------------------
                                             CUSTOMERS
     --------------------------------------------------------------------------------------- */
@@ -289,6 +299,114 @@ class BPMAPi {
             });
 
         return Promise.resolve(data[0]);
+    }
+
+    async searchCustomers(value) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const body = { query: value };
+
+        const data = await api
+            .url(`/customers/search`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .post(body)
+            .json((response) => {
+                return response;
+            });
+
+        return Promise.resolve(data);
+    }
+
+    async getCustomers(options) {
+        const { filters, sort, sortBy, page, query, view } = options;
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const data = await api
+            .url('/customers')
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        const customers = data.map((customer) => {
+            customer.create_date = parseISO(customer.create_date);
+            customer.last_updated = parseISO(customer.last_updated);
+            return customer;
+        });
+
+        const queriedCustomers = customers.filter((_customer) => {
+            // If query exists, it looks in lead name and address
+            if (
+                !!query &&
+                !_customer.first_name
+                    ?.toLowerCase()
+                    .includes(query.toLowerCase()) &&
+                !_customer.last_name?.toLowerCase().includes(query.toLowerCase()) &&
+                !_customer.company_name?.toLowerCase().includes(query.toLowerCase()) &&
+                !_customer.address?.toLowerCase().includes(query.toLowerCase())
+            ) {
+                return false;
+            }
+
+            // No need to look for any resource fields
+            if (typeof view === 'undefined' || view === 'all') {
+                return true;
+            }
+
+            // In this case, the view represents the resource status
+            return _customer.status === view;
+        });
+        const filteredCustomers = applyFilters(queriedCustomers, filters);
+        const sortedCustomers = applySort(filteredCustomers, sort, sortBy);
+        const paginatedCustomers = applyPagination(sortedCustomers, page);
+
+        return Promise.resolve({
+            customers: paginatedCustomers,
+            customersCount: filteredCustomers.length,
+        });
+    }
+
+    async createCustomer(customer) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+        const response = await api
+            .url('/customers')
+            .auth(`Bearer ${fb_auth.token}`)
+            .post(customer)
+            .json((id) => id[0]);
+
+        return response;
+    }
+
+    async getCustomerLogs(id) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const data = await api
+            .url(`/customers/${id}/logs`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return Promise.resolve(data);
+    }
+
+    async createCustomerLog(id, entry, action) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+
+        const body = {
+            content: entry,
+            action: action,
+        };
+
+        const response = await api
+            .url(`/customers/${id}/logs`)
+            .auth(`Bearer ${fb_auth.token}`)
+            .post(body)
+            .res((response) => response);
+
+        return response;
     }
 
     /* ------------------------------------------------------------------------------------

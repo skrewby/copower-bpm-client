@@ -120,6 +120,14 @@ const InstallLog = Loadable(
     )
 );
 
+const Customers = Loadable(
+    lazy(() =>
+        import('./containers/customers/customers').then((module) => ({
+            default: module.Customers,
+        }))
+    )
+);
+
 const routes = [
     {
         path: '/',
@@ -208,6 +216,15 @@ const routes = [
                                 element: <InstallLog />,
                             },
                         ],
+                    },
+                ],
+            },
+            {
+                path: 'customers',
+                children: [
+                    {
+                        path: '',
+                        element: <Customers />,
                     },
                 ],
             },
