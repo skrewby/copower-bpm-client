@@ -26,13 +26,21 @@ export const InstallChooseCustomerDialog = (props) => {
             submit: null,
         },
         validationSchema: Yup.object().shape({
-            customer_id: Yup.number().required("Must select a customer to assign to install"),
+            customer_id: Yup.number().required(
+                'Must select a customer to assign to install'
+            ),
         }),
         onSubmit: async (values, helpers) => {
             try {
-                const res = await bpmAPI.updateInstall(install.install_id, values).then();
+                const res = await bpmAPI
+                    .updateInstall(install.install_id, values)
+                    .then();
                 if (res.status === 200) {
-                    bpmAPI.createInstallLog(install.install_id, `Changed customer`, true)
+                    bpmAPI.createInstallLog(
+                        install.install_id,
+                        `Changed customer`,
+                        true
+                    );
                     toast.success('Install updated');
                 } else {
                     toast.error('Something went wrong');
@@ -69,9 +77,9 @@ export const InstallChooseCustomerDialog = (props) => {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <CustomerAutocomplete
-                        fullWidth
-                        formik={formik}
-                        value={formik.values.customer_id}
+                            fullWidth
+                            formik={formik}
+                            value={formik.values.customer_id}
                         />
                     </Grid>
                     {formik.errors.submit && (

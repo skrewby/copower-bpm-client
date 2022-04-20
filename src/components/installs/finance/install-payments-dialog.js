@@ -13,7 +13,7 @@ import {
     Grid,
     MenuItem,
     FormControlLabel,
-    Checkbox
+    Checkbox,
 } from '@mui/material';
 import { InputField } from '../../form/input-field';
 import { DateField } from '../../form/date-field';
@@ -42,16 +42,27 @@ export const InstallPaymentsDialog = (props) => {
             deposit_paid_date: Yup.date(),
             invoice_paid: Yup.boolean(),
             invoice_amount: Yup.number(),
-            invoice_paid_date: Yup.date()
+            invoice_paid_date: Yup.date(),
         }),
         onSubmit: async (values, helpers) => {
             try {
                 // Remove empty strings and null values
-                let payments_values = Object.fromEntries(Object.entries(values).filter(([_, v]) => (v !== null && v !== "")));
+                let payments_values = Object.fromEntries(
+                    Object.entries(values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
 
-                payments_values.deposit_amount = Number(payments_values.deposit_amount);    
-                payments_values.invoice_amount = Number(payments_values.invoice_amount);    
-                const res = await bpmAPI.updateInstall(install.install_id, payments_values);
+                payments_values.deposit_amount = Number(
+                    payments_values.deposit_amount
+                );
+                payments_values.invoice_amount = Number(
+                    payments_values.invoice_amount
+                );
+                const res = await bpmAPI.updateInstall(
+                    install.install_id,
+                    payments_values
+                );
                 if (res.status === 200) {
                     toast.success('Property updated');
                 } else {
@@ -89,111 +100,125 @@ export const InstallPaymentsDialog = (props) => {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <FormControlLabel
-                            control={(
+                            control={
                                 <Checkbox
                                     checked={formik.values.deposit_paid}
-                                    onChange={(event) => formik.setFieldValue('deposit_paid',
-                                        event.target.checked)}
+                                    onChange={(event) =>
+                                        formik.setFieldValue(
+                                            'deposit_paid',
+                                            event.target.checked
+                                        )
+                                    }
                                 />
-                             )}
-                      label="Deposit Paid"
-                    />
-                    </Grid>
-                    {formik.values.deposit_paid ?
-                    <Grid item xs={6}>
-                        <InputField
-                            error={Boolean(
-                                formik.touched.deposit_amount &&
-                                    formik.errors.deposit_amount
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.deposit_amount &&
-                                formik.errors.deposit_amount
                             }
-                            label="Deposit Amount"
-                            name="deposit_amount"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.deposit_amount}
+                            label="Deposit Paid"
                         />
                     </Grid>
-                    :
-                    null
-                    }
-                    {formik.values.deposit_paid ?
-                    <Grid
-                    item
-                    md={6}
-                    xs={6}
-                  >
-                    <DateField
-                      error={Boolean(formik.touched.deposit_paid_date && formik.errors.deposit_paid_date)}
-                      fullWidth
-                      helperText={formik.touched.deposit_paid_date && formik.errors.deposit_paid_date}
-                      label="Deposit Paid Date"
-                      name="deposit_paid_date"
-                      onChange={(date) => formik.setFieldValue('deposit_paid_date', date)}
-                      value={formik.values.deposit_paid_date}
-                    />
-                  </Grid>
-                  :
-                  null
-                  }
+                    {formik.values.deposit_paid ? (
+                        <Grid item xs={6}>
+                            <InputField
+                                error={Boolean(
+                                    formik.touched.deposit_amount &&
+                                        formik.errors.deposit_amount
+                                )}
+                                fullWidth
+                                helperText={
+                                    formik.touched.deposit_amount &&
+                                    formik.errors.deposit_amount
+                                }
+                                label="Deposit Amount"
+                                name="deposit_amount"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.deposit_amount}
+                            />
+                        </Grid>
+                    ) : null}
+                    {formik.values.deposit_paid ? (
+                        <Grid item md={6} xs={6}>
+                            <DateField
+                                error={Boolean(
+                                    formik.touched.deposit_paid_date &&
+                                        formik.errors.deposit_paid_date
+                                )}
+                                fullWidth
+                                helperText={
+                                    formik.touched.deposit_paid_date &&
+                                    formik.errors.deposit_paid_date
+                                }
+                                label="Deposit Paid Date"
+                                name="deposit_paid_date"
+                                onChange={(date) =>
+                                    formik.setFieldValue(
+                                        'deposit_paid_date',
+                                        date
+                                    )
+                                }
+                                value={formik.values.deposit_paid_date}
+                            />
+                        </Grid>
+                    ) : null}
 
-                  <Grid item xs={12}>
+                    <Grid item xs={12}>
                         <FormControlLabel
-                            control={(
+                            control={
                                 <Checkbox
                                     checked={formik.values.invoice_paid}
-                                    onChange={(event) => formik.setFieldValue('invoice_paid',
-                                        event.target.checked)}
+                                    onChange={(event) =>
+                                        formik.setFieldValue(
+                                            'invoice_paid',
+                                            event.target.checked
+                                        )
+                                    }
                                 />
-                             )}
-                      label="Invoice Paid"
-                    />
-                    </Grid>
-                    {formik.values.invoice_paid ?
-                    <Grid item xs={6}>
-                        <InputField
-                            error={Boolean(
-                                formik.touched.invoice_amount &&
-                                    formik.errors.invoice_amount
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.invoice_amount &&
-                                formik.errors.invoice_amount
                             }
-                            label="Invoice Amount"
-                            name="invoice_amount"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.invoice_amount}
+                            label="Invoice Paid"
                         />
                     </Grid>
-                    :
-                    null
-                    }
-                    {formik.values.invoice_paid ?
-                    <Grid
-                    item
-                    md={6}
-                    xs={6}
-                  >
-                    <DateField
-                      error={Boolean(formik.touched.invoice_paid_date && formik.errors.invoice_paid_date)}
-                      fullWidth
-                      helperText={formik.touched.invoice_paid_date && formik.errors.invoice_paid_date}
-                      label="Invoice Paid Date"
-                      name="invoice_paid_date"
-                      onChange={(date) => formik.setFieldValue('invoice_paid_date', date)}
-                      value={formik.values.invoice_paid_date}
-                    />
-                  </Grid>
-                  :
-                  null
-                  }
+                    {formik.values.invoice_paid ? (
+                        <Grid item xs={6}>
+                            <InputField
+                                error={Boolean(
+                                    formik.touched.invoice_amount &&
+                                        formik.errors.invoice_amount
+                                )}
+                                fullWidth
+                                helperText={
+                                    formik.touched.invoice_amount &&
+                                    formik.errors.invoice_amount
+                                }
+                                label="Invoice Amount"
+                                name="invoice_amount"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.invoice_amount}
+                            />
+                        </Grid>
+                    ) : null}
+                    {formik.values.invoice_paid ? (
+                        <Grid item md={6} xs={6}>
+                            <DateField
+                                error={Boolean(
+                                    formik.touched.invoice_paid_date &&
+                                        formik.errors.invoice_paid_date
+                                )}
+                                fullWidth
+                                helperText={
+                                    formik.touched.invoice_paid_date &&
+                                    formik.errors.invoice_paid_date
+                                }
+                                label="Invoice Paid Date"
+                                name="invoice_paid_date"
+                                onChange={(date) =>
+                                    formik.setFieldValue(
+                                        'invoice_paid_date',
+                                        date
+                                    )
+                                }
+                                value={formik.values.invoice_paid_date}
+                            />
+                        </Grid>
+                    ) : null}
                     {formik.errors.submit && (
                         <Grid item xs={12}>
                             <FormHelperText error>

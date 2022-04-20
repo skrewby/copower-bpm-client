@@ -27,41 +27,61 @@ export const InstallPayments = (props) => {
                     <PropertyList>
                         <PropertyListItem
                             label="Deposit Paid"
-                            value={install.deposit_paid ? "Paid" : ""}
+                            value={install.deposit_paid ? 'Paid' : ''}
                         />
                         <PropertyListItem
                             label="Invoice Paid"
-                            value={install.invoice_paid ? "Paid" : ""}
+                            value={install.invoice_paid ? 'Paid' : ''}
                         />
                     </PropertyList>
                 </Grid>
                 <Grid item sm={4} xs={12}>
                     <PropertyList>
-                    <PropertyListItem
+                        <PropertyListItem
                             label="Deposit Amount"
-                            value={install.deposit_paid ? install.deposit_amount === null ? "" : install.deposit_amount.toString() : ""}
+                            value={
+                                install.deposit_paid
+                                    ? install.deposit_amount === null
+                                        ? ''
+                                        : install.deposit_amount.toString()
+                                    : ''
+                            }
                         />
                         <PropertyListItem
                             label="Invoice Amount"
-                            value={install.invoice_paid ? install.invoice_amount === null ? "" : install.invoice_amount.toString() : ""}
+                            value={
+                                install.invoice_paid
+                                    ? install.invoice_amount === null
+                                        ? ''
+                                        : install.invoice_amount.toString()
+                                    : ''
+                            }
                         />
                     </PropertyList>
                 </Grid>
                 <Grid item sm={4} xs={12}>
                     <PropertyList>
-                    <PropertyListItem
+                        <PropertyListItem
                             label="Deposit Paid Date"
-                            value={install.deposit_paid ? format(
-                                parseISO(install.deposit_paid_date),
-                                'dd MMM yyyy'
-                            ) : ""}
+                            value={
+                                install.deposit_paid
+                                    ? format(
+                                          parseISO(install.deposit_paid_date),
+                                          'dd MMM yyyy'
+                                      )
+                                    : ''
+                            }
                         />
                         <PropertyListItem
                             label="Invoice Paid Date"
-                            value={install.invoice_paid ? format(
-                                parseISO(install.invoice_paid_date),
-                                'dd MMM yyyy'
-                            ) : ""}
+                            value={
+                                install.invoice_paid
+                                    ? format(
+                                          parseISO(install.invoice_paid_date),
+                                          'dd MMM yyyy'
+                                      )
+                                    : ''
+                            }
                         />
                     </PropertyList>
                 </Grid>
