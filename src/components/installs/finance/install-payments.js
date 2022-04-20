@@ -27,11 +27,19 @@ export const InstallPayments = (props) => {
                     <PropertyList>
                         <PropertyListItem
                             label="Deposit Paid"
-                            value={install.deposit_paid ? 'Paid' : ''}
+                            value={
+                                install.deposit_paid
+                                    ? 'Paid'
+                                    : 'Waiting Payment'
+                            }
                         />
                         <PropertyListItem
                             label="Invoice Paid"
-                            value={install.invoice_paid ? 'Paid' : ''}
+                            value={
+                                install.invoice_paid
+                                    ? 'Paid'
+                                    : 'Waiting Payment'
+                            }
                         />
                     </PropertyList>
                 </Grid>

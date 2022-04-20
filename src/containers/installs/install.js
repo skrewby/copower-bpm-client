@@ -36,6 +36,10 @@ export const Install = () => {
             label: 'Summary',
         },
         {
+            href: `/bpm/installs/${installID}/meter`,
+            label: 'Meter',
+        },
+        {
             href: `/bpm/installs/${installID}/finance`,
             label: 'Finance',
         },

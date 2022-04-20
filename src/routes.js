@@ -126,6 +126,13 @@ const InstallFinance = Loadable(
         }))
     )
 );
+const InstallMeter = Loadable(
+    lazy(() =>
+        import('./containers/installs/install-meter').then((module) => ({
+            default: module.InstallMeter,
+        }))
+    )
+);
 
 const Customers = Loadable(
     lazy(() =>
@@ -231,6 +238,10 @@ const routes = [
                             {
                                 path: '',
                                 element: <InstallSummary />,
+                            },
+                            {
+                                path: 'meter',
+                                element: <InstallMeter />,
                             },
                             {
                                 path: 'finance',
