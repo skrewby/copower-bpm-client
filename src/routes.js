@@ -119,6 +119,13 @@ const InstallLog = Loadable(
         }))
     )
 );
+const InstallFinance = Loadable(
+    lazy(() =>
+        import('./containers/installs/install-finance').then((module) => ({
+            default: module.InstallFinance,
+        }))
+    )
+);
 
 const Customers = Loadable(
     lazy(() =>
@@ -224,6 +231,10 @@ const routes = [
                             {
                                 path: '',
                                 element: <InstallSummary />,
+                            },
+                            {
+                                path: 'finance',
+                                element: <InstallFinance />,
                             },
                             {
                                 path: 'log',

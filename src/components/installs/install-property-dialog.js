@@ -456,5 +456,5 @@ InstallPropertyDialog.defaultProps = {
 InstallPropertyDialog.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
-    lead: PropTypes.object,
+    install: PropTypes.object,
 };
