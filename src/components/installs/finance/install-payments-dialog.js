@@ -64,7 +64,7 @@ export const InstallPaymentsDialog = (props) => {
                     payments_values
                 );
                 if (res.status === 200) {
-                    toast.success('Property updated');
+                    toast.success('Install updated');
                 } else {
                     toast.error('Something went wrong');
                 }

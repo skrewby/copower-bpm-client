@@ -28,43 +28,39 @@ export const InstallPTCDialog = (props) => {
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
-            deposit_paid: install?.deposit_paid || false,
-            deposit_amount: install?.deposit_amount || '',
-            deposit_paid_date: parseISO(install?.deposit_paid_date) || now,
-            invoice_paid: install?.invoice_paid || false,
-            invoice_amount: install?.invoice_amount || '',
-            invoice_paid_date: parseISO(install?.invoice_paid_date) || now,
+            ptc_form_sent: install?.ptc_form_sent || false,
+            ptc_form_sent_date: parseISO(install?.ptc_form_sent_date) || now,
+            ptc_approved: install?.ptc_approved || false,
+            ptc_approval_date: parseISO(install?.ptc_approval_date) || now,
+            ptc_number: install?.ptc_number || '',
+            ptc_condition: install?.ptc_condition || '',
+            ptc_exempted: install?.ptc_exempted || false,
             submit: null,
         },
         validationSchema: Yup.object().shape({
-            deposit_paid: Yup.boolean(),
-            deposit_amount: Yup.number(),
-            deposit_paid_date: Yup.date(),
-            invoice_paid: Yup.boolean(),
-            invoice_amount: Yup.number(),
-            invoice_paid_date: Yup.date(),
+            ptc_form_sent: Yup.boolean(),
+            ptc_form_sent_date: Yup.date(),
+            ptc_approved: Yup.boolean(),
+            ptc_approval_date: Yup.date(),
+            ptc_number: Yup.string(255),
+            ptc_condition: Yup.string(255),
+            ptc_exempted: Yup.boolean(),
         }),
         onSubmit: async (values, helpers) => {
             try {
                 // Remove empty strings and null values
-                let payments_values = Object.fromEntries(
+                let form_values = Object.fromEntries(
                     Object.entries(values).filter(
                         ([_, v]) => v !== null && v !== ''
                     )
                 );
 
-                payments_values.deposit_amount = Number(
-                    payments_values.deposit_amount
-                );
-                payments_values.invoice_amount = Number(
-                    payments_values.invoice_amount
-                );
                 const res = await bpmAPI.updateInstall(
                     install.install_id,
-                    payments_values
+                    form_values
                 );
                 if (res.status === 200) {
-                    toast.success('Property updated');
+                    toast.success('Install updated');
                 } else {
                     toast.error('Something went wrong');
                 }
@@ -95,130 +91,145 @@ export const InstallPTCDialog = (props) => {
                 onExited: () => formik.resetForm(),
             }}
         >
-            <DialogTitle>Edit PTC Status</DialogTitle>
+            <DialogTitle>Permission to Connect</DialogTitle>
             <DialogContent>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={formik.values.deposit_paid}
+                                    checked={formik.values.ptc_form_sent}
                                     onChange={(event) =>
                                         formik.setFieldValue(
-                                            'deposit_paid',
+                                            'ptc_form_sent',
                                             event.target.checked
                                         )
                                     }
                                 />
                             }
-                            label="Deposit Paid"
+                            label="PTC Form Sent"
                         />
                     </Grid>
-                    {formik.values.deposit_paid ? (
-                        <Grid item xs={6}>
-                            <InputField
-                                error={Boolean(
-                                    formik.touched.deposit_amount &&
-                                        formik.errors.deposit_amount
-                                )}
-                                fullWidth
-                                helperText={
-                                    formik.touched.deposit_amount &&
-                                    formik.errors.deposit_amount
-                                }
-                                label="Deposit Amount"
-                                name="deposit_amount"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                value={formik.values.deposit_amount}
-                            />
-                        </Grid>
-                    ) : null}
-                    {formik.values.deposit_paid ? (
+                    {formik.values.ptc_form_sent ? (
                         <Grid item md={6} xs={6}>
                             <DateField
                                 error={Boolean(
-                                    formik.touched.deposit_paid_date &&
-                                        formik.errors.deposit_paid_date
+                                    formik.touched.ptc_form_sent_date &&
+                                        formik.errors.ptc_form_sent_date
                                 )}
                                 fullWidth
                                 helperText={
-                                    formik.touched.deposit_paid_date &&
-                                    formik.errors.deposit_paid_date
+                                    formik.touched.ptc_form_sent_date &&
+                                    formik.errors.ptc_form_sent_date
                                 }
-                                label="Deposit Paid Date"
-                                name="deposit_paid_date"
+                                label="PTC Form Sent Date"
+                                name="ptc_form_sent_date"
                                 onChange={(date) =>
                                     formik.setFieldValue(
-                                        'deposit_paid_date',
+                                        'ptc_form_sent_date',
                                         date
                                     )
                                 }
-                                value={formik.values.deposit_paid_date}
+                                value={formik.values.ptc_form_sent_date}
                             />
                         </Grid>
                     ) : null}
-
                     <Grid item xs={12}>
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={formik.values.invoice_paid}
+                                    checked={formik.values.ptc_approved}
                                     onChange={(event) =>
                                         formik.setFieldValue(
-                                            'invoice_paid',
+                                            'ptc_approved',
                                             event.target.checked
                                         )
                                     }
                                 />
                             }
-                            label="Invoice Paid"
+                            label="PTC Approved"
                         />
                     </Grid>
-                    {formik.values.invoice_paid ? (
-                        <Grid item xs={6}>
-                            <InputField
-                                error={Boolean(
-                                    formik.touched.invoice_amount &&
-                                        formik.errors.invoice_amount
-                                )}
-                                fullWidth
-                                helperText={
-                                    formik.touched.invoice_amount &&
-                                    formik.errors.invoice_amount
-                                }
-                                label="Invoice Amount"
-                                name="invoice_amount"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                value={formik.values.invoice_amount}
-                            />
-                        </Grid>
-                    ) : null}
-                    {formik.values.invoice_paid ? (
+                    {formik.values.ptc_approved ? (
                         <Grid item md={6} xs={6}>
                             <DateField
                                 error={Boolean(
-                                    formik.touched.invoice_paid_date &&
-                                        formik.errors.invoice_paid_date
+                                    formik.touched.ptc_approval_date &&
+                                        formik.errors.ptc_approval_date
                                 )}
                                 fullWidth
                                 helperText={
-                                    formik.touched.invoice_paid_date &&
-                                    formik.errors.invoice_paid_date
+                                    formik.touched.ptc_approval_date &&
+                                    formik.errors.ptc_approval_date
                                 }
-                                label="Invoice Paid Date"
-                                name="invoice_paid_date"
+                                label="PTC Approval Date"
+                                name="ptc_approval_date"
                                 onChange={(date) =>
                                     formik.setFieldValue(
-                                        'invoice_paid_date',
+                                        'ptc_approval_date',
                                         date
                                     )
                                 }
-                                value={formik.values.invoice_paid_date}
+                                value={formik.values.ptc_approval_date}
                             />
                         </Grid>
                     ) : null}
+                    {formik.values.ptc_approved ? (
+                        <Grid item xs={6}>
+                            <InputField
+                                error={Boolean(
+                                    formik.touched.ptc_number &&
+                                        formik.errors.ptc_number
+                                )}
+                                fullWidth
+                                helperText={
+                                    formik.touched.ptc_number &&
+                                    formik.errors.ptc_number
+                                }
+                                label="Approval Number"
+                                name="ptc_number"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.ptc_number}
+                            />
+                        </Grid>
+                    ) : null}
+                    {formik.values.ptc_approved ? (
+                        <Grid item xs={12}>
+                            <InputField
+                                error={Boolean(
+                                    formik.touched.ptc_condition &&
+                                        formik.errors.ptc_condition
+                                )}
+                                fullWidth
+                                helperText={
+                                    formik.touched.ptc_condition &&
+                                    formik.errors.ptc_condition
+                                }
+                                label="Approval Condition"
+                                name="ptc_condition"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.ptc_condition}
+                            />
+                        </Grid>
+                    ) : null}
+                    <Grid item xs={12}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={formik.values.ptc_exempted}
+                                    onChange={(event) =>
+                                        formik.setFieldValue(
+                                            'ptc_exempted',
+                                            event.target.checked
+                                        )
+                                    }
+                                />
+                            }
+                            label="PTC Exempted"
+                        />
+                    </Grid>
                     {formik.errors.submit && (
                         <Grid item xs={12}>
                             <FormHelperText error>

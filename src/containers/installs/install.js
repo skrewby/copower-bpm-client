@@ -23,6 +23,8 @@ import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
+const now = new Date().toISOString();
+
 export const Install = () => {
     let { installID } = useParams();
     const mounted = useMounted();
@@ -54,6 +56,15 @@ export const Install = () => {
 
         try {
             const result = await bpmAPI.getInstall(installID);
+
+            // Need to set null dates to now in order to avoid infinite loops due to the dialogs
+            // We did not make the default in the database to current_timestamp as we don't want
+            // the default to be a really old date in case the install was created a few months
+            // prior
+            result.ptc_form_sent_date = result.ptc_form_sent_date ?? now;
+            result.deposit_paid_date = result.deposit_paid_date ?? now;
+            result.invoice_paid_date = result.invoice_paid_date ?? now;
+            result.ptc_approval_date = result.ptc_approval_date ?? now;
 
             if (mounted.current) {
                 setInstallState(() => ({

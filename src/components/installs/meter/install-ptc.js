@@ -26,20 +26,21 @@ export const InstallPTC = (props) => {
                 <Grid item sm={6} xs={12}>
                     <PropertyList>
                         <PropertyListItem
-                            label="PTC Form Sent Date"
+                            label="PTC Status"
                             value={
-                                install.ptc_form_sent_date
-                                    ? format(
-                                          parseISO(install.ptc_form_sent_date),
-                                          'dd MMM yyyy'
-                                      )
+                                install.ptc_approved
+                                    ? 'Approved'
+                                    : install.ptc_exempted
+                                    ? 'Exempted'
+                                    : install.ptc_form_sent
+                                    ? 'Waiting for Approval'
                                     : ''
                             }
                         />
                         <PropertyListItem
                             label="PTC Approval Date"
                             value={
-                                install.ptc_approval_date
+                                install.ptc_approved
                                     ? format(
                                           parseISO(install.ptc_approval_date),
                                           'dd MMM yyyy'
@@ -49,27 +50,32 @@ export const InstallPTC = (props) => {
                         />
                         <PropertyListItem
                             label="Approval Condition"
-                            value={install.ptc_approval_condition}
+                            value={
+                                install.ptc_approved
+                                    ? install.ptc_condition
+                                    : ''
+                            }
                         />
                     </PropertyList>
                 </Grid>
                 <Grid item sm={6} xs={12}>
                     <PropertyList>
                         <PropertyListItem
-                            label="PTC Status"
+                            label="PTC Form Sent Date"
                             value={
-                                install.ptc_approved
-                                    ? 'Approved'
-                                    : install.ptc_exempted
-                                    ? 'Exempted'
-                                    : install.ptc_form_sent_date
-                                    ? 'Waiting for Approval'
-                                    : 'Apply for PTC'
+                                install.ptc_form_sent
+                                    ? format(
+                                          parseISO(install.ptc_form_sent_date),
+                                          'dd MMM yyyy'
+                                      )
+                                    : ''
                             }
                         />
                         <PropertyListItem
                             label="Approval Number"
-                            value={install.ptc_number}
+                            value={
+                                install.ptc_approved ? install.ptc_number : ''
+                            }
                         />
                     </PropertyList>
                 </Grid>
