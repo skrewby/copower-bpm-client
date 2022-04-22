@@ -133,6 +133,13 @@ const InstallMeter = Loadable(
         }))
     )
 );
+const InstallSchedule = Loadable(
+    lazy(() =>
+        import('./containers/installs/install-schedule').then((module) => ({
+            default: module.InstallSchedule,
+        }))
+    )
+);
 
 const Customers = Loadable(
     lazy(() =>
@@ -242,6 +249,10 @@ const routes = [
                             {
                                 path: 'meter',
                                 element: <InstallMeter />,
+                            },
+                            {
+                                path: 'schedule',
+                                element: <InstallSchedule />,
                             },
                             {
                                 path: 'finance',

@@ -42,6 +42,10 @@ export const Install = () => {
             label: 'Meter',
         },
         {
+            href: `/bpm/installs/${installID}/schedule`,
+            label: 'Schedule',
+        },
+        {
             href: `/bpm/installs/${installID}/finance`,
             label: 'Finance',
         },
@@ -65,6 +69,7 @@ export const Install = () => {
             result.deposit_paid_date = result.deposit_paid_date ?? now;
             result.invoice_paid_date = result.invoice_paid_date ?? now;
             result.ptc_approval_date = result.ptc_approval_date ?? now;
+            result.schedule = result.schedule ?? now;
 
             if (mounted.current) {
                 setInstallState(() => ({

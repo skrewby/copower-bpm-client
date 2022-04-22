@@ -342,8 +342,12 @@ class BPMAPi {
                 !_customer.first_name
                     ?.toLowerCase()
                     .includes(query.toLowerCase()) &&
-                !_customer.last_name?.toLowerCase().includes(query.toLowerCase()) &&
-                !_customer.company_name?.toLowerCase().includes(query.toLowerCase()) &&
+                !_customer.last_name
+                    ?.toLowerCase()
+                    .includes(query.toLowerCase()) &&
+                !_customer.company_name
+                    ?.toLowerCase()
+                    .includes(query.toLowerCase()) &&
                 !_customer.address?.toLowerCase().includes(query.toLowerCase())
             ) {
                 return false;
@@ -439,7 +443,7 @@ class BPMAPi {
 
     async updateProperty(id, values) {
         const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
-        
+
         const response = await api
             .url(`/properties/${id}`)
             .auth(`Bearer ${fb_auth.token}`)
@@ -447,6 +451,20 @@ class BPMAPi {
             .res((response) => response);
 
         return response;
+    }
+
+    /* ------------------------------------------------------------------------------------
+                                            INSTALLERS
+    --------------------------------------------------------------------------------------- */
+    async getInstallers(options) {
+        const data = await api
+            .url('/installers')
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return data;
     }
 
     /* ------------------------------------------------------------------------------------

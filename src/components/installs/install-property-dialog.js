@@ -73,7 +73,9 @@ export const InstallPropertyDialog = (props) => {
                 };
             });
 
-            const propertyResult = await bpmAPI.getProperty(install.property_id);
+            const propertyResult = await bpmAPI.getProperty(
+                install.property_id
+            );
 
             if (mounted.current) {
                 setPhaseOptions(phasesResult);
@@ -132,9 +134,16 @@ export const InstallPropertyDialog = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 // Remove empty strings and null values
-                let property_values = Object.fromEntries(Object.entries(values).filter(([_, v]) => (v !== null && v !== "")));
+                let property_values = Object.fromEntries(
+                    Object.entries(values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
 
-                const res = await bpmAPI.updateProperty(install.property_id, property_values);
+                const res = await bpmAPI.updateProperty(
+                    install.property_id,
+                    property_values
+                );
                 if (res.status === 200) {
                     toast.success('Property updated');
                 } else {
@@ -170,16 +179,14 @@ export const InstallPropertyDialog = (props) => {
             <DialogTitle>Edit Property</DialogTitle>
             <DialogContent>
                 <Grid container spacing={2}>
-                <Grid item xs={12}>
+                    <Grid item xs={12}>
                         <InputField
                             error={Boolean(
-                                formik.touched.address &&
-                                    formik.errors.address
+                                formik.touched.address && formik.errors.address
                             )}
                             fullWidth
                             helperText={
-                                formik.touched.address &&
-                                formik.errors.address
+                                formik.touched.address && formik.errors.address
                             }
                             label="Address"
                             name="address"
@@ -407,13 +414,11 @@ export const InstallPropertyDialog = (props) => {
                     <Grid item xs={12}>
                         <InputField
                             error={Boolean(
-                                formik.touched.comment &&
-                                    formik.errors.comment
+                                formik.touched.comment && formik.errors.comment
                             )}
                             fullWidth
                             helperText={
-                                formik.touched.comment &&
-                                formik.errors.comment
+                                formik.touched.comment && formik.errors.comment
                             }
                             label="Comment"
                             name="comment"
