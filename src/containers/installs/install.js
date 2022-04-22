@@ -70,6 +70,10 @@ export const Install = () => {
             result.invoice_paid_date = result.invoice_paid_date ?? now;
             result.ptc_approval_date = result.ptc_approval_date ?? now;
             result.schedule = result.schedule ?? now;
+            result.inspection_booked_date =
+                result.inspection_booked_date ?? now;
+            result.inspection_completed_date =
+                result.inspection_completed_date ?? now;
 
             if (mounted.current) {
                 setInstallState(() => ({

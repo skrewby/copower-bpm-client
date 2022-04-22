@@ -5,6 +5,8 @@ import { Box, Container, Grid, Skeleton, Typography } from '@mui/material';
 import { InstallProgress } from '../../components/installs/install-progress';
 import { InstallSetSchedule } from '../../components/installs/schedule/install-set-schedule';
 import { InstallSetScheduleDialog } from '../../components/installs/schedule/install-set-schedule-dialog';
+import { InstallInspection } from '../../components/installs/schedule/install-inspection';
+import { InstallInspectionDialog } from '../../components/installs/schedule/install-inspection-dialog';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import { useOutletContext } from 'react-router-dom';
 
@@ -13,6 +15,7 @@ export const InstallSchedule = () => {
 
     const [openInstallScheduleDialog, setOpenInstallScheduleDialog] =
         useState(false);
+    const [openInspectionDialog, setOpenInspectionDialog] = useState(false);
 
     const renderContent = () => {
         if (installState.isLoading) {
@@ -69,6 +72,12 @@ export const InstallSchedule = () => {
                                 install={installState.data}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <InstallInspection
+                                onEdit={() => setOpenInspectionDialog(true)}
+                                install={installState.data}
+                            />
+                        </Grid>
                     </Grid>
                     <Grid
                         container
@@ -86,6 +95,12 @@ export const InstallSchedule = () => {
                 <InstallSetScheduleDialog
                     onClose={() => setOpenInstallScheduleDialog(false)}
                     open={openInstallScheduleDialog}
+                    install={installState.data}
+                    refresh={setRefresh}
+                />
+                <InstallInspectionDialog
+                    onClose={() => setOpenInspectionDialog(false)}
+                    open={openInspectionDialog}
                     install={installState.data}
                     refresh={setRefresh}
                 />
