@@ -1,4 +1,4 @@
-import { Look } from '../components/calendar/look';
+import { BPMCalendar } from '../components/calendar/calendar';
 import { Helmet } from 'react-helmet-async';
 import { Box, Container, Grid } from '@mui/material';
 
@@ -25,7 +25,7 @@ export function ViewCalendar() {
                         ></Box>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
-                                <Look />
+                                <BPMCalendar />
                             </Grid>
                         </Grid>
                     </Box>
