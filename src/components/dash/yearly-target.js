@@ -12,24 +12,24 @@ import { useTheme } from '@mui/system';
 
 const stats = [
     {
-        content: 'Current - 139 KW',
-        label: 'Fred',
+        content: '139 KW',
+        label: 'Company Current',
     },
     {
-        content: 'Current - 123 KW',
-        label: 'Pedro',
+        content: '123 KW',
+        label: 'Company Target',
     },
     {
-        content: 'Current - 109 KW',
-        label: 'Frank',
+        content: '109 KW',
+        label: 'Company Week',
     },
     {
-        content: 'Current - 138 KW',
-        label: 'Joyce',
+        content: '138 KW',
+        label: 'Compmay Month',
     },
     {
-        content: 'Current - 81 KW',
-        label: 'Eric',
+        content: '81 KW',
+        label: 'Company Year',
     },
 ];
 

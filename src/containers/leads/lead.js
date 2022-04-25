@@ -94,12 +94,17 @@ export const Lead = () => {
             onClick: handleSendQuote,
         },
         {
+<<<<<<< Updated upstream
             label: 'Accept Sale',
             onClick: handleAccept,
         },
         {
             label: 'Reject Sale',
             onClick: handleReject,
+=======
+            label: 'Download',
+            onClick: handleSendQuote,
+>>>>>>> Stashed changes
         },
     ];
 

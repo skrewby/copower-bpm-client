@@ -66,7 +66,7 @@ export const TargetsOverview = (props) => {
     return (
         <Card variant="outlined" {...props}>
             <CardHeader
-                title="Target Overview - 10/15"
+                title="Target Overview - 10/15 KW"
                 sx={{
                     py: 2.26,
                 }}
