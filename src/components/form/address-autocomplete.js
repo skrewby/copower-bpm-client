@@ -6,20 +6,11 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Grid from '@mui/material/Grid';
 import throttle from 'lodash/throttle';
 import wretch from 'wretch';
-import { CoPresent } from '@mui/icons-material';
 
-let baseUrl = 'https://addressr.p.rapidapi.com/addresses?q=';
-
-let addressrAPIoptions = {
-    method: 'GET',
-    headers: {
-        'X-RapidAPI-Host': 'addressr.p.rapidapi.com',
-        'X-RapidAPI-Key': 'c4358055c3msh8304d1e0856dce9p12d565jsn0d48dc368603',
-    },
-};
+let baseUrl = 'http://165.22.253.133:8080/addresses?q=';
 
 export function AddressAutocomplete(props) {
-    const { formik, ...other  } = props;
+    const { formik, ...other } = props;
     const [value, setValue] = React.useState(null);
     const [inputValue, setInputValue] = React.useState('');
     const [options, setOptions] = React.useState([]);
@@ -31,7 +22,7 @@ export function AddressAutocomplete(props) {
                 const url = `${baseUrl}${input}`;
                 wretch()
                     .url(url)
-                    .options(addressrAPIoptions)
+                    .options({ mode: 'cors' })
                     .get()
                     .json(callback);
             }, 200),
@@ -83,9 +74,9 @@ export function AddressAutocomplete(props) {
             filterSelectedOptions
             onChange={(event, newValue) => {
                 formik.setFieldValue(
-                    "address",
-                    newValue !== null ? newValue : ""
-                  );
+                    'address',
+                    newValue !== null ? newValue : ''
+                );
             }}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);

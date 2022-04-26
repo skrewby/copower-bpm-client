@@ -7,6 +7,8 @@ import { InstallSetSchedule } from '../../components/installs/schedule/install-s
 import { InstallSetScheduleDialog } from '../../components/installs/schedule/install-set-schedule-dialog';
 import { InstallInspection } from '../../components/installs/schedule/install-inspection';
 import { InstallInspectionDialog } from '../../components/installs/schedule/install-inspection-dialog';
+import { InstallReview } from '../../components/installs/schedule/install-review';
+import { InstallReviewDialog } from '../../components/installs/schedule/install-review-dialog';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import { useOutletContext } from 'react-router-dom';
 
@@ -16,6 +18,7 @@ export const InstallSchedule = () => {
     const [openInstallScheduleDialog, setOpenInstallScheduleDialog] =
         useState(false);
     const [openInspectionDialog, setOpenInspectionDialog] = useState(false);
+    const [openReviewDialog, setOpenReviewDialog] = useState(false);
 
     const renderContent = () => {
         if (installState.isLoading) {
@@ -78,6 +81,12 @@ export const InstallSchedule = () => {
                                 install={installState.data}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <InstallReview
+                                onEdit={() => setOpenReviewDialog(true)}
+                                install={installState.data}
+                            />
+                        </Grid>
                     </Grid>
                     <Grid
                         container
@@ -101,6 +110,12 @@ export const InstallSchedule = () => {
                 <InstallInspectionDialog
                     onClose={() => setOpenInspectionDialog(false)}
                     open={openInspectionDialog}
+                    install={installState.data}
+                    refresh={setRefresh}
+                />
+                <InstallReviewDialog
+                    onClose={() => setOpenReviewDialog(false)}
+                    open={openReviewDialog}
                     install={installState.data}
                     refresh={setRefresh}
                 />

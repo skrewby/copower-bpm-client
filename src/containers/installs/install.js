@@ -74,6 +74,9 @@ export const Install = () => {
                 result.inspection_booked_date ?? now;
             result.inspection_completed_date =
                 result.inspection_completed_date ?? now;
+            result.review_greenbot_approved_date =
+                result.review_greenbot_approved_date ?? now;
+            result.retailer_notice_date = result.retailer_notice_date ?? now;
 
             if (mounted.current) {
                 setInstallState(() => ({

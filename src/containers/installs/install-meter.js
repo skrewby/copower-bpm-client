@@ -3,14 +3,10 @@ import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { Box, Container, Grid, Skeleton, Typography } from '@mui/material';
 import { InstallProgress } from '../../components/installs/install-progress';
-import { InstallCustomer } from '../../components/installs/install-customer';
-import { InstallPropertyDetails } from '../../components/installs/install-property-details';
-import { InstallPropertyDialog } from '../../components/installs/install-property-dialog';
-import { InstallChooseCustomerDialog } from '../../components/installs/install-choose-customer-dialog';
-import { InstallPaymentsDialog } from '../../components/installs/finance/install-payments-dialog';
-import { InstallPayments } from '../../components/installs/finance/install-payments';
 import { InstallPTC } from '../../components/installs/meter/install-ptc';
 import { InstallPTCDialog } from '../../components/installs/meter/install-ptc-dialog';
+import { InstallRetailer } from '../../components/installs/meter/install-retailer';
+import { InstallRetailerDialog } from '../../components/installs/meter/install-retailer-dialog';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import { useOutletContext } from 'react-router-dom';
 
@@ -18,6 +14,7 @@ export const InstallMeter = () => {
     const [installState, setRefresh] = useOutletContext();
 
     const [openPTCDialog, setOpenPTCDialog] = useState(false);
+    const [openRetailerDialog, setOpenRetailerDialog] = useState(false);
 
     const renderContent = () => {
         if (installState.isLoading) {
@@ -72,6 +69,12 @@ export const InstallMeter = () => {
                                 install={installState.data}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <InstallRetailer
+                                onEdit={() => setOpenRetailerDialog(true)}
+                                install={installState.data}
+                            />
+                        </Grid>
                     </Grid>
                     <Grid
                         container
@@ -89,6 +92,12 @@ export const InstallMeter = () => {
                 <InstallPTCDialog
                     onClose={() => setOpenPTCDialog(false)}
                     open={openPTCDialog}
+                    install={installState.data}
+                    refresh={setRefresh}
+                />
+                <InstallRetailerDialog
+                    onClose={() => setOpenRetailerDialog(false)}
+                    open={openRetailerDialog}
                     install={installState.data}
                     refresh={setRefresh}
                 />

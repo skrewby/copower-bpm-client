@@ -242,20 +242,7 @@ export const LeadCreateDialog = (props) => {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <InputField
-                            error={Boolean(
-                                formik.touched.address && formik.errors.address
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.address && formik.errors.address
-                            }
-                            label="Address"
-                            name="address"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.address}
-                        />
+                        <AddressAutocomplete fullWidth formik={formik} />
                     </Grid>
                     <Grid item xs={6}>
                         <InputField
