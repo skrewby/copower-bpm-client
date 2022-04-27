@@ -11,7 +11,9 @@ import { wait } from '../utils/wait';
 // Heroku
 // const server_url =  https://copower-server.herokuapp.com/api
 
-const server_url = 'http://localhost:5000/api';
+const serverRemote = process.env.REACT_APP_SERVER_URL;
+const serverLocal = 'http://localhost:5000/api';
+const server_url = serverRemote ?? serverLocal;
 
 // Cross origin authenticated requests on an external API
 const api = wretch()
