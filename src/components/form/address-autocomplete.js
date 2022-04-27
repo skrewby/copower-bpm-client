@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import throttle from 'lodash/throttle';
 import wretch from 'wretch';
 
-let baseUrl = 'http://165.22.253.133:8080/addresses?q=';
+let baseUrl = '//165.22.253.133:8080/addresses?q=';
 
 export function AddressAutocomplete(props) {
     const { formik, ...other } = props;
