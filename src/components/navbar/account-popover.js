@@ -18,6 +18,7 @@ import { usePopover } from '../../hooks/use-popover';
 import { ChevronDown as ChevronDownIcon } from '../../icons/chevron-down';
 import { Logout as LogoutIcon } from '../../icons/logout';
 import { User as UserIcon } from '../../icons/user';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 import { lightNeutral } from '../../colors';
 import { bpmAPI } from '../../api/bpmAPI';
 import { useMounted } from '../../hooks/use-mounted';
@@ -27,18 +28,18 @@ export const AccountPopover = (props) => {
     const navigate = useNavigate();
     const { logout } = useAuth();
     const [anchorRef, open, handleOpen, handleClose] = usePopover();
-    const [userName, setUserName] = useState('User');
+    const [userState, setUserState] = useState('User');
     const mounted = useMounted();
 
     const getData = useCallback(async () => {
         try {
             const user = await bpmAPI.getCurrentUser();
             if (mounted.current) {
-                setUserName(user.user_name);
+                setUserState(user);
             }
         } catch (err) {
             console.log(err);
-            setUserName('User');
+            setUserState({ dislplayName: 'User' });
         }
     }, [mounted]);
 
@@ -103,7 +104,7 @@ export const AccountPopover = (props) => {
                             sx={{ color: 'primary.contrastText' }}
                             variant="subtitle2"
                         >
-                            {userName}
+                            {userState.displayName}
                         </Typography>
                     </div>
                     <ChevronDownIcon
@@ -137,7 +138,7 @@ export const AccountPopover = (props) => {
                             <Avatar variant="rounded" src="/static/user.png" />
                         </ListItemAvatar>
                         <ListItemText
-                            primary={userName}
+                            primary={userState.displayName}
                             secondary="Space Solar Service"
                         />
                     </ListItem>
@@ -153,6 +154,21 @@ export const AccountPopover = (props) => {
                         </ListItemIcon>
                         <ListItemText primary="Account" />
                     </ListItem>
+                    {(userState.role === 'sysadmin' ||
+                        userState.role === 'manager') && (
+                        <ListItem
+                            button
+                            component={RouterLink}
+                            divider
+                            onClick={handleClose}
+                            to="/bpm/organization"
+                        >
+                            <ListItemIcon>
+                                <ApartmentIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Organization" />
+                        </ListItem>
+                    )}
                     <ListItem button onClick={handleLogout}>
                         <ListItemIcon>
                             <LogoutIcon />

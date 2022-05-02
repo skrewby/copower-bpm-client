@@ -27,8 +27,10 @@ class BPMAPi {
                                             USERS
     --------------------------------------------------------------------------------------- */
     async getUsers(options) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
         const data = await api
             .url('/users')
+            .auth(`Bearer ${fb_auth.token}`)
             .get()
             .json((response) => {
                 return response;
@@ -48,6 +50,39 @@ class BPMAPi {
             });
 
         return data;
+    }
+
+    async getValidRoles(options) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+        const data = await api
+            .url('/roles')
+            .auth(`Bearer ${fb_auth.token}`)
+            .get()
+            .json((response) => {
+                return response;
+            });
+
+        return data;
+    }
+
+    async createUser(user) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+        const response = await api
+            .url('/user')
+            .auth(`Bearer ${fb_auth.token}`)
+            .post(user);
+
+        return response;
+    }
+
+    async updateUser(user) {
+        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
+        const response = api
+            .url('/user')
+            .auth(`Bearer ${fb_auth.token}`)
+            .put(user);
+
+        return response;
     }
 
     /* ------------------------------------------------------------------------------------

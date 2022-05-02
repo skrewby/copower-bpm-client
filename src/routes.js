@@ -163,6 +163,24 @@ const CustomerSummary = Loadable(
     )
 );
 
+// Organization
+const Organization = Loadable(
+    lazy(() =>
+        import('./containers/organization/organization').then((module) => ({
+            default: module.Organization,
+        }))
+    )
+);
+const OrganizationMembers = Loadable(
+    lazy(() =>
+        import('./containers/organization/organization-members').then(
+            (module) => ({
+                default: module.OrganizationMembers,
+            })
+        )
+    )
+);
+
 const routes = [
     {
         path: '/',
@@ -282,6 +300,16 @@ const routes = [
                                 element: <CustomerSummary />,
                             },
                         ],
+                    },
+                ],
+            },
+            {
+                path: 'organization',
+                element: <Organization />,
+                children: [
+                    {
+                        path: '',
+                        element: <OrganizationMembers />,
                     },
                 ],
             },
