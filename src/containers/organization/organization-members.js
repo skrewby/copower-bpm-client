@@ -23,6 +23,8 @@ import { useMounted } from '../../hooks/use-mounted';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import { OrganizationInviteDialog } from '../../components/organization/organization-invite-dialog';
 import { OrganizationEditUserDialog } from '../../components/organization/organization-edit-user-dialog';
+import { useDialog } from '../../hooks/use-dialog';
+import { ConfirmationDialog } from '../../components/confirmation-dialog';
 import AddIcon from '@mui/icons-material/Add';
 
 export const OrganizationMembers = () => {
@@ -32,6 +34,11 @@ export const OrganizationMembers = () => {
 
     const [openAdd, setOpenAdd] = useState(false);
     const [openEditUser, setOpenEditUser] = useState(false);
+
+    const [disableUserOpen, handleOpenDisableUser, handleCloseDisableUser] =
+        useDialog();
+    const [enableUserOpen, handleOpenEnableUser, handleCloseEnableUser] =
+        useDialog();
 
     // The information of the user that will be modified
     const [userEdit, setUserEdit] = useState({});
@@ -72,6 +79,17 @@ export const OrganizationMembers = () => {
         setRefresh(false);
         getData().catch(console.error);
     }, [getData, refresh]);
+
+    const handleDisableUser = () => {
+        handleCloseDisableUser();
+        bpmAPI.updateUser({ email: userEdit.email, disabled: true });
+        toast.success('User disabled. Refresh to see changes');
+    };
+    const handleEnableUser = () => {
+        handleCloseEnableUser();
+        bpmAPI.updateUser({ email: userEdit.email, disabled: false });
+        toast.success('User enabled. Refresh to see changes');
+    };
 
     const renderContent = () => {
         if (membersState.isLoading || rolesState.isLoading) {
@@ -143,6 +161,10 @@ export const OrganizationMembers = () => {
                                     (option) => option.value === member.role
                                 );
 
+                                const textColour = member.disabled
+                                    ? 'text.secondary'
+                                    : 'text.primary';
+
                                 return (
                                     <TableRow key={member.uid}>
                                         <TableCell>
@@ -158,23 +180,34 @@ export const OrganizationMembers = () => {
                                                     sx={{ mr: 1 }}
                                                 />
                                                 <Typography
-                                                    color="textPrimary"
+                                                    color={
+                                                        member.disabled
+                                                            ? 'textSecondary'
+                                                            : 'textPrimary'
+                                                    }
                                                     variant="subtitle2"
                                                 >
                                                     {member.displayName}
                                                 </Typography>
                                             </Box>
                                         </TableCell>
-                                        <TableCell>{member.email}</TableCell>
-                                        <TableCell>
+                                        <TableCell
+                                            sx={{
+                                                color: textColour,
+                                            }}
+                                        >
+                                            {member.email}
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                color: textColour,
+                                            }}
+                                        >
                                             {member.phoneNumber}
                                         </TableCell>
                                         <TableCell
                                             sx={{
-                                                color:
-                                                    member.role === 'sysadmin'
-                                                        ? 'text.secondary'
-                                                        : 'text.primary',
+                                                color: textColour,
                                             }}
                                         >
                                             {roleOption.label}
@@ -194,24 +227,46 @@ export const OrganizationMembers = () => {
                                                 >
                                                     Edit
                                                 </Typography>
-                                                {member.role !== 'sysadmin' && (
-                                                    <>
-                                                        <Divider
-                                                            flexItem
-                                                            orientation="vertical"
-                                                            sx={{ mx: 2 }}
-                                                        />
+                                                <>
+                                                    <Divider
+                                                        flexItem
+                                                        orientation="vertical"
+                                                        sx={{ mx: 2 }}
+                                                    />
+                                                    {member.disabled ? (
                                                         <Typography
-                                                            color="primary"
+                                                            color="error"
+                                                            onClick={() => {
+                                                                setUserEdit(
+                                                                    member
+                                                                );
+                                                                handleOpenEnableUser();
+                                                            }}
                                                             sx={{
                                                                 cursor: 'pointer',
                                                             }}
                                                             variant="subtitle2"
                                                         >
-                                                            Remove
+                                                            Enable
                                                         </Typography>
-                                                    </>
-                                                )}
+                                                    ) : (
+                                                        <Typography
+                                                            color="error"
+                                                            onClick={() => {
+                                                                setUserEdit(
+                                                                    member
+                                                                );
+                                                                handleOpenDisableUser();
+                                                            }}
+                                                            sx={{
+                                                                cursor: 'pointer',
+                                                            }}
+                                                            variant="subtitle2"
+                                                        >
+                                                            Disable
+                                                        </Typography>
+                                                    )}
+                                                </>
                                             </Box>
                                         </TableCell>
                                     </TableRow>
@@ -231,6 +286,22 @@ export const OrganizationMembers = () => {
                     open={openEditUser}
                     user={userEdit}
                     refresh={setRefresh}
+                />
+                <ConfirmationDialog
+                    message="Are you sure you want to disable this user?"
+                    onCancel={handleCloseDisableUser}
+                    onConfirm={handleDisableUser}
+                    open={disableUserOpen}
+                    title="Disable User"
+                    variant="warning"
+                />
+                <ConfirmationDialog
+                    message="Are you sure you want to enable this user?"
+                    onCancel={handleCloseEnableUser}
+                    onConfirm={handleEnableUser}
+                    open={enableUserOpen}
+                    title="Enable User"
+                    variant="warning"
                 />
             </>
         );

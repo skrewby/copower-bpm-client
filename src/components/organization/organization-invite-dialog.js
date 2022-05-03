@@ -28,6 +28,7 @@ export const OrganizationInviteDialog = (props) => {
             email: '',
             password: '',
             displayName: '',
+            phoneNumber: '',
             role: 'sales',
             submit: null,
         },
@@ -38,11 +39,16 @@ export const OrganizationInviteDialog = (props) => {
                 .required('Email is required'),
             password: Yup.string().max(255).required('Password is required'),
             displayName: Yup.string().max(255).required('Name is required'),
+            phoneNumber: Yup.string().matches(
+                /^\+?[1-9]\d{1,14}$/,
+                'Phone number must be in the E.164 format (ex. +61412345678)'
+            ),
             role: Yup.mixed().oneOf(roleOptions.map((option) => option.value)),
         }),
         onSubmit: async (values, helpers) => {
             try {
                 bpmAPI.createUser(values);
+                toast.success('User created. Refresh to see changes');
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);
                 onClose?.();
@@ -119,6 +125,24 @@ export const OrganizationInviteDialog = (props) => {
                                 onChange={formik.handleChange}
                                 type="email"
                                 value={formik.values.email}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <InputField
+                                error={Boolean(
+                                    formik.touched.phoneNumber &&
+                                        formik.errors.phoneNumber
+                                )}
+                                fullWidth
+                                helperText={
+                                    formik.touched.phoneNumber &&
+                                    formik.errors.phoneNumber
+                                }
+                                label="Phone Number"
+                                name="phoneNumber"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.phoneNumber}
                             />
                         </Grid>
                         <Grid item xs={12}>

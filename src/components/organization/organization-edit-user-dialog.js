@@ -50,9 +50,7 @@ export const OrganizationEditUserDialog = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 bpmAPI.updateUser(values);
-                toast.success(
-                    'Updated member. Might have to refresh to see changes'
-                );
+                toast.success('Updated member. Refresh to see changes');
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);
                 onClose?.();
@@ -124,7 +122,7 @@ export const OrganizationEditUserDialog = (props) => {
                                     formik.touched.phoneNumber &&
                                     formik.errors.phoneNumber
                                 }
-                                label="PhoneNumber"
+                                label="Phone Number"
                                 name="phoneNumber"
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
