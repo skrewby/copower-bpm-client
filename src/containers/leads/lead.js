@@ -50,11 +50,14 @@ export const Lead = () => {
 
         try {
             const result = await bpmAPI.getLead(leadID);
+            const userList = await bpmAPI.getUsers();
+            const user = userList.find((user) => user.uid === result.sales_id);
+            const leadResult = { ...result, sales: user.displayName };
 
             if (mounted.current) {
                 setLeadState(() => ({
                     isLoading: false,
-                    data: result,
+                    data: leadResult,
                 }));
             }
         } catch (err) {

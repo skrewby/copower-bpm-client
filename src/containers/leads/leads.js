@@ -47,9 +47,21 @@ export const Leads = () => {
             });
 
             if (mounted.current) {
+                const userList = await bpmAPI.getUsers();
+                const leadsList = result.leads.map((lead) => {
+                    const user = userList.find(
+                        (user) => user.uid === lead.sales_id
+                    );
+                    lead.sales = user.displayName;
+                    return lead;
+                });
+                const leadsResult = {
+                    leads: leadsList,
+                    leadsCount: result.leadsCount,
+                };
                 setLeadsState(() => ({
                     isLoading: false,
-                    data: result,
+                    data: leadsResult,
                 }));
             }
         } catch (err) {

@@ -22,21 +22,37 @@ const api = wretch()
     // Cors fetch options
     .options({ mode: 'cors' });
 
+// The users don't change often, avoid calling the API each time.
+// TODO: Implement proper caching
+let userList = [];
+let updateUserList = true;
+
 class BPMAPi {
     /* ------------------------------------------------------------------------------------
                                             USERS
     --------------------------------------------------------------------------------------- */
     async getUsers(options) {
-        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
-        const data = await api
-            .url('/users')
-            .auth(`Bearer ${fb_auth.token}`)
-            .get()
-            .json((response) => {
-                return response;
-            });
+        if (updateUserList) {
+            const fb_auth = await firebase
+                .auth()
+                .currentUser.getIdTokenResult();
+            const data = await api
+                .url('/users')
+                .auth(`Bearer ${fb_auth.token}`)
+                .get()
+                .json((response) => {
+                    userList = response;
+                    updateUserList = false;
+                    return response;
+                });
+            return data;
+        } else {
+            return userList;
+        }
+    }
 
-        return data;
+    updateUserList() {
+        updateUserList = true;
     }
 
     async getCurrentUser(options) {

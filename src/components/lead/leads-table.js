@@ -19,6 +19,7 @@ import { Pagination } from '../pagination';
 import { ResourceError } from '../resource-error';
 import { ResourceUnavailable } from '../resource-unavailable';
 import { Status } from '../status';
+import { bpmAPI } from '../../api/bpmAPI';
 
 const columns = [
     {

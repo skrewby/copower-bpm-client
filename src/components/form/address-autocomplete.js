@@ -7,14 +7,7 @@ import Grid from '@mui/material/Grid';
 import throttle from 'lodash/throttle';
 import wretch from 'wretch';
 
-let baseUrl = 'https://addressr.p.rapidapi.com/addresses?q=';
-let addressrAPIoptions = {
-    method: 'GET',
-    headers: {
-        'X-RapidAPI-Host': 'addressr.p.rapidapi.com',
-        'X-RapidAPI-Key': process.env.REACT_APP_ADDRESSR_KEY,
-    },
-};
+let baseUrl = 'http://165.22.253.133:8080/addresses?q=';
 
 export function AddressAutocomplete(props) {
     const { formik, ...other } = props;
@@ -27,11 +20,7 @@ export function AddressAutocomplete(props) {
             throttle((request, callback) => {
                 const input = encodeURI(request.input);
                 const url = `${baseUrl}${input}`;
-                wretch()
-                    .url(url)
-                    .options(addressrAPIoptions)
-                    .get()
-                    .json(callback);
+                wretch().url(url).get().json(callback);
             }, 200),
         []
     );

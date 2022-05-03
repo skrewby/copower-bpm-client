@@ -25,7 +25,6 @@ export const LeadCreateDialog = (props) => {
 
     const [users, setUsers] = useState({ isLoading: true, data: [] });
     const [sources, setSources] = useState({ isLoading: true, data: [] });
-    const [creator, setCreator] = useState({ isLoading: true, data: [] });
 
     const getData = useCallback(async () => {
         try {
@@ -33,8 +32,8 @@ export const LeadCreateDialog = (props) => {
             // TODO: Filter users by roles -> Only show Sales
             const usersResult = usersAPI.map((row) => {
                 return {
-                    user_id: row.user_id,
-                    user_name: row.user_name,
+                    uid: row.uid,
+                    displayName: row.displayName,
                 };
             });
             const sourcesAPI = await bpmAPI.getLeadSources();
@@ -45,20 +44,6 @@ export const LeadCreateDialog = (props) => {
                 };
             });
 
-            const creator_id = await firebase
-                .auth()
-                .currentUser.getIdTokenResult()
-                .then((idTokenResult) => {
-                    const creator_email = idTokenResult.claims.email;
-                    const creator_obj = usersAPI.filter(
-                        (user) => user.email === creator_email
-                    );
-                    return creator_obj[0].user_id;
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-
             if (mounted.current) {
                 setUsers(() => ({
                     isLoading: false,
@@ -67,10 +52,6 @@ export const LeadCreateDialog = (props) => {
                 setSources(() => ({
                     isLoading: false,
                     data: sourcesResult,
-                }));
-                setCreator(() => ({
-                    isLoading: false,
-                    data: creator_id,
                 }));
             }
         } catch (err) {
@@ -83,11 +64,6 @@ export const LeadCreateDialog = (props) => {
                     error: err.message,
                 }));
                 setSources(() => ({
-                    isLoading: false,
-                    data: [],
-                    error: err.message,
-                }));
-                setCreator(() => ({
                     isLoading: false,
                     data: [],
                     error: err.message,
@@ -128,14 +104,15 @@ export const LeadCreateDialog = (props) => {
                 .email('Must be a valid email')
                 .max(255)
                 .required('Email is required'),
-            sales_id: Yup.number().required('Must assign to a sales person'),
+            sales_id: Yup.string()
+                .max(255)
+                .required('Must assign to a sales person'),
             source_id: Yup.number().required('Must choose lead source'),
             phone: Yup.string().max(255).required('Contact number is required'),
             comment: Yup.string().max(255).nullable(),
         }),
         onSubmit: async (values, helpers) => {
             try {
-                formik.values.created_by = creator.data;
                 const res = await bpmAPI
                     .createLead(formik.values, refresh)
                     .then(refresh(true));
@@ -340,11 +317,8 @@ export const LeadCreateDialog = (props) => {
                             value={formik.values.sales_id}
                         >
                             {users.data.map((option) => (
-                                <MenuItem
-                                    key={option.user_id}
-                                    value={option.user_id}
-                                >
-                                    {option.user_name}
+                                <MenuItem key={option.uid} value={option.uid}>
+                                    {option.displayName}
                                 </MenuItem>
                             ))}
                         </InputField>

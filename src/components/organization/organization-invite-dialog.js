@@ -48,6 +48,7 @@ export const OrganizationInviteDialog = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 bpmAPI.createUser(values);
+                bpmAPI.updateUserList();
                 toast.success('User created. Refresh to see changes');
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);

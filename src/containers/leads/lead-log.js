@@ -28,6 +28,7 @@ export const LeadLog = () => {
 
         try {
             const result = await bpmAPI.getLeadLogs(leadID);
+            console.log(result);
 
             if (mounted.current) {
                 setLeadLogs(() => ({

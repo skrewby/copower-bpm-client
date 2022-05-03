@@ -50,6 +50,7 @@ export const OrganizationEditUserDialog = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 bpmAPI.updateUser(values);
+                bpmAPI.updateUserList();
                 toast.success('Updated member. Refresh to see changes');
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);
