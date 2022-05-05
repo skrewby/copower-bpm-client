@@ -33,9 +33,18 @@ export const InstallLog = () => {
             const result = await bpmAPI.getInstallLogs(installID);
 
             if (mounted.current) {
+                const userList = await bpmAPI.getUsers();
+                const logList = result.map((log) => {
+                    const user = userList.find(
+                        (user) => user.uid === log.created_by
+                    );
+                    log.user_name = user.displayName;
+                    return log;
+                });
+
                 setInstallLogs(() => ({
                     isLoading: false,
-                    data: result,
+                    data: logList,
                 }));
             }
         } catch (err) {

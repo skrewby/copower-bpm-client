@@ -28,12 +28,20 @@ export const LeadLog = () => {
 
         try {
             const result = await bpmAPI.getLeadLogs(leadID);
-            console.log(result);
 
             if (mounted.current) {
+                const userList = await bpmAPI.getUsers();
+                const logList = result.map((log) => {
+                    const user = userList.find(
+                        (user) => user.uid === log.created_by
+                    );
+                    log.user_name = user.displayName;
+                    return log;
+                });
+
                 setLeadLogs(() => ({
                     isLoading: false,
-                    data: result,
+                    data: logList,
                 }));
             }
         } catch (err) {
