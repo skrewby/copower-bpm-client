@@ -440,7 +440,7 @@ const baseThemeOptions = {
         borderRadius: 6,
     },
     typography: {
-        fontFamily: 'Inter, sans-serif',
+        fontFamily: 'Roboto, Montserrat, Open Sans, sans-serif',
         h1: {
             fontSize: 48,
             fontWeight: 600,

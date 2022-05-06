@@ -14,12 +14,15 @@ import {
     TableHead,
     TableRow,
     TableSortLabel,
+    Button,
+    IconButton,
 } from '@mui/material';
 import { Pagination } from '../pagination';
 import { ResourceError } from '../resource-error';
 import { ResourceUnavailable } from '../resource-unavailable';
 import { Status } from '../status';
 import { bpmAPI } from '../../api/bpmAPI';
+import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 
 const columns = [
     {
@@ -33,6 +36,14 @@ const columns = [
     {
         id: 'address',
         label: 'Address',
+    },
+    {
+        id: 'email',
+        label: 'Email',
+    },
+    {
+        id: 'phone',
+        label: 'Phone',
     },
     {
         id: 'sales',
@@ -53,6 +64,10 @@ const columns = [
     {
         id: 'status',
         label: 'Status',
+    },
+    {
+        id: 'actions',
+        label: 'Actions',
     },
 ];
 
@@ -112,16 +127,12 @@ export const LeadsTable = (props) => {
                 <TableBody>
                     {leads.map((lead) => {
                         return (
-                            <TableRow
-                                hover
-                                key={lead.lead_id}
-                                onClick={() => {
-                                    navigate(`/bpm/leads/${lead.lead_id}`);
-                                }}
-                            >
+                            <TableRow hover key={lead.lead_id}>
                                 <TableCell>{lead.lead_id}</TableCell>
                                 <TableCell>{lead.name}</TableCell>
                                 <TableCell>{lead.address}</TableCell>
+                                <TableCell>{lead.email}</TableCell>
+                                <TableCell>{lead.phone}</TableCell>
                                 <TableCell>{lead.sales}</TableCell>
                                 <TableCell>{lead.source}</TableCell>
                                 <TableCell>
@@ -135,6 +146,20 @@ export const LeadsTable = (props) => {
                                         color={lead.status_colour}
                                         label={lead.status}
                                     />
+                                </TableCell>
+                                <TableCell>
+                                    <IconButton
+                                        color="primary"
+                                        onClick={() => {
+                                            navigate(
+                                                `/bpm/leads/${lead.lead_id}`
+                                            );
+                                        }}
+                                        size="large"
+                                        sx={{ order: 3 }}
+                                    >
+                                        <ArrowForwardOutlinedIcon />
+                                    </IconButton>
                                 </TableCell>
                             </TableRow>
                         );

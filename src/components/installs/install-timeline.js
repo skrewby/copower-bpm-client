@@ -8,7 +8,8 @@ import {
     TimelineDot,
     TimelineItem,
 } from '@mui/lab';
-import { Check as CheckIcon } from '../../icons/check';
+import CheckIcon from '@mui/icons-material/Check';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 const getDotStyles = (value) => {
     if (value === 'complete') {
@@ -114,8 +115,11 @@ export const InstallTimeline = (props) => {
                                     : 'outlined'
                             }
                         >
-                            {(item.value === 'complete' ||
-                                item.value === 'active') && <CheckIcon />}
+                            {item.value === 'complete' ? (
+                                <CheckIcon />
+                            ) : (
+                                item.value === 'active' && <MoreHorizIcon />
+                            )}
                         </TimelineDot>
                         <TimelineContent>
                             <Typography

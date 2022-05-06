@@ -29,13 +29,16 @@ export const AccountPopover = (props) => {
     const { logout } = useAuth();
     const [anchorRef, open, handleOpen, handleClose] = usePopover();
     const [userState, setUserState] = useState('User');
+    const [userRole, setUserRole] = useState('sales');
     const mounted = useMounted();
 
     const getData = useCallback(async () => {
         try {
             const user = await bpmAPI.getCurrentUser();
+            const userRole = await bpmAPI.getCurrentUserRole();
             if (mounted.current) {
                 setUserState(user);
+                setUserRole(userRole);
             }
         } catch (err) {
             console.log(err);
@@ -154,8 +157,7 @@ export const AccountPopover = (props) => {
                         </ListItemIcon>
                         <ListItemText primary="Account" />
                     </ListItem>
-                    {(userState.role === 'sysadmin' ||
-                        userState.role === 'manager') && (
+                    {(userRole === 'sysadmin' || userRole === 'manager') && (
                         <ListItem
                             button
                             component={RouterLink}

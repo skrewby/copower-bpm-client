@@ -56,16 +56,12 @@ class BPMAPi {
     }
 
     async getCurrentUser(options) {
-        const fb_auth = await firebase.auth().currentUser.getIdTokenResult();
-        const data = await api
-            .url('/user')
-            .auth(`Bearer ${fb_auth.token}`)
-            .get()
-            .json((response) => {
-                return response;
-            });
+        return firebase.auth().currentUser;
+    }
 
-        return data;
+    async getCurrentUserRole(options) {
+        return (await firebase.auth().currentUser.getIdTokenResult()).claims
+            .role;
     }
 
     async getValidRoles(options) {

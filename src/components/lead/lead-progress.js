@@ -9,6 +9,8 @@ import {
     CardHeader,
     Divider,
     Typography,
+    Skeleton,
+    Box,
 } from '@mui/material';
 import { useDialog } from '../../hooks/use-dialog';
 import { Archive as ArchiveIcon } from '../../icons/archive';
@@ -61,8 +63,14 @@ export const LeadProgress = (props) => {
         isLoading: true,
         data: [],
     });
+    const [userState, setUserState] = useState({
+        isLoading: true,
+        data: [],
+    });
+
     const getData = useCallback(async () => {
         setStatusOptions(() => ({ isLoading: true, data: [] }));
+        setUserState(() => ({ isLoading: true, data: [] }));
 
         try {
             const statusAPI = await bpmAPI.getLeadStatusOptions();
@@ -75,10 +83,16 @@ export const LeadProgress = (props) => {
                 };
             });
 
+            const user = await bpmAPI.getCurrentUserRole();
+
             if (mounted.current) {
                 setStatusOptions(() => ({
                     isLoading: false,
                     data: statusResult,
+                }));
+                setUserState(() => ({
+                    isLoading: false,
+                    data: user,
                 }));
             }
         } catch (err) {
@@ -184,37 +198,45 @@ export const LeadProgress = (props) => {
     };
 
     const ActionListRejectPending = () => {
-        return (
-            <ActionList>
-                <ActionListItem
-                    icon={CheckCircleIcon}
-                    label="Approve"
-                    onClick={handleOpenRejectLeadApprove}
-                />
-                <ActionListItem
-                    icon={XCircleIcon}
-                    label="Deny"
-                    onClick={handleRejectDenyLead}
-                />
-            </ActionList>
-        );
+        if (userState.data === 'sales') {
+            return <Box />;
+        } else {
+            return (
+                <ActionList>
+                    <ActionListItem
+                        icon={CheckCircleIcon}
+                        label="Approve"
+                        onClick={handleOpenRejectLeadApprove}
+                    />
+                    <ActionListItem
+                        icon={XCircleIcon}
+                        label="Deny"
+                        onClick={handleRejectDenyLead}
+                    />
+                </ActionList>
+            );
+        }
     };
 
     const ActionListReview = () => {
-        return (
-            <ActionList>
-                <ActionListItem
-                    icon={CheckCircleIcon}
-                    label="Approve"
-                    onClick={handleOpenReviewLeadApprove}
-                />
-                <ActionListItem
-                    icon={XCircleIcon}
-                    label="Deny"
-                    onClick={handleReviewDeny}
-                />
-            </ActionList>
-        );
+        if (userState.data === 'sales') {
+            return <Box />;
+        } else {
+            return (
+                <ActionList>
+                    <ActionListItem
+                        icon={CheckCircleIcon}
+                        label="Approve"
+                        onClick={handleOpenReviewLeadApprove}
+                    />
+                    <ActionListItem
+                        icon={XCircleIcon}
+                        label="Deny"
+                        onClick={handleReviewDeny}
+                    />
+                </ActionList>
+            );
+        }
     };
 
     const ActionListNothing = () => {
@@ -238,106 +260,144 @@ export const LeadProgress = (props) => {
         }
     };
 
-    return (
-        <>
-            <Card variant="outlined" {...other}>
-                <CardHeader title="Lead Progress" />
-                <Divider />
-                <CardContent>
-                    {lead.status_id < 4 && (
-                        <StatusSelect
-                            onChange={handleStatusChange}
-                            options={statusOptions.data}
-                            value={
-                                statusOptions.data.filter(
-                                    (status) =>
-                                        status.status_id === lead.status_id
-                                )[0]?.status_id || ''
-                            }
-                        />
-                    )}
-                    <Typography
-                        sx={{
-                            color: 'text.secondary',
-                            display: 'block',
-                        }}
-                        variant="caption"
-                    >
-                        {`Updated ${format(
-                            parseISO(lead.last_updated),
-                            'dd MMM yyyy HH:mm'
-                        )}`}
-                    </Typography>
-                    <Divider sx={{ my: 2 }} />
-                    {lead.status_id < 6 ? (
-                        <LeadTimeline lead={lead} />
-                    ) : (
-                        <LeadStatusDisplay lead={lead} />
-                    )}
-                </CardContent>
-                <Divider />
-                {ChooseActionList()}
-            </Card>
-            <ConfirmationDialog
-                message="Are you sure you want to mark this lead as Win?"
-                onCancel={handleCloseSendToOperations}
-                onConfirm={handleSendToOperations}
-                open={sendToOperationsOpen}
-                title="Mark as Win"
-                variant="warning"
-            />
-            <ConfirmationDialog
-                message="Are you sure you want to reject this lead?"
-                onCancel={handleCloseRejectLead}
-                onConfirm={handleRejectLead}
-                open={rejectLeadOpen}
-                title="Reject Lead"
-                variant="warning"
-            />
-            <ConfirmationDialog
-                message="Are you sure you want to close this lead?"
-                onCancel={handleCloseCloseLead}
-                onConfirm={handleCloseLead}
-                open={closeLeadOpen}
-                title="Close Lead"
-                variant="warning"
-            />
-            <ConfirmationDialog
-                message="Approve reject request?"
-                onCancel={handleCloseRejectLeadApprove}
-                onConfirm={handleRejectLeadApproved}
-                open={rejectLeadApproveOpen}
-                title="Approve reject request"
-                variant="warning"
-            />
-            <ConfirmationDialog
-                message="Approve lead submission?"
-                onCancel={handleCloseReviewLeadApprove}
-                onConfirm={handleReviewApprove}
-                open={reviewLeadApproveOpen}
-                title="Approve lead submission"
-                variant="warning"
-            />
-            <LeadRejectDialog
-                onClose={() => setOpenLeadRejectDialog(false)}
-                open={openLeadRejectDialog}
-                leadID={lead.lead_id}
-                refresh={refresh}
-            />
-            <LeadRejectDenyDialog
-                onClose={() => setOpenLeadRejectDenyDialog(false)}
-                open={openLeadRejectDenyDialog}
-                leadID={lead.lead_id}
-                refresh={refresh}
-            />
-            <LeadReviewDenyDialog
-                onClose={() => setOpenLeadReviewDenyDialog(false)}
-                open={openLeadReviewDenyDialog}
-                leadID={lead.lead_id}
-                refresh={refresh}
-            />
-        </>
-    );
+    if (!userState.isLoading && !statusOptions.isLoading) {
+        return (
+            <>
+                <Card variant="outlined" {...other}>
+                    <CardHeader title="Lead Progress" />
+                    <Divider />
+                    <CardContent>
+                        {lead.status_id < 4 && (
+                            <StatusSelect
+                                onChange={handleStatusChange}
+                                options={statusOptions.data}
+                                value={
+                                    statusOptions.data.filter(
+                                        (status) =>
+                                            status.status_id === lead.status_id
+                                    )[0]?.status_id || ''
+                                }
+                            />
+                        )}
+                        <Typography
+                            sx={{
+                                color: 'text.secondary',
+                                display: 'block',
+                            }}
+                            variant="caption"
+                        >
+                            {`Updated ${format(
+                                parseISO(lead.last_updated),
+                                'dd MMM yyyy HH:mm'
+                            )}`}
+                        </Typography>
+                        <Divider sx={{ my: 2 }} />
+                        {lead.status_id < 6 ? (
+                            <LeadTimeline lead={lead} />
+                        ) : (
+                            <LeadStatusDisplay lead={lead} />
+                        )}
+                    </CardContent>
+                    <Divider />
+                    {ChooseActionList()}
+                </Card>
+                <ConfirmationDialog
+                    message="Are you sure you want to mark this lead as Win?"
+                    onCancel={handleCloseSendToOperations}
+                    onConfirm={handleSendToOperations}
+                    open={sendToOperationsOpen}
+                    title="Mark as Win"
+                    variant="warning"
+                />
+                <ConfirmationDialog
+                    message="Are you sure you want to reject this lead?"
+                    onCancel={handleCloseRejectLead}
+                    onConfirm={handleRejectLead}
+                    open={rejectLeadOpen}
+                    title="Reject Lead"
+                    variant="warning"
+                />
+                <ConfirmationDialog
+                    message="Are you sure you want to close this lead?"
+                    onCancel={handleCloseCloseLead}
+                    onConfirm={handleCloseLead}
+                    open={closeLeadOpen}
+                    title="Close Lead"
+                    variant="warning"
+                />
+                <ConfirmationDialog
+                    message="Approve reject request?"
+                    onCancel={handleCloseRejectLeadApprove}
+                    onConfirm={handleRejectLeadApproved}
+                    open={rejectLeadApproveOpen}
+                    title="Approve reject request"
+                    variant="warning"
+                />
+                <ConfirmationDialog
+                    message="Approve lead submission?"
+                    onCancel={handleCloseReviewLeadApprove}
+                    onConfirm={handleReviewApprove}
+                    open={reviewLeadApproveOpen}
+                    title="Approve lead submission"
+                    variant="warning"
+                />
+                <LeadRejectDialog
+                    onClose={() => setOpenLeadRejectDialog(false)}
+                    open={openLeadRejectDialog}
+                    leadID={lead.lead_id}
+                    refresh={refresh}
+                />
+                <LeadRejectDenyDialog
+                    onClose={() => setOpenLeadRejectDenyDialog(false)}
+                    open={openLeadRejectDenyDialog}
+                    leadID={lead.lead_id}
+                    refresh={refresh}
+                />
+                <LeadReviewDenyDialog
+                    onClose={() => setOpenLeadReviewDenyDialog(false)}
+                    open={openLeadReviewDenyDialog}
+                    leadID={lead.lead_id}
+                    refresh={refresh}
+                />
+            </>
+        );
+    } else {
+        return (
+            <>
+                <Card variant="outlined" {...other}>
+                    <CardHeader title="Lead Progress" />
+                    <Divider />
+                    <CardContent>
+                        {lead.status_id < 4 && (
+                            <StatusSelect
+                                onChange={handleStatusChange}
+                                options={statusOptions.data}
+                                value={
+                                    statusOptions.data.filter(
+                                        (status) =>
+                                            status.status_id === lead.status_id
+                                    )[0]?.status_id || ''
+                                }
+                            />
+                        )}
+                        <Typography
+                            sx={{
+                                color: 'text.secondary',
+                                display: 'block',
+                            }}
+                            variant="caption"
+                        >
+                            {`Loading ...`}
+                        </Typography>
+                        <Divider sx={{ my: 2 }} />
+                        <Skeleton height={42} />
+                        <Skeleton height={42} />
+                        <Skeleton height={42} />
+                    </CardContent>
+                </Card>
+            </>
+        );
+    }
 };
 
 LeadProgress.propTypes = {
