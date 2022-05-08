@@ -146,9 +146,6 @@ export const LeadCreateDialog = (props) => {
             <DialogTitle>Create Lead</DialogTitle>
             <DialogContent>
                 <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <AddressAutocomplete fullWidth formik={formik} />
-                    </Grid>
                     <Grid item xs={6}>
                         <InputField
                             error={Boolean(
@@ -220,6 +217,9 @@ export const LeadCreateDialog = (props) => {
                             onChange={formik.handleChange}
                             value={formik.values.company_abn}
                         />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <AddressAutocomplete fullWidth formik={formik} />
                     </Grid>
                     <Grid item xs={6}>
                         <InputField

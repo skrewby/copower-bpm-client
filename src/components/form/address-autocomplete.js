@@ -60,6 +60,8 @@ export function AddressAutocomplete(props) {
             id="address"
             name="address"
             sx={{ paddingY: 1 }}
+            size="small"
+            freeSolo
             getOptionLabel={(option) =>
                 typeof option === 'string' ? option : option.description
             }
