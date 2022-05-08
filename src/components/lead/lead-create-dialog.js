@@ -99,7 +99,6 @@ export const LeadCreateDialog = (props) => {
             last_name: Yup.string().max(255).required('Last name is required'),
             company_name: Yup.string().max(255),
             company_abn: Yup.string().max(255),
-            address: Yup.string().max(255).required('Address is required'),
             email: Yup.string()
                 .email('Must be a valid email')
                 .max(255)

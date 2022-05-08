@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import throttle from 'lodash/throttle';
 import wretch from 'wretch';
 
-let baseUrl = 'http://165.22.253.133:8080/addresses?q=';
+let baseUrl = 'http://165.22.253.133:5000/api/addresses';
 
 export function AddressAutocomplete(props) {
     const { formik, ...other } = props;
@@ -18,9 +18,8 @@ export function AddressAutocomplete(props) {
     const adressAPI = React.useMemo(
         () =>
             throttle((request, callback) => {
-                const input = encodeURI(request.input);
-                const url = `${baseUrl}${input}`;
-                wretch().url(url).get().json(callback);
+                const body = { query: request.input };
+                wretch().url(baseUrl).post(body).json(callback);
             }, 200),
         []
     );
@@ -42,7 +41,9 @@ export function AddressAutocomplete(props) {
                 }
 
                 if (results) {
-                    const data = results.map((item) => item.sla);
+                    const data = results.map((item) => {
+                        return { sla: item.sla, id: item.pid };
+                    });
                     newOptions = [...newOptions, ...data];
                 }
 
@@ -62,9 +63,7 @@ export function AddressAutocomplete(props) {
             sx={{ paddingY: 1 }}
             size="small"
             freeSolo
-            getOptionLabel={(option) =>
-                typeof option === 'string' ? option : option.description
-            }
+            getOptionLabel={(option) => option.sla}
             filterOptions={(x) => x}
             options={options}
             autoComplete
@@ -93,7 +92,7 @@ export function AddressAutocomplete(props) {
                                 />
                             </Grid>
                             <Grid item xs>
-                                {option}
+                                {option.sla}
                             </Grid>
                         </Grid>
                     </li>
