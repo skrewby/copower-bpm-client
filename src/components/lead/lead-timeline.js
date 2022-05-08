@@ -42,7 +42,8 @@ export const LeadTimeline = (props) => {
         const statusMapping = [
             'Created',
             'New',
-            'Contacted',
+            'Attempting Contact',
+            'Park',
             'Quotation',
             'Review',
             'Win',
@@ -52,14 +53,15 @@ export const LeadTimeline = (props) => {
         const items = [
             { title: 'Created' },
             { title: 'New' },
-            { title: 'Contacted' },
+            { title: 'Attempting Contact' },
+            { title: 'Park' },
             { title: 'Quotation' },
             { title: 'Review' },
             { title: 'Win' },
         ];
 
         return items.map((item, index) => {
-            if (currentStatusIndex === 5) {
+            if (currentStatusIndex === 6) {
                 return { ...item, value: 'complete' };
             }
 

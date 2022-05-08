@@ -16,13 +16,16 @@ import {
     TableSortLabel,
     Button,
     IconButton,
+    Tooltip,
 } from '@mui/material';
 import { Pagination } from '../pagination';
 import { ResourceError } from '../resource-error';
 import { ResourceUnavailable } from '../resource-unavailable';
 import { Status } from '../status';
 import { bpmAPI } from '../../api/bpmAPI';
+import { onClickUrl } from '../../utils/open-link';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
+import EmailIcon from '@mui/icons-material/Email';
 
 const columns = [
     {
@@ -38,10 +41,6 @@ const columns = [
         label: 'Address',
     },
     {
-        id: 'email',
-        label: 'Email',
-    },
-    {
         id: 'phone',
         label: 'Phone',
     },
@@ -52,10 +51,6 @@ const columns = [
     {
         id: 'source',
         label: 'Source',
-    },
-    {
-        id: 'create_date',
-        label: 'Created',
     },
     {
         id: 'last_updated',
@@ -131,13 +126,9 @@ export const LeadsTable = (props) => {
                                 <TableCell>{lead.lead_id}</TableCell>
                                 <TableCell>{lead.name}</TableCell>
                                 <TableCell>{lead.address}</TableCell>
-                                <TableCell>{lead.email}</TableCell>
                                 <TableCell>{lead.phone}</TableCell>
                                 <TableCell>{lead.sales}</TableCell>
                                 <TableCell>{lead.source}</TableCell>
-                                <TableCell>
-                                    {format(lead.create_date, 'dd MMM yyyy')}
-                                </TableCell>
                                 <TableCell>
                                     {format(lead.last_updated, 'dd MMM yyyy')}
                                 </TableCell>
@@ -148,18 +139,32 @@ export const LeadsTable = (props) => {
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <IconButton
-                                        color="primary"
-                                        onClick={() => {
-                                            navigate(
-                                                `/bpm/leads/${lead.lead_id}`
-                                            );
-                                        }}
-                                        size="large"
-                                        sx={{ order: 3 }}
-                                    >
-                                        <ArrowForwardOutlinedIcon />
-                                    </IconButton>
+                                    <Tooltip title="Email Customer">
+                                        <IconButton
+                                            color="primary"
+                                            onClick={onClickUrl(
+                                                `https://mail.google.com/mail/?view=cm&fs=1&to=${lead.email}&su=Update of Case Status - ${lead.address}`
+                                            )}
+                                            size="large"
+                                            sx={{ order: 3 }}
+                                        >
+                                            <EmailIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Lead details">
+                                        <IconButton
+                                            color="primary"
+                                            onClick={() => {
+                                                navigate(
+                                                    `/bpm/leads/${lead.lead_id}`
+                                                );
+                                            }}
+                                            size="large"
+                                            sx={{ order: 3 }}
+                                        >
+                                            <ArrowForwardOutlinedIcon />
+                                        </IconButton>
+                                    </Tooltip>
                                 </TableCell>
                             </TableRow>
                         );
@@ -206,7 +211,7 @@ LeadsTable.defaultProps = {
     leadsCount: 0,
     page: 1,
     sort: 'desc',
-    sortBy: 'id',
+    sortBy: 'lead_id',
 };
 
 LeadsTable.propTypes = {

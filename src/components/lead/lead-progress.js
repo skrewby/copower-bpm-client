@@ -74,7 +74,7 @@ export const LeadProgress = (props) => {
 
         try {
             const statusAPI = await bpmAPI.getLeadStatusOptions();
-            const statusFiltered = statusAPI.filter((row) => row.status_id < 4);
+            const statusFiltered = statusAPI.filter((row) => row.status_id < 5);
             const statusResult = statusFiltered.map((row) => {
                 return {
                     status_id: row.status_id,
@@ -132,7 +132,7 @@ export const LeadProgress = (props) => {
             `Marked lead as Win - Awaiting review`,
             true
         );
-        bpmAPI.updateLead(lead.lead_id, { status_id: 5 }).then(refresh(true));
+        bpmAPI.updateLead(lead.lead_id, { status_id: 6 }).then(refresh(true));
     };
 
     const handleRejectLead = () => {
@@ -147,12 +147,12 @@ export const LeadProgress = (props) => {
     const handleCloseLead = () => {
         handleCloseCloseLead();
         bpmAPI.createLeadLog(lead.lead_id, `Closed lead`, true);
-        bpmAPI.updateLead(lead.lead_id, { status_id: 9 }).then(refresh(true));
+        bpmAPI.updateLead(lead.lead_id, { status_id: 10 }).then(refresh(true));
     };
 
     const handleRejectLeadApproved = () => {
         bpmAPI.createLeadLog(lead.lead_id, `Approved reject request`, true);
-        bpmAPI.updateLead(lead.lead_id, { status_id: 6 }).then(refresh(true));
+        bpmAPI.updateLead(lead.lead_id, { status_id: 7 }).then(refresh(true));
         handleCloseRejectLeadApprove();
     };
 
@@ -170,7 +170,7 @@ export const LeadProgress = (props) => {
                 true
             );
             bpmAPI
-                .updateLead(lead.lead_id, { status_id: 4 })
+                .updateLead(lead.lead_id, { status_id: 5 })
                 .then(refresh(true));
         });
     };
@@ -245,15 +245,15 @@ export const LeadProgress = (props) => {
 
     const ChooseActionList = () => {
         switch (lead.status_id) {
-            case 4:
-                return <ActionListNothing />;
             case 5:
-                return <ActionListReview />;
-            case 6:
                 return <ActionListNothing />;
-            case 8:
-                return <ActionListRejectPending />;
+            case 6:
+                return <ActionListReview />;
+            case 7:
+                return <ActionListNothing />;
             case 9:
+                return <ActionListRejectPending />;
+            case 10:
                 return <ActionListNothing />;
             default:
                 return <ActionListDefault />;
@@ -267,7 +267,7 @@ export const LeadProgress = (props) => {
                     <CardHeader title="Lead Progress" />
                     <Divider />
                     <CardContent>
-                        {lead.status_id < 4 && (
+                        {lead.status_id < 5 && (
                             <StatusSelect
                                 onChange={handleStatusChange}
                                 options={statusOptions.data}
@@ -292,7 +292,7 @@ export const LeadProgress = (props) => {
                             )}`}
                         </Typography>
                         <Divider sx={{ my: 2 }} />
-                        {lead.status_id < 6 ? (
+                        {lead.status_id < 7 ? (
                             <LeadTimeline lead={lead} />
                         ) : (
                             <LeadStatusDisplay lead={lead} />
@@ -368,7 +368,7 @@ export const LeadProgress = (props) => {
                     <CardHeader title="Lead Progress" />
                     <Divider />
                     <CardContent>
-                        {lead.status_id < 4 && (
+                        {lead.status_id < 5 && (
                             <StatusSelect
                                 onChange={handleStatusChange}
                                 options={statusOptions.data}

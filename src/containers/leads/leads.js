@@ -26,7 +26,7 @@ export const Leads = () => {
         page: 0,
         query: '',
         sort: 'desc',
-        sortBy: 'id',
+        sortBy: 'lead_id',
         view: 'all',
     });
     const [leadsState, setLeadsState] = useState({ isLoading: true });

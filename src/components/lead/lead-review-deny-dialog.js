@@ -37,7 +37,7 @@ export const LeadReviewDenyDialog = (props) => {
                     true
                 );
                 const res = await bpmAPI
-                    .updateLead(leadID, { status_id: 3 })
+                    .updateLead(leadID, { status_id: 4 })
                     .then(refresh(true));
 
                 if (res.status === 200) {

@@ -30,8 +30,12 @@ const views = [
         value: 'New',
     },
     {
-        label: 'Contacted',
-        value: 'Contacted',
+        label: 'Attempting Contact',
+        value: 'Attempting Contact',
+    },
+    {
+        label: 'Park',
+        value: 'Park',
     },
     {
         label: 'Quotation',
@@ -78,6 +82,11 @@ const filterProperties = [
     {
         label: 'Status',
         name: 'status',
+        type: 'string',
+    },
+    {
+        label: 'Source',
+        name: 'source',
         type: 'string',
     },
 ];

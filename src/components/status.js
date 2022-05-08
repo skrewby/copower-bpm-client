@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { StatusBadge } from './status-badge';
 
 export const Status = (props) => {
-    const { color, label, ...other } = props;
+    const { color, label, showBadge, ...other } = props;
 
     return (
         <Box
@@ -13,7 +13,7 @@ export const Status = (props) => {
             }}
             {...other}
         >
-            <StatusBadge color={color} />
+            {showBadge && <StatusBadge color={color} />}
             <Typography
                 sx={{
                     color,
@@ -25,6 +25,10 @@ export const Status = (props) => {
             </Typography>
         </Box>
     );
+};
+
+Status.defaultProps = {
+    showBadge: true,
 };
 
 Status.propTypes = {

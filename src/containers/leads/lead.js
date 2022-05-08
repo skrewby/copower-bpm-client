@@ -79,10 +79,25 @@ export const Lead = () => {
         );
     };
 
+    const handleReOpen = () => {
+        bpmAPI.getCurrentUserRole().then((role) => {
+            if (role !== 'sales') {
+                bpmAPI.createLeadLog(leadID, `Re-Opened lead`, true);
+                bpmAPI.updateLead(leadID, { status_id: 1 }).then(refresh(true));
+            } else {
+                toast.error('Not authorized. Contact an admin');
+            }
+        });
+    };
+
     const actions = [
         {
             label: 'Send Quote',
             onClick: handleSendQuote,
+        },
+        {
+            label: 'Re-Open',
+            onClick: handleReOpen,
         },
     ];
 
