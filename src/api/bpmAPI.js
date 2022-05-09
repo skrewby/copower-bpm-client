@@ -595,6 +595,35 @@ class BPMAPi {
 
         return data;
     }
+
+    /**
+     * return userProfile
+     * {
+     *   token: XXXXX,
+     *   email: XXXXX
+     *   ...
+     * }
+    */
+    async login(email, password) {
+        const param = {
+            email: email,
+            password: password
+        }
+
+        const userProfile = await api
+            .url('/auth/login')
+            .post(param);
+
+        return userProfile;
+    }
+
+    async logout() {
+        const userProfile = await api
+            .url('/auth/logout')
+            .post();
+
+        return userProfile;
+    }
 }
 
 export const bpmAPI = new BPMAPi();
