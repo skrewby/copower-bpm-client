@@ -1,8 +1,15 @@
 import { useEffect } from 'react';
+
+// Libraries
 import NProgress from 'nprogress';
+
+// Material UI
 import { Box } from '@mui/material';
 
-export const LoadingScreen = () => {
+/**
+ * A simple loading animation used when containers are being loaded
+ */
+export const Loading = () => {
     useEffect(() => {
         NProgress.start();
 

@@ -23,7 +23,7 @@ import {
     lightText,
     lightWarning,
 } from './colors';
-import { XCircle as XCircleIcon } from './icons/x-circle';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const { breakpoints } = createMuiTheme();
 
@@ -181,7 +181,7 @@ const baseThemeOptions = {
         },
         MuiChip: {
             defaultProps: {
-                deleteIcon: <XCircleIcon />,
+                deleteIcon: <CancelIcon />,
             },
             styleOverrides: {
                 avatar: {
