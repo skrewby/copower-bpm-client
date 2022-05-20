@@ -15,6 +15,9 @@ const links = [
     },
 ];
 
+/**
+ * Information about the company
+ */
 export const Footer = () => (
     <div>
         <Container

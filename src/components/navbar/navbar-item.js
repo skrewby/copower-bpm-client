@@ -8,6 +8,9 @@ import { Button, Typography } from '@mui/material';
 // Local Import
 import { lightNeutral } from '../../colors';
 
+/**
+ * The buttons that make up a Navbar. It consists of an icon and text that navigates to a route when clicked
+ */
 export const NavbarItem = (props) => {
     const { active, href, icon: Icon, title } = props;
 

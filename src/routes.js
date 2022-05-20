@@ -3,6 +3,8 @@ import { Navigate } from 'react-router-dom';
 
 // Components
 import { Loading } from './components/general/loading';
+import { AuthGuard } from './components/auth/auth-guard';
+import { GuestGuard } from './components/auth/guest-guard';
 
 // Containers
 import { BPMLayout } from './containers/bpm-layout';
@@ -13,6 +15,15 @@ const Loadable = (Component) => (props) =>
             <Component {...props} />
         </Suspense>
     );
+
+// Auth pages
+const Login = Loadable(
+    lazy(() =>
+        import('./containers/auth/login').then((module) => ({
+            default: module.Login,
+        }))
+    )
+);
 
 // BPM pages
 const NotFound = Loadable(
@@ -36,8 +47,20 @@ const routes = [
         element: <Navigate to="/bpm" replace />,
     },
     {
+        path: 'login',
+        element: (
+            <GuestGuard>
+                <Login />
+            </GuestGuard>
+        ),
+    },
+    {
         path: 'bpm',
-        element: <BPMLayout />,
+        element: (
+            <AuthGuard>
+                <BPMLayout />
+            </AuthGuard>
+        ),
         children: [
             {
                 path: '',

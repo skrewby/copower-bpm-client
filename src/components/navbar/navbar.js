@@ -12,6 +12,9 @@ import { NavbarItem } from './navbar-item';
 
 import { useSettings } from '../../contexts/settings-context';
 
+/**
+ * The navigation bar at the top of the page
+ */
 export const Navbar = (props) => {
     const { items } = props;
     const { settings, saveSettings } = useSettings();
