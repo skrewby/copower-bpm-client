@@ -12,7 +12,7 @@ export async function getLeads(options) {
 
     const data = await bpmServer
         .api()
-        .url('/leads')
+        .url('api/leads')
         .auth(`Bearer ${auth.token}`)
         .get()
         .json((response) => {

@@ -6,18 +6,16 @@ class Server {
         this.serverRemote = process.env.REACT_APP_SERVER_URL;
         this.serverLocal = 'http://localhost:5000/';
         this.server_url = this.serverRemote ?? this.serverLocal;
-
-        this.api()
-            .url('auth/refresh')
-            .get()
-            .json((response) => {
-                window.sessionStorage.setItem('idToken', response.idToken);
-                this.notify({ idToken: response.idToken });
-            });
     }
 
     subscribe(item) {
         this.observer.push(item);
+        this.api()
+            .url('auth/authenticated')
+            .get()
+            .json((response) => {
+                this.notify({ idToken: response.idToken });
+            });
     }
 
     notify(data) {
@@ -44,7 +42,7 @@ class Server {
                     .auth(`Bearer ${token}`)
                     .replay()
                     .unauthorized((err) => {
-                        this.notify();
+                        this.notify(null);
                     })
                     .json();
             });
