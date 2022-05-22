@@ -1,8 +1,13 @@
 import { Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+// Local import
+import { useAuth } from '../../hooks/use-auth';
+
 export const GuestGuard = ({ children }) => {
-    if (true) {
+    const { isAuthenticated } = useAuth();
+
+    if (isAuthenticated) {
         return <Navigate to="/bpm/dashboard" />;
     }
 

@@ -13,14 +13,17 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 // Import local
 import { SettingsProvider } from './contexts/settings-context';
+import { AuthProvider } from './contexts/auth-context';
 
 ReactDOM.render(
     <HelmetProvider>
         <BrowserRouter>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <SettingsProvider>
-                    <App />
-                    <Toaster position="bottom-right" />
+                    <AuthProvider>
+                        <App />
+                        <Toaster position="bottom-right" />
+                    </AuthProvider>
                 </SettingsProvider>
             </LocalizationProvider>
         </BrowserRouter>
