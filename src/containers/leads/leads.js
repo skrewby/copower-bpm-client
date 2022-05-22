@@ -204,19 +204,19 @@ export const Leads = () => {
         setLeadsState(() => ({ isLoading: true }));
 
         try {
-            /*const result = await bpmAPI.getLeads({
+            const result = await bpmAPI.getLeads({
                 filters: controller.filters,
                 page: controller.page,
                 query: controller.query,
                 sort: controller.sort,
                 sortBy: controller.sortBy,
                 view: controller.view,
-            });*/
+            });
 
             if (mounted.current) {
                 setLeadsState(() => ({
                     isLoading: false,
-                    data: [],
+                    data: result,
                 }));
             }
         } catch (err) {

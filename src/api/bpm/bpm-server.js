@@ -6,10 +6,17 @@ class Server {
         this.serverRemote = process.env.REACT_APP_SERVER_URL;
         this.serverLocal = 'http://localhost:5000/';
         this.server_url = this.serverRemote ?? this.serverLocal;
+
+        this.api()
+            .url('auth/refresh')
+            .get()
+            .json((response) => {
+                window.sessionStorage.setItem('idToken', response.idToken);
+                this.notify({ idToken: response.idToken });
+            });
     }
 
     subscribe(item) {
-        console.log('Subscribed');
         this.observer.push(item);
     }
 
@@ -31,12 +38,13 @@ class Server {
                     .text();
                 console.log(`Refreshed token: ${token}`);
                 window.sessionStorage.setItem('idToken', token);
+                this.notify({ idToken: token });
                 // Replay the original request with new credentials
                 return request
                     .auth(`Bearer ${token}`)
                     .replay()
                     .unauthorized((err) => {
-                        throw err;
+                        this.notify();
                     })
                     .json();
             });

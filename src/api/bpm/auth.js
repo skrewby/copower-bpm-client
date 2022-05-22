@@ -1,5 +1,3 @@
-import wretch from 'wretch';
-
 import { bpmServer } from './bpm-server';
 
 export async function login(email, password) {
@@ -9,8 +7,7 @@ export async function login(email, password) {
         .post({ email, password })
         .json((response) => {
             window.sessionStorage.setItem('idToken', response.idToken);
-            console.log('Logged in (api/bpm/auth.js)');
-            bpmServer.notify(response.idToken);
+            bpmServer.notify({ idToken: response.idToken });
         });
 
     return Promise.resolve(res);

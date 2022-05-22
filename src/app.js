@@ -8,9 +8,11 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import { useSettings } from './contexts/settings-context';
 import routes from './routes';
 import { createCustomTheme } from './theme';
+import { useAuth } from './hooks/use-auth';
 
 export const App = () => {
     const { settings } = useSettings();
+    const { isInitialized } = useAuth();
     const content = useRoutes(routes);
 
     const theme = createCustomTheme({
@@ -21,7 +23,7 @@ export const App = () => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            {content}
+            {isInitialized && content}
         </ThemeProvider>
     );
 };

@@ -29,9 +29,6 @@ const reducer = (state, action) =>
 export const AuthContext = createContext({
     ...initialState,
     method: 'BPM',
-    createUserWithEmailAndPassword: () => Promise.resolve(),
-    signInWithEmailAndPassword: () => Promise.resolve(),
-    logout: () => Promise.resolve(),
 });
 
 export const AuthProvider = (props) => {
@@ -48,7 +45,9 @@ export const AuthProvider = (props) => {
                         type: 'AUTH_STATE_CHANGED',
                         payload: {
                             isAuthenticated: true,
-                            user: null,
+                            user: {
+                                idToken: user.idToken,
+                            },
                         },
                     });
                 } else {
@@ -64,24 +63,11 @@ export const AuthProvider = (props) => {
         [dispatch]
     );
 
-    const signInWithEmailAndPassword = (email, password) => {};
-    //firebase.auth().signInWithEmailAndPassword(email, password);
-
-    const createUserWithEmailAndPassword = async (email, password) => {};
-    //firebase.auth().createUserWithEmailAndPassword(email, password);
-
-    const logout = async () => {
-        //await firebase.auth().signOut();
-    };
-
     return (
         <AuthContext.Provider
             value={{
                 ...state,
                 method: 'BPM',
-                createUserWithEmailAndPassword,
-                signInWithEmailAndPassword,
-                logout,
             }}
         >
             {children}
