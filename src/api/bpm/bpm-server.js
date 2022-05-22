@@ -10,12 +10,14 @@ class Server {
 
     subscribe(item) {
         this.observer.push(item);
+
         this.api()
             .url('auth/authenticated')
             .get()
             .json((response) => {
                 this.notify({ idToken: response.idToken });
-            });
+            })
+            .catch(() => this.notify());
     }
 
     notify(data) {
