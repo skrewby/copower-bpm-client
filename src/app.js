@@ -12,6 +12,7 @@ import { useAuth } from './hooks/use-auth';
 
 export const App = () => {
     const { settings } = useSettings();
+    const { isInitialized } = useAuth();
     const content = useRoutes(routes);
 
     const theme = createCustomTheme({
@@ -22,7 +23,7 @@ export const App = () => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            {content}
+            {isInitialized && content}
         </ThemeProvider>
     );
 };

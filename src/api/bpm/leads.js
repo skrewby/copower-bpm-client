@@ -8,12 +8,10 @@ import { bpmServer } from './bpm-server';
 
 export async function getLeads(options) {
     const { filters, sort, sortBy, page, query, view } = options;
-    const auth = window.sessionStorage.getItem('idToken');
 
     const data = await bpmServer
         .api()
         .url('api/leads')
-        .auth(`Bearer ${auth.token}`)
         .get()
         .json((response) => {
             return response;
