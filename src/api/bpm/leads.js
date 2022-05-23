@@ -51,3 +51,52 @@ export async function getLeads(options) {
         leadsCount: filteredLeads.length,
     });
 }
+
+export async function getLead(id) {
+    const data = await bpmServer
+        .api()
+        .url(`api/leads/${id}`)
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(data[0]);
+}
+
+export async function updateLead(id, values) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/${id}`)
+        .put(values)
+        .res((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function createLeadLog(id, entry, action) {
+    const body = {
+        content: entry,
+        action: action,
+    };
+
+    const response = await bpmServer
+        .api()
+        .url(`/leads/${id}/logs`)
+        .post(body)
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function getLeadLogs(id) {
+    const response = await bpmServer
+        .api()
+        .url(`/leads/${id}/logs`)
+        .get()
+        .json((response) => response);
+
+    return Promise.resolve(response);
+}

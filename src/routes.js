@@ -40,6 +40,27 @@ const Leads = Loadable(
         }))
     )
 );
+const Lead = Loadable(
+    lazy(() =>
+        import('./containers/leads/lead').then((module) => ({
+            default: module.Lead,
+        }))
+    )
+);
+const LeadSummary = Loadable(
+    lazy(() =>
+        import('./containers/leads/lead-summary').then((module) => ({
+            default: module.LeadSummary,
+        }))
+    )
+);
+const LeadLog = Loadable(
+    lazy(() =>
+        import('./containers/leads/lead-log').then((module) => ({
+            default: module.LeadLog,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -68,7 +89,26 @@ const routes = [
             },
             {
                 path: 'leads',
-                element: <Leads />,
+                children: [
+                    {
+                        path: '',
+                        element: <Leads />,
+                    },
+                    {
+                        path: ':leadID',
+                        element: <Lead />,
+                        children: [
+                            {
+                                path: '',
+                                element: <LeadSummary />,
+                            },
+                            {
+                                path: 'log',
+                                element: <LeadLog />,
+                            },
+                        ],
+                    },
+                ],
             },
         ],
     },
