@@ -17,7 +17,7 @@ import {
     Tabs,
     Divider,
 } from '@mui/material';
-import { bpmAPI } from '../../api/bpmAPI';
+import { bpmAPI } from '../../api/bpm/bpm-api';
 import { ActionsMenu } from '../../components/actions-menu';
 import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';

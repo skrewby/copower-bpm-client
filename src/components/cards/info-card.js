@@ -1,14 +1,19 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 
 // Material UI
 import { Button, Card, CardHeader, Divider, Grid } from '@mui/material';
 
 // Local Import
-import { PropertyList } from '../property-list';
-import { PropertyListItem } from '../property-list-item';
+import { InfoCardList } from './info-card-list';
+import { InfoCardListItem } from './info-card-list-item';
 
-export const LeadInfo = (props) => {
-    const { lead, onEdit, ...other } = props;
+/**
+ * Displays a card with a grid inside that shows information that is passed to it.
+ * The data passed to it must be an array of JSON objects of the format {label: "", value: ""}
+ */
+export const InfoCard = (props) => {
+    const { dataLeft, dataRight, title, onEdit, ...other } = props;
 
     return (
         <Card variant="outlined" {...other}>
@@ -18,57 +23,46 @@ export const LeadInfo = (props) => {
                         Edit
                     </Button>
                 }
-                title="Lead Info"
+                title={title}
             />
             <Divider />
             <Grid container>
                 <Grid item sm={6} xs={12}>
-                    <PropertyList>
-                        <PropertyListItem
-                            label="Customer Name"
-                            value={lead.name}
-                        />
-                        <PropertyListItem
-                            label="Company Name"
-                            value={lead.company_name}
-                        />
-                        <PropertyListItem
-                            label="Email Address"
-                            value={lead.email}
-                        />
-                        <PropertyListItem
-                            label="Assigned Sales"
-                            value={lead.sales}
-                        />
-                        <PropertyListItem
-                            label="Comment"
-                            value={lead.comment}
-                        />
-                    </PropertyList>
+                    <InfoCardList>
+                        {dataLeft.map((data) => (
+                            <React.Fragment key={data.id}>
+                                <InfoCardListItem
+                                    label={data.label}
+                                    value={data.value}
+                                />
+                            </React.Fragment>
+                        ))}
+                    </InfoCardList>
                 </Grid>
                 <Grid item sm={6} xs={12}>
-                    <PropertyList>
-                        <PropertyListItem
-                            label="Address"
-                            value={lead.address}
-                        />
-                        <PropertyListItem
-                            label="Company ABN"
-                            value={lead.company_abn}
-                        />
-                        <PropertyListItem
-                            label="Phone Number"
-                            value={lead.phone}
-                        />
-                        <PropertyListItem label="Source" value={lead.source} />
-                    </PropertyList>
+                    <InfoCardList>
+                        {dataRight.map((data) => (
+                            <React.Fragment key={data.id}>
+                                <InfoCardListItem
+                                    label={data.label}
+                                    value={data.value}
+                                />
+                            </React.Fragment>
+                        ))}
+                    </InfoCardList>
                 </Grid>
             </Grid>
         </Card>
     );
 };
 
-LeadInfo.propTypes = {
+InfoCard.propTypes = {
+    /** Function called when the edit button is pressed on the info card */
     onEdit: PropTypes.func,
-    lead: PropTypes.object.isRequired,
+    /** The string to show in the top of the info card */
+    title: PropTypes.string.isRequired,
+    /** Information to show on the first column of the grid in the card */
+    dataLeft: PropTypes.array.isRequired,
+    /** Information to show on the second column of the grid in the card */
+    dataRight: PropTypes.array.isRequired,
 };

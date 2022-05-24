@@ -55,7 +55,8 @@ export async function getLeads(options) {
 export async function getLead(id) {
     const data = await bpmServer
         .api()
-        .url(`api/leads/${id}`)
+        .url(`api/leads`)
+        .query({ id })
         .get()
         .json((response) => {
             return response;
@@ -67,7 +68,8 @@ export async function getLead(id) {
 export async function updateLead(id, values) {
     const response = await bpmServer
         .api()
-        .url(`api/leads/${id}`)
+        .url(`api/leads`)
+        .query({ id })
         .put(values)
         .res((response) => {
             return response;

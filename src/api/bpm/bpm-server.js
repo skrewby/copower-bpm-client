@@ -44,7 +44,7 @@ class Server {
                     .auth(`Bearer ${token}`)
                     .replay()
                     .unauthorized((err) => {
-                        this.notify(null);
+                        this.notify();
                     })
                     .json();
             });

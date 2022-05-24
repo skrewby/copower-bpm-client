@@ -54,13 +54,6 @@ const LeadSummary = Loadable(
         }))
     )
 );
-const LeadLog = Loadable(
-    lazy(() =>
-        import('./containers/leads/lead-log').then((module) => ({
-            default: module.LeadLog,
-        }))
-    )
-);
 
 const routes = [
     {
@@ -101,10 +94,6 @@ const routes = [
                             {
                                 path: '',
                                 element: <LeadSummary />,
-                            },
-                            {
-                                path: 'log',
-                                element: <LeadLog />,
                             },
                         ],
                     },

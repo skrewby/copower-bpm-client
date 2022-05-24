@@ -12,6 +12,7 @@ import {
     updateLead,
 } from './leads';
 import { getUsers } from './users';
+import { getLeadSources } from './info';
 
 class API {}
 
@@ -25,5 +26,8 @@ API.prototype.getUsers = getUsers;
 API.prototype.createLeadLog = createLeadLog;
 API.prototype.getLeadLogs = getLeadLogs;
 API.prototype.updateLead = updateLead;
+
+// Info
+API.prototype.getLeadSources = getLeadSources;
 
 export const bpmAPI = new API();
