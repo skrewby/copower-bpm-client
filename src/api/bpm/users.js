@@ -11,3 +11,15 @@ export async function getUsers() {
 
     return Promise.resolve(data[0]);
 }
+
+export async function getCurrentUser() {
+    const data = await bpmServer
+        .api()
+        .url(`api/users/me`)
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(data[0]);
+}

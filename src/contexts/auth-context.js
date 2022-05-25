@@ -1,5 +1,6 @@
 import { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
+import jwt_decode from 'jwt-decode';
 
 // Local imports
 import { bpmServer } from '../api/bpm/bpm-server';
@@ -45,9 +46,8 @@ export const AuthProvider = (props) => {
                         type: 'AUTH_STATE_CHANGED',
                         payload: {
                             isAuthenticated: true,
-                            user: {
-                                idToken: user.idToken,
-                            },
+                            idToken: user.idToken,
+                            user: jwt_decode(user.idToken),
                         },
                     });
                 } else {
@@ -55,6 +55,7 @@ export const AuthProvider = (props) => {
                         type: 'AUTH_STATE_CHANGED',
                         payload: {
                             isAuthenticated: false,
+                            idToken: null,
                             user: null,
                         },
                     });

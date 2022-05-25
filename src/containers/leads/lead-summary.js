@@ -16,6 +16,7 @@ import { useMounted } from '../../hooks/use-mounted';
 // Components
 import { InfoCard } from '../../components/cards/info-card';
 import { FormDialog } from '../../components/dialogs/form-dialog';
+import { LeadProgress } from '../../components/timeline/lead-progress';
 
 export const LeadSummary = () => {
     const [leadState, setRefresh] = useOutletContext();
@@ -23,16 +24,20 @@ export const LeadSummary = () => {
     const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
     const mounted = useMounted();
 
-    const [sourceOptions, setSourceOptions] = useState({
-        isLoading: true,
-        data: [],
-    });
+    const [sourceOptions, setSourceOptions] = useState([]);
+    const [phaseOptions, setPhaseOptions] = useState([]);
+    const [existingSystemOptions, setExistingSystemOptions] = useState([]);
+    const [storyOptions, setStoryOptions] = useState([]);
+    const [roofTypeOptions, setRoofTypeOptions] = useState([]);
+    const [statusOptions, setStatusOptions] = useState([]);
 
     const getData = useCallback(async () => {
-        setSourceOptions(() => ({
-            isLoading: true,
-            data: [],
-        }));
+        setSourceOptions([]);
+        setPhaseOptions([]);
+        setExistingSystemOptions([]);
+        setStoryOptions([]);
+        setRoofTypeOptions([]);
+        setStatusOptions([]);
 
         try {
             const sourcesAPI = await bpmAPI.getLeadSources();
@@ -42,21 +47,61 @@ export const LeadSummary = () => {
                     name: row.name,
                 };
             });
+            const phasesAPI = await bpmAPI.getPhaseOptions();
+            const phasesResult = phasesAPI.map((row) => {
+                return {
+                    id: row.id,
+                    name: row.num,
+                };
+            });
+            const existingSystemAPI = await bpmAPI.getExistingSystemOptions();
+            const existingSystemResult = existingSystemAPI.map((row) => {
+                return {
+                    id: row.id,
+                    name: row.comment,
+                };
+            });
+            const storyOptionsAPI = await bpmAPI.getStoryOptions();
+            const storyOptionsResult = storyOptionsAPI.map((row) => {
+                return {
+                    id: row.id,
+                    name: row.num,
+                };
+            });
+            const roofTypeAPI = await bpmAPI.getRoofTypeOptions();
+            const roofTypeResult = roofTypeAPI.map((row) => {
+                return {
+                    id: row.id,
+                    name: row.name,
+                };
+            });
+            const statusOptionsAPI = await bpmAPI.getLeadStatusOptions();
+            const statusOptionsResult = statusOptionsAPI.map((row) => {
+                return {
+                    id: row.id,
+                    name: row.name,
+                    colour: row.colour,
+                };
+            });
 
             if (mounted.current) {
-                setSourceOptions(() => ({
-                    isLoading: false,
-                    data: sourcesResult,
-                }));
+                setSourceOptions(sourcesResult);
+                setPhaseOptions(phasesResult);
+                setExistingSystemOptions(existingSystemResult);
+                setStoryOptions(storyOptionsResult);
+                setRoofTypeOptions(roofTypeResult);
+                setStatusOptions(statusOptionsResult);
             }
         } catch (err) {
             console.error(err);
 
             if (mounted.current) {
-                setSourceOptions(() => ({
-                    isLoading: false,
-                    error: err.message,
-                }));
+                setSourceOptions(() => ({ error: err.message }));
+                setPhaseOptions(() => ({ error: err.message }));
+                setExistingSystemOptions(() => ({ error: err.message }));
+                setStoryOptions(() => ({ error: err.message }));
+                setRoofTypeOptions(() => ({ error: err.message }));
+                setStatusOptions(() => ({ error: err.message }));
             }
         }
     }, [mounted]);
@@ -127,6 +172,63 @@ export const LeadSummary = () => {
         },
     });
 
+    const propertyFormik = useFormik({
+        enableReinitialize: true,
+        initialValues: {
+            phase_id: leadState.data?.phase_id || '',
+            existing_system_id: leadState.data?.existing_system_id || '',
+            story_id: leadState.data?.story_id || '',
+            retailer: leadState.data?.retailer || '',
+            roof_type_id: leadState.data?.roof_type_id || '',
+            distributor: leadState.data?.distributor || '',
+            nmi: leadState.data?.nmi || '',
+            meter: leadState.data?.meter || '',
+            property_comment: leadState.data?.property_comment || '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            phase_id: Yup.number(),
+            existing_system_id: Yup.number(),
+            story_id: Yup.number(),
+            retailer: Yup.string(),
+            roof_type_id: Yup.number(),
+            distributor: Yup.string(),
+            nmi: Yup.string(),
+            meter: Yup.string(),
+            property_comment: Yup.string(),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                // Remove empty strings and null values
+                let property_values = Object.fromEntries(
+                    Object.entries(values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
+
+                const res = await bpmAPI.updateLead(
+                    leadState.data.lead_id,
+                    property_values
+                );
+                if (res.status === 201) {
+                    toast.success('Lead updated');
+                } else {
+                    toast.error('Something went wrong');
+                }
+                setRefresh(true);
+
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+                setOpenPropertyDialog(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
     const leadInfoFormFields = [
         {
             id: 1,
@@ -173,13 +275,8 @@ export const LeadSummary = () => {
         },
         {
             id: 5,
-            variant: 'Input',
+            variant: 'Address',
             width: 12,
-            touched: leadInfoFormik.touched.address,
-            errors: leadInfoFormik.errors.address,
-            value: leadInfoFormik.values.address,
-            label: 'Address',
-            name: 'address',
         },
         {
             id: 6,
@@ -211,7 +308,7 @@ export const LeadSummary = () => {
             value: leadInfoFormik.values.source_id,
             label: 'Lead Source',
             name: 'source_id',
-            options: sourceOptions.data,
+            options: sourceOptions,
         },
         {
             id: 9,
@@ -222,6 +319,103 @@ export const LeadSummary = () => {
             value: leadInfoFormik.values.comment,
             label: 'Comment',
             name: 'comment',
+        },
+    ];
+
+    const propertyFormFields = [
+        {
+            id: 1,
+            variant: 'Select',
+            width: 6,
+            touched: propertyFormik.touched.phase_id,
+            errors: propertyFormik.errors.phase_id,
+            value: propertyFormik.values.phase_id,
+            label: 'Phases',
+            name: 'phase_id',
+            options: phaseOptions,
+        },
+        {
+            id: 2,
+            variant: 'Select',
+            width: 6,
+            touched: propertyFormik.touched.existing_system_id,
+            errors: propertyFormik.errors.existing_system_id,
+            value: propertyFormik.values.existing_system_id,
+            label: 'Existing System',
+            name: 'existing_system_id',
+            options: existingSystemOptions,
+        },
+        {
+            id: 3,
+            variant: 'Select',
+            width: 6,
+            touched: propertyFormik.touched.roof_type_id,
+            errors: propertyFormik.errors.roof_type_id,
+            value: propertyFormik.values.roof_type_id,
+            label: 'Roof Type',
+            name: 'roof_type_id',
+            options: roofTypeOptions,
+        },
+        {
+            id: 4,
+            variant: 'Select',
+            width: 6,
+            touched: propertyFormik.touched.story_id,
+            errors: propertyFormik.errors.story_id,
+            value: propertyFormik.values.story_id,
+            label: 'Stories',
+            name: 'story_id',
+            options: storyOptions,
+        },
+        {
+            id: 5,
+            variant: 'Input',
+            width: 6,
+            touched: propertyFormik.touched.retailer,
+            errors: propertyFormik.errors.retailer,
+            value: propertyFormik.values.retailer,
+            label: 'Retailer',
+            name: 'retailer',
+        },
+        {
+            id: 6,
+            variant: 'Input',
+            width: 6,
+            touched: propertyFormik.touched.nmi,
+            errors: propertyFormik.errors.nmi,
+            value: propertyFormik.values.nmi,
+            label: 'NMI',
+            name: 'nmi',
+        },
+        {
+            id: 7,
+            variant: 'Input',
+            width: 6,
+            touched: propertyFormik.touched.distributor,
+            errors: propertyFormik.errors.distributor,
+            value: propertyFormik.values.distributor,
+            label: 'Distributor',
+            name: 'distributor',
+        },
+        {
+            id: 8,
+            variant: 'Input',
+            width: 6,
+            touched: propertyFormik.touched.meter,
+            errors: propertyFormik.errors.meter,
+            value: propertyFormik.values.meter,
+            label: 'Meter Number',
+            name: 'meter',
+        },
+        {
+            id: 9,
+            variant: 'Input',
+            width: 12,
+            touched: propertyFormik.touched.property_comment,
+            errors: propertyFormik.errors.property_comment,
+            value: propertyFormik.values.property_comment,
+            label: 'Property Comment',
+            name: 'property_comment',
         },
     ];
 
@@ -328,10 +522,59 @@ export const LeadSummary = () => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            {/* <InfoCard
+                            <InfoCard
                                 onEdit={() => setOpenPropertyDialog(true)}
-                                lead={leadState.data}
-                            /> */}
+                                title="Property Details"
+                                dataLeft={[
+                                    {
+                                        id: 1,
+                                        label: 'Phases',
+                                        value: leadState.data.phase,
+                                    },
+                                    {
+                                        id: 2,
+                                        label: 'Roof Type',
+                                        value: leadState.data.roof_type,
+                                    },
+                                    {
+                                        id: 3,
+                                        label: 'Retailer',
+                                        value: leadState.data.retailer,
+                                    },
+                                    {
+                                        id: 4,
+                                        label: 'NMI',
+                                        value: leadState.data.nmi,
+                                    },
+                                    {
+                                        id: 5,
+                                        label: 'Property Comment',
+                                        value: leadState.data.property_comment,
+                                    },
+                                ]}
+                                dataRight={[
+                                    {
+                                        id: 1,
+                                        label: 'Existing System',
+                                        value: leadState.data.existing_system,
+                                    },
+                                    {
+                                        id: 2,
+                                        label: 'Stories',
+                                        value: leadState.data.story,
+                                    },
+                                    {
+                                        id: 3,
+                                        label: 'Distributor',
+                                        value: leadState.data.distributor,
+                                    },
+                                    {
+                                        id: 4,
+                                        label: 'Meter Number',
+                                        value: leadState.data.meter,
+                                    },
+                                ]}
+                            />
                         </Grid>
                     </Grid>
                     <Grid
@@ -343,10 +586,11 @@ export const LeadSummary = () => {
                         xs={12}
                     >
                         <Grid item xs={12}>
-                            {/* <LeadProgress
+                            <LeadProgress
                                 lead={leadState.data}
+                                statusOptions={statusOptions}
                                 refresh={setRefresh}
-                            /> */}
+                            />
                         </Grid>
                     </Grid>
                 </Grid>
@@ -357,12 +601,13 @@ export const LeadSummary = () => {
                     title="Edit Lead Info"
                     fields={leadInfoFormFields}
                 />
-                {/* <LeadPropertyDialog
+                <FormDialog
                     onClose={() => setOpenPropertyDialog(false)}
                     open={openPropertyDialog}
-                    lead={leadState.data}
-                    refresh={setRefresh}
-                /> */}
+                    formik={propertyFormik}
+                    title="Edit Property Details"
+                    fields={propertyFormFields}
+                />
             </>
         );
     };

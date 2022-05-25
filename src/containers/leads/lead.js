@@ -18,13 +18,16 @@ import {
     Divider,
 } from '@mui/material';
 import { bpmAPI } from '../../api/bpm/bpm-api';
+import { useAuth } from '../../hooks/use-auth';
+
 import { ActionsMenu } from '../../components/actions-menu';
 import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
 export const Lead = () => {
-    let { leadID } = useParams();
+    const { leadID } = useParams();
+    const { user } = useAuth();
     const mounted = useMounted();
     const [leadState, setLeadState] = useState({ isLoading: true });
     const [refresh, setRefresh] = useState(false);
@@ -77,26 +80,39 @@ export const Lead = () => {
     };
 
     const handleReOpen = () => {
-        bpmAPI.getCurrentUser().then((role) => {
-            if (role !== 'Sales') {
-                bpmAPI.createLeadLog(leadID, `Re-Opened lead`, true);
-                bpmAPI.updateLead(leadID, { status_id: 1 }).then(refresh(true));
-            } else {
-                toast.error('Not authorized. Contact an admin');
-            }
-        });
+        if (user.role !== 'Sales') {
+            bpmAPI.createLeadLog(leadID, `Re-Opened lead`, true);
+            bpmAPI.updateLead(leadID, { status_id: 1 }).then(setRefresh(true));
+        } else {
+            toast.error('Not authorized. Contact an admin');
+        }
     };
 
-    const actions = [
-        {
-            label: 'Send Quote',
-            onClick: handleSendQuote,
-        },
-        {
-            label: 'Re-Open',
-            onClick: handleReOpen,
-        },
-    ];
+    const getActionMenu = () => {
+        if (user.role === 'Sales') {
+            const salesActions = [
+                {
+                    label: 'Send Quote',
+                    onClick: handleSendQuote,
+                },
+            ];
+
+            return salesActions;
+        }
+
+        const adminActions = [
+            {
+                label: 'Send Quote',
+                onClick: handleSendQuote,
+            },
+            {
+                label: 'Re-Open',
+                onClick: handleReOpen,
+            },
+        ];
+        return adminActions;
+    };
+    const actions = getActionMenu();
 
     const renderContent = () => {
         if (leadState.isLoading) {

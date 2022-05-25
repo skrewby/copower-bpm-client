@@ -11,8 +11,15 @@ import {
     getLeadLogs,
     updateLead,
 } from './leads';
-import { getUsers } from './users';
-import { getLeadSources } from './info';
+import { getCurrentUser, getUsers } from './users';
+import {
+    getExistingSystemOptions,
+    getLeadSources,
+    getLeadStatusOptions,
+    getPhaseOptions,
+    getRoofTypeOptions,
+    getStoryOptions,
+} from './info';
 
 class API {}
 
@@ -22,12 +29,20 @@ API.prototype.login = login;
 // Leads
 API.prototype.getLeads = getLeads;
 API.prototype.getLead = getLead;
-API.prototype.getUsers = getUsers;
 API.prototype.createLeadLog = createLeadLog;
 API.prototype.getLeadLogs = getLeadLogs;
 API.prototype.updateLead = updateLead;
 
+// Users
+API.prototype.getUsers = getUsers;
+API.prototype.getCurrentUser = getCurrentUser;
+
 // Info
 API.prototype.getLeadSources = getLeadSources;
+API.prototype.getPhaseOptions = getPhaseOptions;
+API.prototype.getExistingSystemOptions = getExistingSystemOptions;
+API.prototype.getStoryOptions = getStoryOptions;
+API.prototype.getRoofTypeOptions = getRoofTypeOptions;
+API.prototype.getLeadStatusOptions = getLeadStatusOptions;
 
 export const bpmAPI = new API();

@@ -74,14 +74,18 @@ export function AddressAutocomplete(props) {
             onChange={(event, newValue) => {
                 formik.setFieldValue(
                     'address',
-                    newValue !== null ? newValue : ''
+                    newValue !== null ? newValue.sla : ''
+                );
+                formik.setFieldValue(
+                    'address_id',
+                    newValue !== null ? newValue.id : ''
                 );
             }}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
             renderInput={(params) => (
-                <TextField value="Test" {...params} label="Address" fullWidth />
+                <TextField {...params} label="Address" fullWidth />
             )}
             renderOption={(props, option) => {
                 return (

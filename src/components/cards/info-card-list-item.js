@@ -36,7 +36,7 @@ export const InfoCardListItem = (props) => {
                     >
                         {children || (
                             <Typography color="textSecondary" variant="body2">
-                                {value ?? ' '}
+                                {value ?? 'No Info'}
                             </Typography>
                         )}
                     </Box>
@@ -61,5 +61,5 @@ InfoCardListItem.propTypes = {
     component: PropTypes.elementType,
     children: PropTypes.node,
     label: PropTypes.string.isRequired,
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };

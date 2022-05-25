@@ -86,7 +86,7 @@ export async function createLeadLog(id, entry, action) {
 
     const response = await bpmServer
         .api()
-        .url(`/leads/${id}/logs`)
+        .url(`api/leads/${id}/logs`)
         .post(body)
         .res((response) => response);
 
@@ -96,7 +96,7 @@ export async function createLeadLog(id, entry, action) {
 export async function getLeadLogs(id) {
     const response = await bpmServer
         .api()
-        .url(`/leads/${id}/logs`)
+        .url(`api/leads/${id}/logs`)
         .get()
         .json((response) => response);
 
