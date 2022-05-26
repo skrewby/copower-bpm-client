@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import toast from 'react-hot-toast';
 
 // Material UI
 import {
@@ -29,6 +32,7 @@ import { bpmAPI } from '../../api/bpm/bpm-api';
 import { DataTable } from '../../components/tables/data-table';
 import { Status } from '../../components/tables/status';
 import { Filter } from '../../components/tables/filter';
+import { FormDialog } from '../../components/dialogs/form-dialog';
 
 const columns = [
     {
@@ -155,6 +159,9 @@ export const Leads = () => {
     const [refresh, setRefresh] = useState(false);
     let navigate = useNavigate();
 
+    const [sourceOptions, setSourceOptions] = useState([]);
+    const [salesUserOptions, setSalesUserOptions] = useState([]);
+
     const mapFunction = (lead) => {
         return (
             <TableRow hover key={lead.lead_id}>
@@ -202,6 +209,8 @@ export const Leads = () => {
 
     const getData = useCallback(async () => {
         setLeadsState(() => ({ isLoading: true }));
+        setSourceOptions([]);
+        setSalesUserOptions([]);
 
         try {
             const result = await bpmAPI.getLeads({
@@ -212,12 +221,31 @@ export const Leads = () => {
                 sortBy: controller.sortBy,
                 view: controller.view,
             });
+            const sourcesAPI = await bpmAPI.getLeadSources();
+            const sourcesResult = sourcesAPI.map((row) => {
+                return {
+                    id: row.id,
+                    name: row.name,
+                };
+            });
+            const usersAPI = await bpmAPI.getUsers();
+            const salesResult = usersAPI.filter(
+                (user) => user.role === 'Sales'
+            );
+            const usersResult = salesResult.map((user) => {
+                return {
+                    id: user.account_id,
+                    name: user.name,
+                };
+            });
 
             if (mounted.current) {
                 setLeadsState(() => ({
                     isLoading: false,
                     data: result,
                 }));
+                setSourceOptions(sourcesResult);
+                setSalesUserOptions(usersResult);
             }
         } catch (err) {
             console.error(err);
@@ -227,6 +255,8 @@ export const Leads = () => {
                     isLoading: false,
                     error: err.message,
                 }));
+                setSourceOptions(() => ({ error: err.message }));
+                setSalesUserOptions(() => ({ error: err.message }));
             }
         }
     }, [
@@ -300,6 +330,167 @@ export const Leads = () => {
             sortBy: property,
         });
     };
+
+    const addLeadFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            address: '',
+            email: '',
+            first_name: '',
+            last_name: '',
+            company_name: '',
+            company_abn: '',
+            sales_id: '',
+            phone: '',
+            source_id: '',
+            comment: '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            first_name: Yup.string()
+                .max(255)
+                .required('First name is required'),
+            last_name: Yup.string().max(255).required('Last name is required'),
+            company_name: Yup.string().max(255),
+            company_abn: Yup.string().max(255),
+            email: Yup.string()
+                .email('Must be a valid email')
+                .max(255)
+                .required('Email is required'),
+            sales_id: Yup.string()
+                .max(255)
+                .required('Must assign to a sales person'),
+            source_id: Yup.number().required('Must choose lead source'),
+            phone: Yup.string().max(255).required('Contact number is required'),
+            comment: Yup.string().max(255).nullable(),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                const res = await bpmAPI
+                    .createLead(values)
+                    .then(setRefresh(true));
+                if (res.status === 201) {
+                    bpmAPI.createLeadLog(res.lead_id, 'Created Lead', true);
+                    toast.success(`Lead Created`);
+                } else {
+                    toast.error(`Something went wrong`);
+                }
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const leadFormFields = [
+        {
+            id: 1,
+            variant: 'Input',
+            width: 6,
+            touched: addLeadFormik.touched.first_name,
+            errors: addLeadFormik.errors.first_name,
+            value: addLeadFormik.values.first_name,
+            label: 'First Name',
+            name: 'first_name',
+            type: 'name',
+        },
+        {
+            id: 2,
+            variant: 'Input',
+            width: 6,
+            touched: addLeadFormik.touched.last_name,
+            errors: addLeadFormik.errors.last_name,
+            value: addLeadFormik.values.last_name,
+            label: 'Last Name',
+            name: 'last_name',
+            type: 'name',
+        },
+        {
+            id: 3,
+            variant: 'Input',
+            width: 6,
+            touched: addLeadFormik.touched.company_name,
+            errors: addLeadFormik.errors.company_name,
+            value: addLeadFormik.values.company_name,
+            label: 'Company Name',
+            name: 'company_name',
+            type: 'name',
+        },
+        {
+            id: 4,
+            variant: 'Input',
+            width: 6,
+            touched: addLeadFormik.touched.company_abn,
+            errors: addLeadFormik.errors.company_abn,
+            value: addLeadFormik.values.company_abn,
+            label: 'Company ABN',
+            name: 'company_abn',
+        },
+        {
+            id: 5,
+            variant: 'Address',
+            width: 12,
+        },
+        {
+            id: 6,
+            variant: 'Input',
+            width: 6,
+            touched: addLeadFormik.touched.email,
+            errors: addLeadFormik.errors.email,
+            value: addLeadFormik.values.email,
+            label: 'Email',
+            name: 'email',
+            type: 'email',
+        },
+        {
+            id: 7,
+            variant: 'Input',
+            width: 6,
+            touched: addLeadFormik.touched.phone,
+            errors: addLeadFormik.errors.phone,
+            value: addLeadFormik.values.phone,
+            label: 'Contact Number',
+            name: 'phone',
+        },
+        {
+            id: 8,
+            variant: 'Select',
+            width: 6,
+            touched: addLeadFormik.touched.source_id,
+            errors: addLeadFormik.errors.source_id,
+            value: addLeadFormik.values.source_id,
+            label: 'Lead Source',
+            name: 'source_id',
+            options: sourceOptions,
+        },
+        {
+            id: 9,
+            variant: 'Select',
+            width: 6,
+            touched: addLeadFormik.touched.sales_id,
+            errors: addLeadFormik.errors.sales_id,
+            value: addLeadFormik.values.sales_id,
+            label: 'Assign Sales',
+            name: 'sales_id',
+            options: salesUserOptions,
+        },
+        {
+            id: 10,
+            variant: 'Input',
+            width: 12,
+            touched: addLeadFormik.touched.comment,
+            errors: addLeadFormik.errors.comment,
+            value: addLeadFormik.values.comment,
+            label: 'Comment',
+            name: 'comment',
+        },
+    ];
 
     return (
         <>
@@ -379,6 +570,13 @@ export const Leads = () => {
                     </Card>
                 </Container>
             </Box>
+            <FormDialog
+                onClose={() => setOpenCreateDialog(false)}
+                open={openCreateDialog}
+                formik={addLeadFormik}
+                title="Add Lead"
+                fields={leadFormFields}
+            />
         </>
     );
 };

@@ -9,7 +9,7 @@ export async function getUsers() {
             return response;
         });
 
-    return Promise.resolve(data[0]);
+    return Promise.resolve(data);
 }
 
 export async function getCurrentUser() {

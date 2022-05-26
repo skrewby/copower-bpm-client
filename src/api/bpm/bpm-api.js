@@ -10,6 +10,7 @@ import {
     createLeadLog,
     getLeadLogs,
     updateLead,
+    createLead,
 } from './leads';
 import { getCurrentUser, getUsers } from './users';
 import {
@@ -32,6 +33,7 @@ API.prototype.getLead = getLead;
 API.prototype.createLeadLog = createLeadLog;
 API.prototype.getLeadLogs = getLeadLogs;
 API.prototype.updateLead = updateLead;
+API.prototype.createLead = createLead;
 
 // Users
 API.prototype.getUsers = getUsers;

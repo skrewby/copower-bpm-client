@@ -78,6 +78,18 @@ export async function updateLead(id, values) {
     return Promise.resolve(response);
 }
 
+export async function createLead(body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads`)
+        .post(body)
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
 export async function createLeadLog(id, entry, action) {
     const body = {
         content: entry,
@@ -86,7 +98,8 @@ export async function createLeadLog(id, entry, action) {
 
     const response = await bpmServer
         .api()
-        .url(`api/leads/${id}/logs`)
+        .url(`api/leads/logs`)
+        .query({ id })
         .post(body)
         .res((response) => response);
 
@@ -96,7 +109,8 @@ export async function createLeadLog(id, entry, action) {
 export async function getLeadLogs(id) {
     const response = await bpmServer
         .api()
-        .url(`api/leads/${id}/logs`)
+        .url(`api/leads/logs`)
+        .query({ id })
         .get()
         .json((response) => response);
 

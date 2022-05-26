@@ -266,7 +266,7 @@ export const LeadProgress = (props) => {
                     {lead.status_id < 5 && (
                         <StatusSelect
                             onChange={handleStatusChange}
-                            options={statusOptions}
+                            options={statusOptions.filter((row) => row.id < 5)}
                             value={
                                 statusOptions.filter(
                                     (status) => status.id === lead.status_id
