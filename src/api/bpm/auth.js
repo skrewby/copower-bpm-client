@@ -12,3 +12,10 @@ export async function login(email, password) {
 
     return Promise.resolve(res);
 }
+
+export async function logout() {
+    window.sessionStorage.removeItem('idToken');
+    bpmServer.notify();
+
+    return Promise.resolve();
+}

@@ -3,7 +3,7 @@ import { parseISO, subDays } from 'date-fns';
 // Local import
 
 // API imports
-import { login } from './auth';
+import { login, logout } from './auth';
 import {
     getLeads,
     getLead,
@@ -26,6 +26,7 @@ class API {}
 
 // Auth
 API.prototype.login = login;
+API.prototype.logout = logout;
 
 // Leads
 API.prototype.getLeads = getLeads;

@@ -31,22 +31,9 @@ class Server {
             // Cors fetch options
             .options({ mode: 'cors' })
             .auth(`Bearer ${window.sessionStorage.getItem('idToken')}`)
-            .catcher(401, async (error, request) => {
-                // Renew credentials
-                const token = await wretch(`${this.server_url}auth/refresh`)
-                    .get()
-                    .text();
-                console.log(`Refreshed token: ${token}`);
-                window.sessionStorage.setItem('idToken', token);
-                this.notify({ idToken: token });
-                // Replay the original request with new credentials
-                return request
-                    .auth(`Bearer ${token}`)
-                    .replay()
-                    .unauthorized((err) => {
-                        this.notify();
-                    })
-                    .json();
+            .catcher(401, () => {
+                window.sessionStorage.removeItem('idToken');
+                this.notify();
             });
         return bpmServer;
     }

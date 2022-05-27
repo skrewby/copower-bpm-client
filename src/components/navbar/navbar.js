@@ -9,6 +9,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 // Components
 import { NavbarItem } from './navbar-item';
+import { NavbarAccount } from './navbar-account';
 
 import { useSettings } from '../../contexts/settings-context';
 
@@ -94,6 +95,10 @@ export const Navbar = (props) => {
                 >
                     {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
+                <NavbarAccount
+                    darkMode={darkMode}
+                    onSwitchTheme={handleSwitchTheme}
+                />
             </Toolbar>
         </AppBar>
     );
