@@ -1,4 +1,4 @@
-import { parseISO, subDays } from 'date-fns';
+import { parseISO } from 'date-fns';
 
 // Local imports
 import { applyFilters } from '../../utils/apply-filters';

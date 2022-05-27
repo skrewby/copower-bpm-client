@@ -23,3 +23,28 @@ export async function getCurrentUser() {
 
     return Promise.resolve(data[0]);
 }
+
+export async function updateUser(id, data) {
+    const response = await bpmServer
+        .api()
+        .url(`api/users`)
+        .query({ id })
+        .put(data)
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function createUser(data) {
+    const response = await bpmServer
+        .api()
+        .url(`api/users`)
+        .post(data)
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}

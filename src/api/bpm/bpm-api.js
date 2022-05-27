@@ -1,7 +1,3 @@
-import { parseISO, subDays } from 'date-fns';
-
-// Local import
-
 // API imports
 import { login, logout } from './auth';
 import {
@@ -12,7 +8,7 @@ import {
     updateLead,
     createLead,
 } from './leads';
-import { getCurrentUser, getUsers } from './users';
+import { createUser, getCurrentUser, getUsers, updateUser } from './users';
 import {
     getExistingSystemOptions,
     getLeadSources,
@@ -20,6 +16,7 @@ import {
     getPhaseOptions,
     getRoofTypeOptions,
     getStoryOptions,
+    getValidRoles,
 } from './info';
 
 class API {}
@@ -39,6 +36,8 @@ API.prototype.createLead = createLead;
 // Users
 API.prototype.getUsers = getUsers;
 API.prototype.getCurrentUser = getCurrentUser;
+API.prototype.updateUser = updateUser;
+API.prototype.createUser = createUser;
 
 // Info
 API.prototype.getLeadSources = getLeadSources;
@@ -47,5 +46,6 @@ API.prototype.getExistingSystemOptions = getExistingSystemOptions;
 API.prototype.getStoryOptions = getStoryOptions;
 API.prototype.getRoofTypeOptions = getRoofTypeOptions;
 API.prototype.getLeadStatusOptions = getLeadStatusOptions;
+API.prototype.getValidRoles = getValidRoles;
 
 export const bpmAPI = new API();

@@ -71,3 +71,15 @@ export async function getLeadStatusOptions() {
 
     return Promise.resolve(data);
 }
+
+export async function getValidRoles() {
+    const data = await bpmServer
+        .api()
+        .url(`api/info/roles`)
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(data);
+}

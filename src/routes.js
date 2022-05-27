@@ -61,6 +61,22 @@ const LeadLog = Loadable(
         }))
     )
 );
+const Organisation = Loadable(
+    lazy(() =>
+        import('./containers/organisation/organisation').then((module) => ({
+            default: module.Organisation,
+        }))
+    )
+);
+const OrganisationMembers = Loadable(
+    lazy(() =>
+        import('./containers/organisation/organisation-members').then(
+            (module) => ({
+                default: module.OrganisationMembers,
+            })
+        )
+    )
+);
 
 const routes = [
     {
@@ -107,6 +123,16 @@ const routes = [
                                 element: <LeadLog />,
                             },
                         ],
+                    },
+                ],
+            },
+            {
+                path: 'organisation',
+                element: <Organisation />,
+                children: [
+                    {
+                        path: '',
+                        element: <OrganisationMembers />,
                     },
                 ],
             },
