@@ -230,7 +230,7 @@ export const Leads = () => {
             });
             const usersAPI = await bpmAPI.getUsers();
             const salesResult = usersAPI.filter(
-                (user) => user.role === 'Sales'
+                (user) => user.disabled === false
             );
             const usersResult = salesResult.map((user) => {
                 return {
@@ -358,24 +358,24 @@ export const Leads = () => {
                 .email('Must be a valid email')
                 .max(255)
                 .required('Email is required'),
-            sales_id: Yup.string()
-                .max(255)
-                .required('Must assign to a sales person'),
+            sales_id: Yup.string().max(255).required('Must assign to an user'),
             source_id: Yup.number().required('Must choose lead source'),
             phone: Yup.string().max(255).required('Contact number is required'),
             comment: Yup.string().max(255).nullable(),
         }),
         onSubmit: async (values, helpers) => {
             try {
-                const res = await bpmAPI
+                await bpmAPI
                     .createLead(values)
-                    .then(setRefresh(true));
-                if (res.status === 201) {
-                    bpmAPI.createLeadLog(res.lead_id, 'Created Lead', true);
-                    toast.success(`Lead Created`);
-                } else {
-                    toast.error(`Something went wrong`);
-                }
+                    .then((res) => {
+                        setOpenCreateDialog(false);
+                        bpmAPI.createLeadLog(res.id, 'Created Lead', true);
+                        toast.success(`Lead Created`);
+                        setRefresh(true);
+                    })
+                    .catch((err) => {
+                        toast.error('There was an error. Try again.');
+                    });
                 helpers.resetForm();
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);
@@ -566,6 +566,7 @@ export const Leads = () => {
                             page={controller.page + 1}
                             sort={controller.sort}
                             sortBy={controller.sortBy}
+                            size="small"
                         />
                     </Card>
                 </Container>

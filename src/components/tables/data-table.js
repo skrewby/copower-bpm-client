@@ -34,6 +34,7 @@ export const DataTable = (props) => {
         page,
         sort,
         sortBy,
+        size,
     } = props;
 
     const displayLoading = isLoading;
@@ -48,7 +49,7 @@ export const DataTable = (props) => {
                 flexDirection: 'column',
             }}
         >
-            <Table sx={{ minWidth: 1000, height: 'fit-content' }}>
+            <Table sx={{ minWidth: 1000, height: 'fit-content' }} size={size}>
                 <TableHead>
                     <TableRow>
                         {columns.map((column) => (
@@ -111,6 +112,7 @@ DataTable.defaultProps = {
     data: [],
     dataCount: 0,
     page: 1,
+    size: 'medium',
 };
 
 DataTable.propTypes = {
@@ -130,4 +132,5 @@ DataTable.propTypes = {
     selectedInvoices: Proptypes.array,
     sort: Proptypes.oneOf(['asc', 'desc']),
     sortBy: Proptypes.string,
+    size: Proptypes.oneOf(['small', 'medium']),
 };

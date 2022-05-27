@@ -419,7 +419,7 @@ const baseThemeOptions = {
             styleOverrides: {
                 root: {
                     '.MuiTableCell-root': {
-                        fontSize: 11,
+                        fontSize: 13,
                         fontWeight: 600,
                         textTransform: 'uppercase',
                     },

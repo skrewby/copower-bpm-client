@@ -7,6 +7,10 @@ import {
 } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+// Material UI
 import {
     Box,
     Button,
@@ -17,19 +21,27 @@ import {
     Tabs,
     Divider,
 } from '@mui/material';
-import { bpmAPI } from '../../api/bpm/bpm-api';
-import { useAuth } from '../../hooks/use-auth';
-
-import { ActionsMenu } from '../../components/actions-menu';
-import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
+
+// Local import
+import { bpmAPI } from '../../api/bpm/bpm-api';
+import { useAuth } from '../../hooks/use-auth';
+import { useMounted } from '../../hooks/use-mounted';
+import { getStatusDetails } from '../../utils/get-status-details';
+
+// Components
+import { ActionsMenu } from '../../components/actions-menu';
+import { FormDialog } from '../../components/dialogs/form-dialog';
 
 export const Lead = () => {
     const { leadID } = useParams();
     const { user } = useAuth();
     const mounted = useMounted();
     const [leadState, setLeadState] = useState({ isLoading: true });
+    const [statusOptions, setStatusOptions] = useState({ isLoading: true });
+    const [salesUserOptions, setSalesUserOptions] = useState([]);
+    const [openChangeSalesDialog, setOpenChangeSalesDialog] = useState();
     const [refresh, setRefresh] = useState(false);
     const location = useLocation();
 
@@ -46,15 +58,40 @@ export const Lead = () => {
 
     const getLead = useCallback(async () => {
         setLeadState(() => ({ isLoading: true }));
+        setStatusOptions(() => ({ isLoading: true }));
+        setSalesUserOptions([]);
 
         try {
             const result = await bpmAPI.getLead(leadID);
+            const statusOptionsAPI = await bpmAPI.getLeadStatusOptions();
+            const statusOptionsResult = statusOptionsAPI.map((row) => {
+                return {
+                    id: row.id,
+                    name: row.name,
+                    colour: row.colour,
+                };
+            });
+            const usersAPI = await bpmAPI.getUsers();
+            const salesResult = usersAPI.filter(
+                (user) => user.disabled === false
+            );
+            const usersResult = salesResult.map((user) => {
+                return {
+                    id: user.account_id,
+                    name: user.name,
+                };
+            });
 
             if (mounted.current) {
                 setLeadState(() => ({
                     isLoading: false,
                     data: result,
                 }));
+                setStatusOptions(() => ({
+                    isLoading: false,
+                    data: statusOptionsResult,
+                }));
+                setSalesUserOptions(usersResult);
             }
         } catch (err) {
             console.error(err);
@@ -64,6 +101,11 @@ export const Lead = () => {
                     isLoading: false,
                     error: err.message,
                 }));
+                setStatusOptions(() => ({
+                    isLoading: false,
+                    error: err.message,
+                }));
+                setSalesUserOptions(() => ({ error: err.message }));
             }
         }
     }, [leadID, mounted]);
@@ -72,12 +114,6 @@ export const Lead = () => {
         setRefresh(false);
         getLead().catch(console.error);
     }, [getLead, refresh]);
-
-    const handleSendQuote = () => {
-        toast.error(
-            'Not implemented yet. It should create a pdf similar to Pylon quote and send it to customer by email'
-        );
-    };
 
     const handleReOpen = () => {
         if (user.role !== 'Sales') {
@@ -88,26 +124,80 @@ export const Lead = () => {
         }
     };
 
+    const handleAssignSales = () => {
+        if (user.role !== 'Sales') {
+            setOpenChangeSalesDialog(true);
+        } else {
+            toast.error('Not authorized. Contact an admin');
+        }
+    };
+
+    const assignSalesFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            sales_id: '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            sales_id: Yup.string().max(255).required('Must assign to an user'),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                const res = await bpmAPI
+                    .updateLead(leadID, values)
+                    .then(setRefresh(true));
+                setOpenChangeSalesDialog(false);
+                if (res.status === 201) {
+                    toast.success(`Sales assigned`);
+                } else {
+                    toast.error(`Something went wrong`);
+                }
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const assignSalesFormField = [
+        {
+            id: 1,
+            variant: 'Select',
+            width: 12,
+            touched: assignSalesFormik.touched.sales_id,
+            errors: assignSalesFormik.errors.sales_id,
+            value: assignSalesFormik.values.sales_id,
+            label: 'Assign Sales',
+            name: 'sales_id',
+            options: salesUserOptions,
+        },
+    ];
+
     const getActionMenu = () => {
-        if (user.role === 'Sales') {
-            const salesActions = [
+        if (leadState.isLoading || statusOptions.isLoading) {
+            return [];
+        }
+        const closedStatus = getStatusDetails(statusOptions.data, 'Closed');
+        if (leadState.data.status_id === closedStatus.id) {
+            const adminActions = [
                 {
-                    label: 'Send Quote',
-                    onClick: handleSendQuote,
+                    label: 'Re-Open',
+                    onClick: handleReOpen,
                 },
             ];
-
-            return salesActions;
+            return adminActions;
         }
 
         const adminActions = [
             {
-                label: 'Send Quote',
-                onClick: handleSendQuote,
-            },
-            {
-                label: 'Re-Open',
-                onClick: handleReOpen,
+                label: 'Assign Sales',
+                onClick: handleAssignSales,
             },
         ];
         return adminActions;
@@ -174,7 +264,9 @@ export const Lead = () => {
                             {`#${leadState.data.lead_id} - ${leadState.data.name}`}
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
-                        <ActionsMenu actions={actions} />
+                        {leadState.data.role !== 'Sales' && (
+                            <ActionsMenu actions={actions} />
+                        )}
                     </Box>
                     <Tabs
                         allowScrollButtonsMobile
@@ -196,6 +288,13 @@ export const Lead = () => {
                     <Divider />
                 </Box>
                 <Outlet context={[leadState, setRefresh]} />
+                <FormDialog
+                    onClose={() => setOpenChangeSalesDialog(false)}
+                    open={openChangeSalesDialog}
+                    formik={assignSalesFormik}
+                    title="Assign a new sales person to the lead"
+                    fields={assignSalesFormField}
+                />
             </>
         );
     };
