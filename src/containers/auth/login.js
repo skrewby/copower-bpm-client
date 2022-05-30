@@ -25,6 +25,7 @@ import { InputField } from '../../components/form/input-field';
 export const Login = () => {
     const mounted = useMounted();
     const formik = useFormik({
+        validateOnChange: false,
         initialValues: {
             email: '',
             password: '',

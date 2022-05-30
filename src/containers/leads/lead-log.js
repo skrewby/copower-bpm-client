@@ -16,6 +16,7 @@ import { LogAdd } from '../../components/logs/log-add';
 import { LogEntry } from '../../components/logs/log-entry';
 
 export const LeadLog = () => {
+    // eslint-disable-next-line no-unused-vars
     const [leadState, setRefresh] = useOutletContext();
     const mounted = useMounted();
     let { leadID } = useParams();

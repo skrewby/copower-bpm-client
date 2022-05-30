@@ -111,6 +111,7 @@ export const LeadSummary = () => {
     }, [getData]);
 
     const leadInfoFormik = useFormik({
+        validateOnChange: false,
         enableReinitialize: true,
         initialValues: {
             first_name: leadState.data?.first_name || '',
@@ -173,6 +174,7 @@ export const LeadSummary = () => {
     });
 
     const propertyFormik = useFormik({
+        validateOnChange: false,
         enableReinitialize: true,
         initialValues: {
             phase_id: leadState.data?.phase_id || '',

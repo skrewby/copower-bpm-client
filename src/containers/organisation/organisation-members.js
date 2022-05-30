@@ -195,6 +195,85 @@ export const OrganisationMembers = () => {
         },
     ];
 
+    const editMemberFormik = useFormik({
+        validateOnChange: false,
+        enableReinitialize: true,
+        initialValues: {
+            email: userEdit.email,
+            name: userEdit.name,
+            phone: userEdit.phone,
+            role_id: userEdit.role_id,
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            email: Yup.string()
+                .email('Must be a valid email')
+                .max(255)
+                .required('Email is required'),
+            name: Yup.string().max(255).required('Name is required'),
+            phone: Yup.string().max(255).required('Phone number required'),
+            role_id: Yup.number().required('Must choose role'),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                bpmAPI.updateUser(userEdit.account_id, values);
+                toast.success('User created. Refresh to see changes');
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+                setOpenEditUser(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const editMemberFormFields = [
+        {
+            id: 1,
+            variant: 'Input',
+            width: 6,
+            touched: editMemberFormik.touched.name,
+            errors: editMemberFormik.errors.name,
+            value: editMemberFormik.values.name,
+            label: 'Display Name',
+            name: 'name',
+        },
+        {
+            id: 3,
+            variant: 'Input',
+            width: 6,
+            touched: editMemberFormik.touched.phone,
+            errors: editMemberFormik.errors.phone,
+            value: editMemberFormik.values.phone,
+            label: 'Phone',
+            name: 'phone',
+        },
+        {
+            id: 4,
+            variant: 'Input',
+            width: 6,
+            touched: editMemberFormik.touched.email,
+            errors: editMemberFormik.errors.email,
+            value: editMemberFormik.values.email,
+            label: 'Email',
+            name: 'email',
+        },
+        {
+            id: 5,
+            variant: 'Select',
+            width: 6,
+            touched: editMemberFormik.touched.role_id,
+            errors: editMemberFormik.errors.role_id,
+            value: editMemberFormik.values.role_id,
+            label: 'Roles',
+            name: 'role_id',
+            options: rolesState.data,
+        },
+    ];
+
     const renderContent = () => {
         if (membersState.isLoading || rolesState.isLoading) {
             return (
@@ -401,6 +480,13 @@ export const OrganisationMembers = () => {
                     formik={addMemberFormik}
                     title="Add Member"
                     fields={addMemberFormFields}
+                />
+                <FormDialog
+                    onClose={() => setOpenEditUser(false)}
+                    open={openEditUser}
+                    formik={editMemberFormik}
+                    title="Edit Member"
+                    fields={editMemberFormFields}
                 />
             </>
         );

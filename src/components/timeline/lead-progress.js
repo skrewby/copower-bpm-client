@@ -143,7 +143,7 @@ export const LeadProgress = (props) => {
     };
 
     const ActionListRejectPending = () => {
-        if (user.role === 'sales') {
+        if (user.role === 'Sales') {
             return <Box />;
         } else {
             return (
@@ -164,7 +164,7 @@ export const LeadProgress = (props) => {
     };
 
     const ActionListReview = () => {
-        if (user.role === 'sales') {
+        if (user.role === 'Sales') {
             return <Box />;
         } else {
             return (
