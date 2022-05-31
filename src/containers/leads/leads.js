@@ -22,11 +22,13 @@ import {
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import EmailIcon from '@mui/icons-material/Email';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 // Local imports
 import { useMounted } from '../../hooks/use-mounted';
 import { onClickUrl } from '../../utils/open-link';
 import { bpmAPI } from '../../api/bpm/bpm-api';
+import { exportToCsv } from '../../utils/export-csv';
 
 // Components
 import { DataTable } from '../../components/tables/data-table';
@@ -119,12 +121,12 @@ const views = [
 const filterProperties = [
     {
         label: 'Created Date',
-        name: 'createdDate',
+        name: 'create_date',
         type: 'date',
     },
     {
         label: 'Last Updated',
-        name: 'updatedDate',
+        name: 'last_updated',
         type: 'date',
     },
     {
@@ -331,6 +333,15 @@ export const Leads = () => {
         });
     };
 
+    const exportLeads = () => {
+        if (leadsState.data) {
+            exportToCsv('leads.csv', leadsState.data.leads);
+            toast.success('Leads exported');
+        } else {
+            toast.error('Something went wrong. Try again later');
+        }
+    };
+
     const addLeadFormik = useFormik({
         enableReinitialize: true,
         validateOnChange: false,
@@ -522,6 +533,18 @@ export const Leads = () => {
                                 Leads
                             </Typography>
                             <Box sx={{ flexGrow: 1 }} />
+                            <Button
+                                color="primary"
+                                size="large"
+                                startIcon={
+                                    <FileDownloadIcon fontSize="small" />
+                                }
+                                onClick={() => exportLeads()}
+                                variant="contained"
+                            >
+                                Export
+                            </Button>
+                            <Box sx={{ px: 1 }} />
                             <Button
                                 color="primary"
                                 size="large"

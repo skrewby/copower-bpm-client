@@ -121,25 +121,42 @@ export const LeadProgress = (props) => {
     };
 
     const ActionListDefault = () => {
-        return (
-            <ActionList>
-                <ActionListItem
-                    icon={CheckCircleIcon}
-                    label="Win"
-                    onClick={handleOpenSendToOperations}
-                />
-                <ActionListItem
-                    icon={CancelIcon}
-                    label="Reject"
-                    onClick={handleOpenRejectLead}
-                />
-                <ActionListItem
-                    icon={ArchiveIcon}
-                    label="Close"
-                    onClick={handleOpenCloseLead}
-                />
-            </ActionList>
-        );
+        if (user.role === 'Sales') {
+            return (
+                <ActionList>
+                    <ActionListItem
+                        icon={CheckCircleIcon}
+                        label="Mark as Win"
+                        onClick={handleOpenSendToOperations}
+                    />
+                    <ActionListItem
+                        icon={CancelIcon}
+                        label="Reject"
+                        onClick={handleOpenRejectLead}
+                    />
+                </ActionList>
+            );
+        } else {
+            return (
+                <ActionList>
+                    <ActionListItem
+                        icon={CheckCircleIcon}
+                        label="Mark as Win"
+                        onClick={handleOpenSendToOperations}
+                    />
+                    <ActionListItem
+                        icon={CancelIcon}
+                        label="Reject"
+                        onClick={handleOpenRejectLead}
+                    />
+                    <ActionListItem
+                        icon={ArchiveIcon}
+                        label="Close"
+                        onClick={handleOpenCloseLead}
+                    />
+                </ActionList>
+            );
+        }
     };
 
     const ActionListRejectPending = () => {

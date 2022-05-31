@@ -127,8 +127,9 @@ export const OrganisationMembers = () => {
         }),
         onSubmit: async (values, helpers) => {
             try {
-                bpmAPI.createUser(values);
-                toast.success('User created. Refresh to see changes');
+                await bpmAPI.createUser(values);
+                toast.success('User created');
+                setRefresh(true);
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);
                 setOpenAdd(false);
@@ -216,8 +217,9 @@ export const OrganisationMembers = () => {
         }),
         onSubmit: async (values, helpers) => {
             try {
-                bpmAPI.updateUser(userEdit.account_id, values);
-                toast.success('User created. Refresh to see changes');
+                await bpmAPI.updateUser(userEdit.account_id, values);
+                toast.success('User updated');
+                setRefresh(true);
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);
                 setOpenEditUser(false);

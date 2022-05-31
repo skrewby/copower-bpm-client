@@ -18,6 +18,22 @@ import {
     getStoryOptions,
     getValidRoles,
 } from './info';
+import {
+    getInstalls,
+    getInstall,
+    createInstallLog,
+    getInstallLogs,
+    updateInstall,
+    createInstall,
+} from './installs';
+import {
+    getCustomers,
+    getCustomer,
+    createCustomer,
+    updateCustomer,
+    createCustomerLog,
+    getCustomerLogs,
+} from './customers';
 
 class API {}
 
@@ -32,6 +48,22 @@ API.prototype.createLeadLog = createLeadLog;
 API.prototype.getLeadLogs = getLeadLogs;
 API.prototype.updateLead = updateLead;
 API.prototype.createLead = createLead;
+
+// Installs
+API.prototype.getInstalls = getInstalls;
+API.prototype.getInstall = getInstall;
+API.prototype.createInstallLog = createInstallLog;
+API.prototype.getInstallLogs = getInstallLogs;
+API.prototype.updateInstall = updateInstall;
+API.prototype.createInstall = createInstall;
+
+// Customers
+API.prototype.getCustomers = getCustomers;
+API.prototype.getCustomer = getCustomer;
+API.prototype.updateCustomer = updateCustomer;
+API.prototype.createCustomer = createCustomer;
+API.prototype.createCustomerLog = createCustomerLog;
+API.prototype.getCustomerLogs = getCustomerLogs;
 
 // Users
 API.prototype.getUsers = getUsers;

@@ -77,6 +77,20 @@ const OrganisationMembers = Loadable(
         )
     )
 );
+const Installs = Loadable(
+    lazy(() =>
+        import('./containers/installs/installs').then((module) => ({
+            default: module.Installs,
+        }))
+    )
+);
+const Customers = Loadable(
+    lazy(() =>
+        import('./containers/customers/customers').then((module) => ({
+            default: module.Customers,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -123,6 +137,24 @@ const routes = [
                                 element: <LeadLog />,
                             },
                         ],
+                    },
+                ],
+            },
+            {
+                path: 'installs',
+                children: [
+                    {
+                        path: '',
+                        element: <Installs />,
+                    },
+                ],
+            },
+            {
+                path: 'customers',
+                children: [
+                    {
+                        path: '',
+                        element: <Customers />,
                     },
                 ],
             },

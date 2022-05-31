@@ -30,19 +30,9 @@ export const LeadLog = () => {
             const result = await bpmAPI.getLeadLogs(leadID);
 
             if (mounted.current) {
-                const userList = await bpmAPI.getUsers();
-
-                const logList = result.logs.map((log) => {
-                    const user = userList.find(
-                        (user) => user.account_id === log.created_by
-                    );
-                    log.user_name = user.name;
-                    return log;
-                });
-
                 setLeadLogs(() => ({
                     isLoading: false,
-                    data: logList,
+                    data: result.logs,
                 }));
             }
         } catch (err) {
