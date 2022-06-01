@@ -4,7 +4,6 @@ import Proptypes from 'prop-types';
 import {
     Box,
     Divider,
-    Skeleton,
     Table,
     TableBody,
     TableCell,
@@ -73,13 +72,7 @@ export const DataTable = (props) => {
                 </TableHead>
                 <TableBody>{data.map(rowFunction)}</TableBody>
             </Table>
-            {displayLoading && (
-                <Box sx={{ p: 2 }}>
-                    <Skeleton height={42} />
-                    <Skeleton height={42} />
-                    <Skeleton height={42} />
-                </Box>
-            )}
+            {displayLoading && <Box sx={{ p: 2 }}></Box>}
             {displayError && (
                 <ResourceError
                     error={error}

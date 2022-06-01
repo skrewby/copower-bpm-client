@@ -6,7 +6,7 @@ import parseISO from 'date-fns/parseISO';
 import { Avatar, Box, Card, Typography } from '@mui/material';
 
 export const LogEntry = (props) => {
-    const { log, sx, ...other } = props;
+    const { log, sx, showStatus, statusDescription, ...other } = props;
 
     return (
         <Card
@@ -51,25 +51,46 @@ export const LogEntry = (props) => {
                         display: 'flex',
                     }}
                 >
-                    <Typography color="textSecondary" variant="caption">
-                        {`${format(
-                            parseISO(log.create_date),
-                            'dd MMM yyyy HH:mm'
-                        )} - Lead state:`}
-                    </Typography>
-                    <Typography color="textSecondary" variant="caption">
-                        &nbsp;
-                    </Typography>
-                    <Typography color={log.status_colour} variant="caption">
-                        {log.status}
-                    </Typography>
+                    {showStatus ? (
+                        <>
+                            <Typography color="textSecondary" variant="caption">
+                                {`${format(
+                                    parseISO(log.create_date),
+                                    'dd MMM yyyy HH:mm'
+                                )} - ${statusDescription}:`}
+                            </Typography>
+                            <Typography color="textSecondary" variant="caption">
+                                &nbsp;
+                            </Typography>
+                            <Typography
+                                color={log.status_colour}
+                                variant="caption"
+                            >
+                                {log.status}
+                            </Typography>
+                        </>
+                    ) : (
+                        <Typography color="textSecondary" variant="caption">
+                            {`${format(
+                                parseISO(log.create_date),
+                                'dd MMM yyyy HH:mm'
+                            )}`}
+                        </Typography>
+                    )}
                 </Box>
             </Box>
         </Card>
     );
 };
 
+LogEntry.defaultProps = {
+    showStatus: false,
+    statusDescription: '',
+};
+
 LogEntry.propTypes = {
     log: PropTypes.object.isRequired,
     sx: PropTypes.object,
+    showStatus: PropTypes.bool,
+    statusDescription: PropTypes.string,
 };

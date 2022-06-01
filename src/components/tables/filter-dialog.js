@@ -13,7 +13,7 @@ import {
     IconButton,
     Typography,
 } from '@mui/material';
-import CancelIcon from '@mui/icons-material/Cancel';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { useFilters } from '../../hooks/use-filters';
 import { FilterDialogItem } from './filter-dialog-item';
@@ -60,7 +60,7 @@ export const FilterDialog = (props) => {
                     Filter
                 </Typography>
                 <IconButton onClick={onClose} size="small">
-                    <CancelIcon
+                    <CloseIcon
                         fontSize="small"
                         sx={{ color: 'text.primary' }}
                     />

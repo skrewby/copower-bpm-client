@@ -106,7 +106,12 @@ export const LeadLog = () => {
                         >
                             <LogAdd onSend={handleCreateLog} />
                             {leadLogs.data.map((log) => (
-                                <LogEntry key={log.log_id} log={log} />
+                                <LogEntry
+                                    key={log.log_id}
+                                    log={log}
+                                    showStatus={true}
+                                    statusDescription="Lead Status"
+                                />
                             ))}
                         </Box>
                     </Grid>

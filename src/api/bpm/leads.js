@@ -29,7 +29,10 @@ export async function getLeads(options) {
             !!query &&
             !_lead.first_name?.toLowerCase().includes(query.toLowerCase()) &&
             !_lead.last_name?.toLowerCase().includes(query.toLowerCase()) &&
-            !_lead.address?.toLowerCase().includes(query.toLowerCase())
+            !_lead.address?.toLowerCase().includes(query.toLowerCase()) &&
+            !_lead.phone?.toLowerCase().includes(query.toLowerCase()) &&
+            !_lead.company_name?.toLowerCase().includes(query.toLowerCase()) &&
+            !_lead.company_abn?.toLowerCase().includes(query.toLowerCase())
         ) {
             return false;
         }

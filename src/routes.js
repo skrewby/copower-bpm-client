@@ -91,6 +91,20 @@ const Customers = Loadable(
         }))
     )
 );
+const Customer = Loadable(
+    lazy(() =>
+        import('./containers/customers/customer').then((module) => ({
+            default: module.Customer,
+        }))
+    )
+);
+const CustomerSummary = Loadable(
+    lazy(() =>
+        import('./containers/customers/customer-summary').then((module) => ({
+            default: module.CustomerSummary,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -155,6 +169,16 @@ const routes = [
                     {
                         path: '',
                         element: <Customers />,
+                    },
+                    {
+                        path: ':customerID',
+                        element: <Customer />,
+                        children: [
+                            {
+                                path: '',
+                                element: <CustomerSummary />,
+                            },
+                        ],
                     },
                 ],
             },

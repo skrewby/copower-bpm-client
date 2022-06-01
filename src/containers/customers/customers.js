@@ -73,6 +73,10 @@ const columns = [
         id: 'last_updated',
         label: 'Last Updated',
     },
+    {
+        id: 'actions',
+        label: 'Actions',
+    },
 ];
 
 const views = [
@@ -313,13 +317,7 @@ export const Customers = () => {
 
     const mapFunction = (customers) => {
         return (
-            <TableRow
-                hover
-                key={customers.customer_id}
-                onClick={() => {
-                    navigate(`/bpm/customers/${customers.customer_id}`);
-                }}
-            >
+            <TableRow hover key={customers.customer_id}>
                 <TableCell>{customers.customer_id}</TableCell>
                 <TableCell>{customers.name}</TableCell>
                 <TableCell>{customers.company_name}</TableCell>
@@ -332,7 +330,7 @@ export const Customers = () => {
                     {format(customers.last_updated, 'dd MMM yyyy')}
                 </TableCell>
                 <TableCell>
-                    <Tooltip title="Lead details">
+                    <Tooltip title="Customer details">
                         <IconButton
                             color="primary"
                             onClick={() => {

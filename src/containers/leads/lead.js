@@ -183,24 +183,32 @@ export const Lead = () => {
         if (leadState.isLoading || statusOptions.isLoading) {
             return [];
         }
-        const closedStatus = getStatusDetails(statusOptions.data, 'Closed');
-        if (leadState.data.status_id === closedStatus.id) {
-            const adminActions = [
-                {
-                    label: 'Re-Open',
-                    onClick: handleReOpen,
-                },
-            ];
-            return adminActions;
-        }
+        const status = leadState.data.status_id;
 
-        const adminActions = [
+        const reOpenEnabled =
+            status === getStatusDetails(statusOptions.data, 'Closed').id ||
+            status === getStatusDetails(statusOptions.data, 'Rejected').id;
+        const assignSalesEnabled = !(
+            status ===
+                getStatusDetails(statusOptions.data, 'Rejected - Pending').id ||
+            status === getStatusDetails(statusOptions.data, 'Review').id ||
+            status === getStatusDetails(statusOptions.data, 'Closed').id
+        );
+
+        const actions = [
+            {
+                label: 'Re-Open',
+                onClick: handleReOpen,
+                disabled: !reOpenEnabled,
+            },
             {
                 label: 'Assign Sales',
                 onClick: handleAssignSales,
+                disabled: !assignSalesEnabled,
             },
         ];
-        return adminActions;
+
+        return actions;
     };
     const actions = getActionMenu();
 

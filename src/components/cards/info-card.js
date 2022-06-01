@@ -13,18 +13,22 @@ import { InfoCardListItem } from './info-card-list-item';
  * The data passed to it must be an array of JSON objects of the format {label: "", value: ""}
  */
 export const InfoCard = (props) => {
-    const { dataLeft, dataRight, title, onEdit, ...other } = props;
+    const { dataLeft, dataRight, title, onEdit, allowEdit, ...other } = props;
 
     return (
         <Card variant="outlined" {...other}>
-            <CardHeader
-                action={
-                    <Button color="primary" onClick={onEdit} variant="text">
-                        Edit
-                    </Button>
-                }
-                title={title}
-            />
+            {allowEdit ? (
+                <CardHeader
+                    action={
+                        <Button color="primary" onClick={onEdit} variant="text">
+                            Edit
+                        </Button>
+                    }
+                    title={title}
+                />
+            ) : (
+                <CardHeader title={title} />
+            )}
             <Divider />
             <Grid container>
                 <Grid item sm={6} xs={12}>
@@ -56,6 +60,10 @@ export const InfoCard = (props) => {
     );
 };
 
+InfoCard.defaultProps = {
+    allowEdit: true,
+};
+
 InfoCard.propTypes = {
     /** Function called when the edit button is pressed on the info card */
     onEdit: PropTypes.func,
@@ -65,4 +73,5 @@ InfoCard.propTypes = {
     dataLeft: PropTypes.array.isRequired,
     /** Information to show on the second column of the grid in the card */
     dataRight: PropTypes.array.isRequired,
+    allowEdit: PropTypes.bool,
 };

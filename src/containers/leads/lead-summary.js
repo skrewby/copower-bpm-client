@@ -41,7 +41,8 @@ export const LeadSummary = () => {
 
         try {
             const sourcesAPI = await bpmAPI.getLeadSources();
-            const sourcesResult = sourcesAPI.map((row) => {
+            const sourcesFilterd = sourcesAPI.filter((source) => source.active);
+            const sourcesResult = sourcesFilterd.map((row) => {
                 return {
                     id: row.id,
                     name: row.name,
@@ -472,6 +473,10 @@ export const LeadSummary = () => {
                             <InfoCard
                                 onEdit={() => setOpenInfoDialog(true)}
                                 title="Lead Information"
+                                allowEdit={
+                                    leadState.data.status_id < 5 ||
+                                    leadState.data.status === 'Review'
+                                }
                                 dataLeft={[
                                     {
                                         id: 1,
@@ -527,6 +532,10 @@ export const LeadSummary = () => {
                             <InfoCard
                                 onEdit={() => setOpenPropertyDialog(true)}
                                 title="Property Details"
+                                allowEdit={
+                                    leadState.data.status_id < 5 ||
+                                    leadState.data.status === 'Review'
+                                }
                                 dataLeft={[
                                     {
                                         id: 1,

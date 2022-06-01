@@ -40,6 +40,7 @@ export const ActionsMenu = (props) => {
                 {actions.map((item) => (
                     <MenuItem
                         key={item.label}
+                        disabled={item.disabled}
                         onClick={() => {
                             if (item.onClick) {
                                 item.onClick();

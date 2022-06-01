@@ -31,7 +31,15 @@ export async function getCustomers(options) {
                 ?.toLowerCase()
                 .includes(query.toLowerCase()) &&
             !_customer.last_name?.toLowerCase().includes(query.toLowerCase()) &&
-            !_customer.address?.toLowerCase().includes(query.toLowerCase())
+            !_customer.address?.toLowerCase().includes(query.toLowerCase()) &&
+            !_customer.phone?.toLowerCase().includes(query.toLowerCase()) &&
+            !_customer.company_name
+                ?.toLowerCase()
+                .includes(query.toLowerCase()) &&
+            !_customer.company_abn
+                ?.toLowerCase()
+                .includes(query.toLowerCase()) &&
+            !_customer.email?.toLowerCase().includes(query.toLowerCase())
         ) {
             return false;
         }
