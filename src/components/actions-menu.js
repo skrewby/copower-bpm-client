@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
+
+// Material UI
 import { Button, Menu, MenuItem } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
+// Local import
 import { usePopover } from '../hooks/use-popover';
-import { ChevronDown as ChevronDownIcon } from '../icons/chevron-down';
 
 export const ActionsMenu = (props) => {
     const { actions, label, ...other } = props;
@@ -11,7 +15,7 @@ export const ActionsMenu = (props) => {
         <>
             <Button
                 color="primary"
-                endIcon={<ChevronDownIcon fontSize="small" />}
+                endIcon={<KeyboardArrowDownIcon fontSize="small" />}
                 onClick={handleOpen}
                 size="large"
                 variant="contained"
@@ -36,6 +40,7 @@ export const ActionsMenu = (props) => {
                 {actions.map((item) => (
                     <MenuItem
                         key={item.label}
+                        disabled={item.disabled}
                         onClick={() => {
                             if (item.onClick) {
                                 item.onClick();

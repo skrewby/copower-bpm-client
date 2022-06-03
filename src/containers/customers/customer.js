@@ -6,7 +6,8 @@ import {
     useParams,
 } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import toast from 'react-hot-toast';
+
+// Material UI
 import {
     Box,
     Button,
@@ -17,16 +18,21 @@ import {
     Tabs,
     Divider,
 } from '@mui/material';
-import { bpmAPI } from '../../api/bpmAPI';
-import { ActionsMenu } from '../../components/actions-menu';
-import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
+
+// Internal imports
+import { bpmAPI } from '../../api/bpm/bpm-api';
+import { useMounted } from '../../hooks/use-mounted';
 
 export const Customer = () => {
     let { customerID } = useParams();
     const mounted = useMounted();
     const [customerState, setCustomerState] = useState({ isLoading: true });
+    const [customerLogs, setCustomerLogs] = useState({
+        isLoading: true,
+        data: [],
+    });
     const [refresh, setRefresh] = useState(false);
     const location = useLocation();
 
@@ -47,14 +53,20 @@ export const Customer = () => {
 
     const getCustomer = useCallback(async () => {
         setCustomerState(() => ({ isLoading: true }));
+        setCustomerLogs({ isLoading: true, data: [] });
 
         try {
             const result = await bpmAPI.getCustomer(customerID);
+            const logResult = await bpmAPI.getCustomerLogs(customerID);
 
             if (mounted.current) {
                 setCustomerState(() => ({
                     isLoading: false,
                     data: result,
+                }));
+                setCustomerLogs(() => ({
+                    isLoading: false,
+                    data: logResult,
                 }));
             }
         } catch (err) {
@@ -62,6 +74,10 @@ export const Customer = () => {
 
             if (mounted.current) {
                 setCustomerState(() => ({
+                    isLoading: false,
+                    error: err.message,
+                }));
+                setCustomerLogs(() => ({
                     isLoading: false,
                     error: err.message,
                 }));
@@ -74,12 +90,8 @@ export const Customer = () => {
         getCustomer().catch(console.error);
     }, [getCustomer, refresh]);
 
-    const actions = [
-
-    ];
-
     const renderContent = () => {
-        if (customerState.isLoading) {
+        if (customerState.isLoading || customerLogs.isLoading) {
             return (
                 <Box sx={{ py: 4 }}>
                     <Skeleton height={42} />
@@ -89,7 +101,7 @@ export const Customer = () => {
             );
         }
 
-        if (customerState.error) {
+        if (customerState.error || customerLogs.error) {
             return (
                 <Box sx={{ py: 4 }}>
                     <Box
@@ -107,7 +119,9 @@ export const Customer = () => {
                             sx={{ mt: 2 }}
                             variant="body2"
                         >
-                            {customerState.error}
+                            {customerState.error
+                                ? customerState.error
+                                : customerLogs.error}
                         </Typography>
                     </Box>
                 </Box>
@@ -137,8 +151,6 @@ export const Customer = () => {
                         <Typography color="textPrimary" variant="h4">
                             {`#${customerState.data.customer_id} - ${customerState.data.name}`}
                         </Typography>
-                        <Box sx={{ flexGrow: 1 }} />
-                        <ActionsMenu actions={actions} />
                     </Box>
                     <Tabs
                         allowScrollButtonsMobile
@@ -159,7 +171,7 @@ export const Customer = () => {
                     </Tabs>
                     <Divider />
                 </Box>
-                <Outlet context={[customerState, setRefresh]} />
+                <Outlet context={[customerState, customerLogs, setRefresh]} />
             </>
         );
     };

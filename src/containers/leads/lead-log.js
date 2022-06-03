@@ -1,22 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import {
-    Box,
-    Container,
-    fabClasses,
-    Grid,
-    Skeleton,
-    Typography,
-} from '@mui/material';
+
+// Material UI
+import { Box, Container, Grid, Skeleton, Typography } from '@mui/material';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
-import { useOutletContext, useParams } from 'react-router-dom';
+
+// Local imports
 import { useMounted } from '../../hooks/use-mounted';
-import { bpmAPI } from '../../api/bpmAPI';
-import { LeadLogAdd } from '../../components/lead/lead-log-add';
-import { LeadLogEntry } from '../../components/lead/lead-log-entry';
+import { bpmAPI } from '../../api/bpm/bpm-api';
+
+// Components
+import { LogAdd } from '../../components/logs/log-add';
+import { LogEntry } from '../../components/logs/log-entry';
 
 export const LeadLog = () => {
+    // eslint-disable-next-line no-unused-vars
     const [leadState, setRefresh] = useOutletContext();
     const mounted = useMounted();
     let { leadID } = useParams();
@@ -30,18 +30,9 @@ export const LeadLog = () => {
             const result = await bpmAPI.getLeadLogs(leadID);
 
             if (mounted.current) {
-                const userList = await bpmAPI.getUsers();
-                const logList = result.map((log) => {
-                    const user = userList.find(
-                        (user) => user.uid === log.created_by
-                    );
-                    log.user_name = user.displayName;
-                    return log;
-                });
-
                 setLeadLogs(() => ({
                     isLoading: false,
-                    data: logList,
+                    data: result.logs,
                 }));
             }
         } catch (err) {
@@ -113,9 +104,14 @@ export const LeadLog = () => {
                                 gap: 1,
                             }}
                         >
-                            <LeadLogAdd onSend={handleCreateLog} />
+                            <LogAdd onSend={handleCreateLog} />
                             {leadLogs.data.map((log) => (
-                                <LeadLogEntry key={log.log_id} log={log} />
+                                <LogEntry
+                                    key={log.log_id}
+                                    log={log}
+                                    showStatus={true}
+                                    statusDescription="Lead Status"
+                                />
                             ))}
                         </Box>
                     </Grid>

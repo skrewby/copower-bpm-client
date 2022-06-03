@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useAuth } from '../../hooks/use-auth';
+
+// Local imports
 import { Login } from '../../containers/auth/login';
+import { useAuth } from '../../hooks/use-auth';
 
 export const AuthGuard = (props) => {
     const { children } = props;
-    const auth = useAuth();
     const location = useLocation();
     const [requestedLocation, setRequestedLocation] = useState(null);
+    const { isAuthenticated } = useAuth();
 
-    if (!auth.isAuthenticated) {
+    if (!isAuthenticated) {
         if (location.pathname !== requestedLocation) {
             setRequestedLocation(location.pathname);
         }

@@ -1,76 +1,24 @@
 import { useState, useEffect } from 'react';
-import {
-    AppBar,
-    Box,
-    Divider,
-    IconButton,
-    Stack,
-    Toolbar,
-    useMediaQuery,
-} from '@mui/material';
+import { AppBar, Box, IconButton, Stack, Toolbar } from '@mui/material';
 import { useLocation, matchPath } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 // Icons
-import { Moon as MoonIcon } from '../../icons/moon';
-import { Sun as SunIcon } from '../../icons/sun';
-import { ChevronDown as ChevronDownIcon } from '../../icons/chevron-down';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import HeadsetMicOutlinedIcon from '@mui/icons-material/HeadsetMicOutlined';
-import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
-import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
-import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 // Components
-import { NotificationsPopover } from './notifications-popover';
-import { AccountPopover } from './account-popover';
 import { NavbarItem } from './navbar-item';
+import { NavbarAccount } from './navbar-account';
 
 import { useSettings } from '../../contexts/settings-context';
 
-const items = [
-    {
-        icon: HomeOutlinedIcon,
-        title: 'Dashboard',
-        href: '/bpm/dashboard',
-    },
-    {
-        icon: CalendarMonthOutlinedIcon,
-        title: 'Calendar',
-        href: '/bpm/calendar',
-    },
-    {
-        icon: HeadsetMicOutlinedIcon,
-        title: 'Leads',
-        href: '/bpm/leads',
-    },
-    {
-        icon: WbSunnyOutlinedIcon,
-        title: 'Installs',
-        href: '/bpm/installs',
-    },
-    {
-        icon: BuildOutlinedIcon,
-        title: 'Services',
-        href: '/bpm/services',
-    },
-    {
-        icon: PersonOutlinedIcon,
-        title: 'Customers',
-        href: '/bpm/customers',
-    },
-    {
-        icon: WarehouseOutlinedIcon,
-        title: 'Stock',
-        href: '/bpm/stock',
-    },
-];
-
-export const Navbar = () => {
-    const mdDown = useMediaQuery((theme) => theme.breakpoints.down('md'));
+/**
+ * The navigation bar at the top of the page
+ */
+export const Navbar = (props) => {
+    const { items } = props;
     const { settings, saveSettings } = useSettings();
-    const [openMenu, setOpenMenu] = useState(false);
     const [darkMode, setDarkMode] = useState(settings.theme === 'dark');
     const { pathname } = useLocation();
     const [activeItem, setActiveItem] = useState(null);
@@ -109,7 +57,7 @@ export const Navbar = () => {
                 }
             }
         });
-    }, [pathname]);
+    }, [items, pathname]);
 
     return (
         <AppBar elevation={0} sx={{ backgroundColor: '#1e212a' }}>
@@ -145,14 +93,18 @@ export const Navbar = () => {
                         },
                     }}
                 >
-                    {darkMode ? <SunIcon /> : <MoonIcon />}
+                    {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
-                <NotificationsPopover sx={{ mr: 2 }} />
-                <AccountPopover
+                <NavbarAccount
                     darkMode={darkMode}
                     onSwitchTheme={handleSwitchTheme}
                 />
             </Toolbar>
         </AppBar>
     );
+};
+
+Navbar.propTypes = {
+    /** The buttons displayed on the navbar that can be clicked to navigate. Refer to NavbarItem */
+    items: PropTypes.array,
 };

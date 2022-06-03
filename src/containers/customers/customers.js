@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import toast from 'react-hot-toast';
+
+// Material UI
 import {
     Box,
     Button,
@@ -8,14 +14,77 @@ import {
     Container,
     Divider,
     Typography,
+    TableCell,
+    TableRow,
+    Tooltip,
+    IconButton,
 } from '@mui/material';
-import { bpmAPI } from '../../api/bpmAPI';
-import { CustomersTable } from '../../components/customers/customers-table';
-import { CustomerCreateDialog } from '../../components/customers/customer-create-dialog';
-import { CustomersFilter } from '../../components/customers/customers-filter';
-import { useMounted } from '../../hooks/use-mounted';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import toast from 'react-hot-toast';
+import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
+
+// Local Import
+import { bpmAPI } from '../../api/bpm/bpm-api';
+import { useMounted } from '../../hooks/use-mounted';
+
+// Components
+import { DataTable } from '../../components/tables/data-table';
+import { Filter } from '../../components/tables/filter';
+import { FormDialog } from '../../components/dialogs/form-dialog';
+
+const filterProperties = [
+    {
+        label: 'Created Date',
+        name: 'createdDate',
+        type: 'date',
+    },
+    {
+        label: 'Last Updated',
+        name: 'updatedDate',
+        type: 'date',
+    },
+];
+
+const columns = [
+    {
+        id: 'customer_id',
+        label: 'ID',
+    },
+    {
+        id: 'name',
+        label: 'Name',
+    },
+    {
+        id: 'company_name',
+        label: 'Company',
+    },
+    {
+        id: 'email',
+        label: 'Email',
+    },
+    {
+        id: 'phone',
+        label: 'Phone',
+    },
+    {
+        id: 'create_date',
+        label: 'Created',
+    },
+    {
+        id: 'last_updated',
+        label: 'Last Updated',
+    },
+    {
+        id: 'actions',
+        label: 'Actions',
+    },
+];
+
+const views = [
+    {
+        label: 'Show all',
+        value: 'all',
+    },
+];
 
 export const Customers = () => {
     const mounted = useMounted();
@@ -30,6 +99,7 @@ export const Customers = () => {
     const [customersState, setCustomersState] = useState({ isLoading: true });
     const [openCreateDialog, setOpenCreateDialog] = useState();
     const [refresh, setRefresh] = useState(false);
+    let navigate = useNavigate();
 
     const getData = useCallback(async () => {
         setCustomersState(() => ({ isLoading: true }));
@@ -124,6 +194,161 @@ export const Customers = () => {
         });
     };
 
+    const addCustomerFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            first_name: '',
+            last_name: '',
+            company_name: '',
+            company_abn: '',
+            email: '',
+            phone: '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            first_name: Yup.string()
+                .max(255)
+                .required('First name is required'),
+            last_name: Yup.string().max(255).required('Last name is required'),
+            company_name: Yup.string().max(255),
+            company_abn: Yup.string().max(255),
+            email: Yup.string()
+                .email('Must be a valid email')
+                .max(255)
+                .required('Email is required'),
+            phone: Yup.string().max(255).required('Contact number is required'),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                await bpmAPI
+                    .createCustomer(values)
+                    .then((res) => {
+                        setOpenCreateDialog(false);
+                        bpmAPI.createCustomerLog(
+                            res.id,
+                            'Created Customer',
+                            true
+                        );
+                        toast.success(`Customer Created`);
+                        setRefresh(true);
+                    })
+                    .catch((err) => {
+                        toast.error('There was an error. Try again.');
+                    });
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const addCustomerFormFields = [
+        {
+            id: 1,
+            variant: 'Input',
+            width: 6,
+            touched: addCustomerFormik.touched.first_name,
+            errors: addCustomerFormik.errors.first_name,
+            value: addCustomerFormik.values.first_name,
+            label: 'First Name',
+            name: 'first_name',
+            type: 'name',
+        },
+        {
+            id: 2,
+            variant: 'Input',
+            width: 6,
+            touched: addCustomerFormik.touched.last_name,
+            errors: addCustomerFormik.errors.last_name,
+            value: addCustomerFormik.values.last_name,
+            label: 'Last Name',
+            name: 'last_name',
+            type: 'name',
+        },
+        {
+            id: 3,
+            variant: 'Input',
+            width: 6,
+            touched: addCustomerFormik.touched.company_name,
+            errors: addCustomerFormik.errors.company_name,
+            value: addCustomerFormik.values.company_name,
+            label: 'Company Name',
+            name: 'company_name',
+            type: 'name',
+        },
+        {
+            id: 4,
+            variant: 'Input',
+            width: 6,
+            touched: addCustomerFormik.touched.company_abn,
+            errors: addCustomerFormik.errors.company_abn,
+            value: addCustomerFormik.values.company_abn,
+            label: 'Company ABN',
+            name: 'company_abn',
+        },
+        {
+            id: 6,
+            variant: 'Input',
+            width: 6,
+            touched: addCustomerFormik.touched.email,
+            errors: addCustomerFormik.errors.email,
+            value: addCustomerFormik.values.email,
+            label: 'Email',
+            name: 'email',
+            type: 'email',
+        },
+        {
+            id: 7,
+            variant: 'Input',
+            width: 6,
+            touched: addCustomerFormik.touched.phone,
+            errors: addCustomerFormik.errors.phone,
+            value: addCustomerFormik.values.phone,
+            label: 'Contact Number',
+            name: 'phone',
+        },
+    ];
+
+    const mapFunction = (customers) => {
+        return (
+            <TableRow hover key={customers.customer_id}>
+                <TableCell>{customers.customer_id}</TableCell>
+                <TableCell>{customers.name}</TableCell>
+                <TableCell>{customers.company_name}</TableCell>
+                <TableCell>{customers.email}</TableCell>
+                <TableCell>{customers.phone}</TableCell>
+                <TableCell>
+                    {format(customers.create_date, 'dd MMM yyyy')}
+                </TableCell>
+                <TableCell>
+                    {format(customers.last_updated, 'dd MMM yyyy')}
+                </TableCell>
+                <TableCell>
+                    <Tooltip title="Customer details">
+                        <IconButton
+                            color="primary"
+                            onClick={() => {
+                                navigate(
+                                    `/bpm/customers/${customers.customer_id}`
+                                );
+                            }}
+                            size="large"
+                            sx={{ order: 3 }}
+                        >
+                            <ArrowForwardOutlinedIcon />
+                        </IconButton>
+                    </Tooltip>
+                </TableCell>
+            </TableRow>
+        );
+    };
+
     return (
         <>
             <Helmet>
@@ -173,33 +398,40 @@ export const Customers = () => {
                         }}
                         variant="outlined"
                     >
-                        <CustomersFilter
+                        <Filter
                             disabled={customersState.isLoading}
                             filters={controller.filters}
                             onFiltersApply={handleFiltersApply}
                             onFiltersClear={handleFiltersClear}
                             onQueryChange={handleQueryChange}
                             query={controller.query}
+                            filterProperties={filterProperties}
+                            views={views}
                         />
                         <Divider />
-                        <CustomersTable
+                        <DataTable
+                            columns={columns}
+                            rowFunction={mapFunction}
                             error={customersState.error}
-                            customers={customersState.data?.customers}
-                            leadsCount={customersState.data?.customersCount}
+                            data={customersState.data?.customers}
+                            dataCount={customersState.data?.customersCount}
                             isLoading={customersState.isLoading}
                             onPageChange={handlePageChange}
                             onSortChange={handleSortChange}
                             page={controller.page + 1}
                             sort={controller.sort}
                             sortBy={controller.sortBy}
+                            size="small"
                         />
                     </Card>
                 </Container>
             </Box>
-            <CustomerCreateDialog
+            <FormDialog
                 onClose={() => setOpenCreateDialog(false)}
-                refresh={setRefresh}
                 open={openCreateDialog}
+                formik={addCustomerFormik}
+                title="Add Customers"
+                fields={addCustomerFormFields}
             />
         </>
     );

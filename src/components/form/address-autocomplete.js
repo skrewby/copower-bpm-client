@@ -1,11 +1,13 @@
 import * as React from 'react';
+import throttle from 'lodash/throttle';
+import wretch from 'wretch';
+
+// Material UI
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Grid from '@mui/material/Grid';
-import throttle from 'lodash/throttle';
-import wretch from 'wretch';
 
 let baseUrl = 'http://165.22.253.133:5000/api/addresses';
 
@@ -72,7 +74,11 @@ export function AddressAutocomplete(props) {
             onChange={(event, newValue) => {
                 formik.setFieldValue(
                     'address',
-                    newValue !== null ? newValue : ''
+                    newValue !== null ? newValue.sla : ''
+                );
+                formik.setFieldValue(
+                    'address_id',
+                    newValue !== null ? newValue.id : ''
                 );
             }}
             onInputChange={(event, newInputValue) => {

@@ -1,6 +1,5 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Container, Typography } from '@mui/material';
-import { EmojiSadOutlined as EmojiSadIcon } from '../icons/emoji-sad-outlined';
 
 export const NotFound = () => (
     <Box sx={{ backgroundColor: 'background.default' }}>
@@ -14,7 +13,6 @@ export const NotFound = () => (
                 flexDirection: 'column',
             }}
         >
-            <EmojiSadIcon sx={{ color: 'text.secondary' }} />
             <Typography
                 align="center"
                 color="textPrimary"

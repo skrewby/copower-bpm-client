@@ -1,0 +1,83 @@
+// API imports
+import { login, logout } from './auth';
+import {
+    getLeads,
+    getLead,
+    createLeadLog,
+    getLeadLogs,
+    updateLead,
+    createLead,
+} from './leads';
+import { createUser, getCurrentUser, getUsers, updateUser } from './users';
+import {
+    getExistingSystemOptions,
+    getLeadSources,
+    getLeadStatusOptions,
+    getPhaseOptions,
+    getRoofTypeOptions,
+    getStoryOptions,
+    getValidRoles,
+} from './info';
+import {
+    getInstalls,
+    getInstall,
+    createInstallLog,
+    getInstallLogs,
+    updateInstall,
+    createInstall,
+} from './installs';
+import {
+    getCustomers,
+    getCustomer,
+    createCustomer,
+    updateCustomer,
+    createCustomerLog,
+    getCustomerLogs,
+} from './customers';
+
+class API {}
+
+// Auth
+API.prototype.login = login;
+API.prototype.logout = logout;
+
+// Leads
+API.prototype.getLeads = getLeads;
+API.prototype.getLead = getLead;
+API.prototype.createLeadLog = createLeadLog;
+API.prototype.getLeadLogs = getLeadLogs;
+API.prototype.updateLead = updateLead;
+API.prototype.createLead = createLead;
+
+// Installs
+API.prototype.getInstalls = getInstalls;
+API.prototype.getInstall = getInstall;
+API.prototype.createInstallLog = createInstallLog;
+API.prototype.getInstallLogs = getInstallLogs;
+API.prototype.updateInstall = updateInstall;
+API.prototype.createInstall = createInstall;
+
+// Customers
+API.prototype.getCustomers = getCustomers;
+API.prototype.getCustomer = getCustomer;
+API.prototype.updateCustomer = updateCustomer;
+API.prototype.createCustomer = createCustomer;
+API.prototype.createCustomerLog = createCustomerLog;
+API.prototype.getCustomerLogs = getCustomerLogs;
+
+// Users
+API.prototype.getUsers = getUsers;
+API.prototype.getCurrentUser = getCurrentUser;
+API.prototype.updateUser = updateUser;
+API.prototype.createUser = createUser;
+
+// Info
+API.prototype.getLeadSources = getLeadSources;
+API.prototype.getPhaseOptions = getPhaseOptions;
+API.prototype.getExistingSystemOptions = getExistingSystemOptions;
+API.prototype.getStoryOptions = getStoryOptions;
+API.prototype.getRoofTypeOptions = getRoofTypeOptions;
+API.prototype.getLeadStatusOptions = getLeadStatusOptions;
+API.prototype.getValidRoles = getValidRoles;
+
+export const bpmAPI = new API();

@@ -1,5 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
+// Local import
 import { useAuth } from '../../hooks/use-auth';
 
 export const GuestGuard = ({ children }) => {

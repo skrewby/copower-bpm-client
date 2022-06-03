@@ -13,7 +13,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 // Import local
 import { SettingsProvider } from './contexts/settings-context';
-import { AuthProvider } from './contexts/firebase-auth-context';
+import { AuthProvider } from './contexts/auth-context';
 
 ReactDOM.render(
     <HelmetProvider>
