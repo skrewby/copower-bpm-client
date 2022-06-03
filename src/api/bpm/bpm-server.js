@@ -29,11 +29,25 @@ class Server {
             // Set the base url
             .url(this.server_url)
             // Cors fetch options
-            .options({ mode: 'cors' })
+            .options({ credentials: 'include', mode: 'cors' })
             .auth(`Bearer ${window.sessionStorage.getItem('idToken')}`)
-            .catcher(401, () => {
-                window.sessionStorage.removeItem('idToken');
-                this.notify();
+            .catcher(401, async (error, request) => {
+                const tokens = await wretch()
+                    .url(`${this.server_url}auth/refresh`)
+                    .options({ credentials: 'include', mode: 'cors' })
+                    .get()
+                    .json((res) => res);
+
+                window.sessionStorage.setItem('idToken', tokens.idToken);
+                this.notify(tokens);
+                return request
+                    .auth(`Bearer ${window.sessionStorage.getItem('idToken')}`)
+                    .replay()
+                    .unauthorized((err) => {
+                        window.sessionStorage.removeItem('idToken');
+                        this.notify();
+                    })
+                    .json();
             });
         return bpmServer;
     }

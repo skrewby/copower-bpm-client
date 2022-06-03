@@ -22,14 +22,18 @@ import { bpmAPI } from '../../api/bpm/bpm-api';
 import { useAuth } from '../../hooks/use-auth';
 
 // Components
-import { ActionList } from './action-list';
-import { ActionListItem } from './action-list-item';
-import { ConfirmationDialog } from '../dialogs/confirmation-dialog';
-import { StatusSelect } from './status-select';
-import { StatusTimeline } from './status-timeline';
-import { StatusDisplay } from './status-display';
-import { CommentDialog } from '../dialogs/comment-dialog';
+import { ActionList } from '../../components/timeline/action-list';
+import { ActionListItem } from '../../components/timeline/action-list-item';
+import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
+import { StatusSelect } from '../../components/timeline/status-select';
+import { StatusTimeline } from '../../components/timeline/status-timeline';
+import { StatusDisplay } from '../../components/timeline/status-display';
+import { CommentDialog } from '../../components/dialogs/comment-dialog';
 
+/**
+ * Container to be used within other containers therefore props need to be passed to it
+ * as if it was a component.
+ */
 export const LeadProgress = (props) => {
     const { lead, refresh, statusOptions, ...other } = props;
     const { user } = useAuth();

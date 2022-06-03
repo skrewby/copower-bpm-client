@@ -13,10 +13,12 @@ import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import { bpmAPI } from '../../api/bpm/bpm-api';
 import { useMounted } from '../../hooks/use-mounted';
 
+// Containers
+import { LeadProgress } from './lead-progress';
+
 // Components
 import { InfoCard } from '../../components/cards/info-card';
 import { FormDialog } from '../../components/dialogs/form-dialog';
-import { LeadProgress } from '../../components/timeline/lead-progress';
 
 export const LeadSummary = () => {
     const [leadState, setRefresh] = useOutletContext();
