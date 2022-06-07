@@ -8,7 +8,14 @@ import {
     updateLead,
     createLead,
 } from './leads';
-import { createUser, getCurrentUser, getUsers, updateUser } from './users';
+import {
+    changePassword,
+    createUser,
+    getCurrentUser,
+    getUsers,
+    updateCurrentUser,
+    updateUser,
+} from './users';
 import {
     getExistingSystemOptions,
     getLeadSources,
@@ -70,6 +77,8 @@ API.prototype.getUsers = getUsers;
 API.prototype.getCurrentUser = getCurrentUser;
 API.prototype.updateUser = updateUser;
 API.prototype.createUser = createUser;
+API.prototype.updateCurrentUser = updateCurrentUser;
+API.prototype.changePassword = changePassword;
 
 // Info
 API.prototype.getLeadSources = getLeadSources;

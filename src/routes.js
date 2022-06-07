@@ -105,6 +105,13 @@ const CustomerSummary = Loadable(
         }))
     )
 );
+const Account = Loadable(
+    lazy(() =>
+        import('./containers/account/account').then((module) => ({
+            default: module.Account,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -191,6 +198,10 @@ const routes = [
                         element: <OrganisationMembers />,
                     },
                 ],
+            },
+            {
+                path: 'account',
+                element: <Account />,
             },
         ],
     },

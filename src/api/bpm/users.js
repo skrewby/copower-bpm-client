@@ -24,6 +24,18 @@ export async function getCurrentUser() {
     return Promise.resolve(data[0]);
 }
 
+export async function updateCurrentUser(data) {
+    const response = await bpmServer
+        .api()
+        .url(`api/users/me`)
+        .put(data)
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
 export async function updateUser(id, data) {
     const response = await bpmServer
         .api()
@@ -42,6 +54,18 @@ export async function createUser(data) {
         .api()
         .url(`api/users`)
         .post(data)
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function changePassword(data) {
+    const response = await bpmServer
+        .api()
+        .url(`api/users/me/change-password`)
+        .put(data)
         .json((response) => {
             return response;
         });
