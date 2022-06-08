@@ -798,6 +798,7 @@ const lightThemeOptions = {
             main: lightWarning.main,
         },
         neutral: lightNeutral,
+        highlight: lightText.primary[60],
     },
     shadows: [
         'none',
@@ -1136,6 +1137,7 @@ const darkThemeOptions = {
             main: darkWarning.main,
         },
         neutral: darkNeutral,
+        highlight: darkNeutral[100],
     },
     shadows: [
         'none',

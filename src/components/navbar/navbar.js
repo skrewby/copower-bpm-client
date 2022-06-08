@@ -10,6 +10,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 // Components
 import { NavbarItem } from './navbar-item';
 import { NavbarAccount } from './navbar-account';
+import { NotificationsPopover } from './notifications-popover';
 
 import { useSettings } from '../../contexts/settings-context';
 
@@ -33,11 +34,15 @@ export const Navbar = (props) => {
     };
 
     useEffect(() => {
+        setActiveItem(null);
         items.forEach((item) => {
             if (item.items) {
                 for (let index = 0; index < item.items.length; index++) {
                     const active = matchPath(
-                        { path: item.items[index].href, end: true },
+                        {
+                            path: item.items[index].href,
+                            exact: false,
+                        },
                         pathname
                     );
 
@@ -47,10 +52,7 @@ export const Navbar = (props) => {
                     }
                 }
             } else {
-                const active = !!matchPath(
-                    { path: item.href, end: true },
-                    pathname
-                );
+                const active = !!matchPath({ path: item.href }, pathname);
 
                 if (active) {
                     setActiveItem(item);
@@ -72,14 +74,13 @@ export const Navbar = (props) => {
                 }}
             >
                 <Stack direction="row" spacing={2}>
-                    {activeItem &&
-                        items.map((item) => (
-                            <NavbarItem
-                                active={activeItem?.title === item.title}
-                                key={item.title}
-                                {...item}
-                            />
-                        ))}
+                    {items.map((item) => (
+                        <NavbarItem
+                            active={activeItem?.title === item.title}
+                            key={item.title}
+                            {...item}
+                        />
+                    ))}
                 </Stack>
                 <Box sx={{ flexGrow: 1 }} />
                 <IconButton
@@ -95,6 +96,7 @@ export const Navbar = (props) => {
                 >
                     {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
+                <NotificationsPopover sx={{ mr: 2 }} />
                 <NavbarAccount
                     darkMode={darkMode}
                     onSwitchTheme={handleSwitchTheme}
