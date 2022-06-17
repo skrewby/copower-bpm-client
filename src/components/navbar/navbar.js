@@ -38,10 +38,11 @@ export const Navbar = (props) => {
         items.forEach((item) => {
             if (item.items) {
                 for (let index = 0; index < item.items.length; index++) {
-                    const active = matchPath(
+                    const active = !!matchPath(
                         {
-                            path: item.items[index].href,
+                            path: item.items[index].href.concat('/*'),
                             exact: false,
+                            strict: false,
                         },
                         pathname
                     );
@@ -52,7 +53,14 @@ export const Navbar = (props) => {
                     }
                 }
             } else {
-                const active = !!matchPath({ path: item.href }, pathname);
+                const active = !!matchPath(
+                    {
+                        path: item.href.concat('/*'),
+                        exact: false,
+                        strict: false,
+                    },
+                    pathname
+                );
 
                 if (active) {
                     setActiveItem(item);
