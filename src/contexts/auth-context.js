@@ -13,12 +13,13 @@ const initialState = {
 
 const handlers = {
     AUTH_STATE_CHANGED: (state, action) => {
-        const { isAuthenticated, user } = action.payload;
+        const { isAuthenticated, user, idToken } = action.payload;
 
         return {
             ...state,
             isAuthenticated,
             isInitialized: true,
+            idToken,
             user,
         };
     },

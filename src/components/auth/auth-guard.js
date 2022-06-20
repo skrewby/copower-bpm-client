@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 // Local imports
 import { Login } from '../../containers/auth/login';
 import { useAuth } from '../../hooks/use-auth';
+import { SocketContext, socket } from '../../contexts/socket-context';
 
 export const AuthGuard = (props) => {
     const { children } = props;
@@ -28,7 +29,13 @@ export const AuthGuard = (props) => {
         return <Navigate to={requestedLocation} />;
     }
 
-    return <>{children}</>;
+    // We add the SocketContext here instead of at the BPMLayout because we only want users
+    // that can send a valid JWT to connect to the socket server
+    return (
+        <SocketContext.Provider value={socket}>
+            <>{children}</>
+        </SocketContext.Provider>
+    );
 };
 
 AuthGuard.propTypes = {

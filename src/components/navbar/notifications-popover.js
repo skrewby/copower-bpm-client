@@ -16,6 +16,9 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ClearIcon from '@mui/icons-material/Clear';
+import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
+import GamepadIcon from '@mui/icons-material/Gamepad';
+import CommentIcon from '@mui/icons-material/Comment';
 
 // Local Import
 import { usePopover } from '../../hooks/use-popover';
@@ -24,68 +27,81 @@ import { useState } from 'react';
 const notificationsDefault = [
     {
         id: '1',
-        createdAt: new Date().getTime(),
-        icon: AutoAwesomeIcon,
-        iconColor: '#ffb400',
+        create_date: new Date().getTime(),
+        icon_tag: 'success',
         title: 'Lead: Marked as win',
         href: '/bpm/leads/1',
         details: 'John Smith - UNIT 1 354 CHISHOLM ROAD, AUBURN NSW 2144',
+        user_id: '19203904821',
     },
     {
         id: '2',
-        createdAt: new Date().getTime(),
-        icon: AutoAwesomeIcon,
-        iconColor: '#ffb400',
-        title: 'Reject request for lead',
+        create_date: new Date().getTime(),
+        icon_tag: 'failure',
+        title: 'Lead: Reject Request',
+        href: '/bpm/leads/2',
+        details: 'Marcus Aurelius - 48 HACKETT RD, ABBOTSBURY NSW 2176',
+        user_id: '19203904821',
     },
     {
         id: '3',
-        createdAt: new Date().getTime(),
-        icon: CampaignIcon,
-        iconColor: '#4970ff',
-        title: 'New feature just deployed',
+        create_date: new Date().getTime(),
+        icon_tag: 'success',
+        title: 'New Lead!',
+        details: 'Scipio Africanus - 3 MIOWERA RD, NORTHBRIDGE NSW 2063',
+        user_id: '19203904821',
     },
     {
         id: '4',
-        createdAt: new Date().getTime(),
-        icon: CampaignIcon,
-        iconColor: '#4970ff',
-        title: 'New feature just deployed',
+        create_date: new Date().getTime(),
+        icon_tag: 'announcement',
+        title: 'BPM v0.1 has been released',
+        details: 'Notifications, Calendar and Installs have been added',
+        user_id: '19203904821',
     },
     {
         id: '5',
-        createdAt: new Date().getTime(),
-        icon: CampaignIcon,
-        iconColor: '#4970ff',
-        title: 'New feature just deployed',
+        create_date: new Date().getTime(),
+        icon_tag: 'success',
+        title: 'New Lead!',
+        details: 'Scipio Africanus - 3 MIOWERA RD, NORTHBRIDGE NSW 2063',
+        user_id: '19203904821',
     },
     {
         id: '6',
-        createdAt: new Date().getTime(),
-        icon: CampaignIcon,
-        iconColor: '#4970ff',
-        title: 'New feature just deployed',
+        create_date: new Date().getTime(),
+        icon_tag: 'comment',
+        title: 'Lead: New message',
+        details: 'Scipio Africanus - 3 MIOWERA RD, NORTHBRIDGE NSW 2063',
+        user_id: '19203904821',
+    },
+];
+
+const iconTags = [
+    {
+        id: 'default',
+        icon: GamepadIcon,
+        iconColor: '#4888f0',
     },
     {
-        id: '7',
-        createdAt: new Date().getTime(),
-        icon: CampaignIcon,
-        iconColor: '#4970ff',
-        title: 'New feature just deployed. Testing long title - hello world',
+        id: 'success',
+        icon: AutoAwesomeIcon,
+        iconColor: '#ffb400',
     },
     {
-        id: '8',
-        createdAt: new Date().getTime(),
-        icon: CampaignIcon,
-        iconColor: '#4970ff',
-        title: 'New feature just deployed',
+        id: 'failure',
+        icon: PriorityHighOutlinedIcon,
+        iconColor: '#e61c19',
     },
     {
-        id: '9',
-        createdAt: new Date().getTime(),
+        id: 'announcement',
         icon: CampaignIcon,
+        iconColor: '#2a8532',
+    },
+    {
+        id: 'comment',
+        icon: CommentIcon,
         iconColor: '#4970ff',
-        title: 'New feature just deployed',
     },
 ];
 
@@ -142,14 +158,12 @@ export const NotificationsPopover = (props) => {
                     }
                 >
                     {notifications.map((notification, index) => {
-                        const {
-                            title,
-                            createdAt,
-                            icon: Icon,
-                            iconColor,
-                            details,
-                        } = notification;
+                        const { title, create_date, icon_tag, details } =
+                            notification;
 
+                        const tag = iconTags.find(
+                            (iconTag) => iconTag.id === icon_tag
+                        );
                         return (
                             <Stack key={notification.id} direction="row">
                                 <ListItem
@@ -174,11 +188,19 @@ export const NotificationsPopover = (props) => {
                                         }
                                     }
                                 >
-                                    <Box sx={{ display: 'flex' }}>
-                                        <Icon
-                                            fontSize="small"
-                                            sx={{ color: iconColor }}
-                                        />
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                        }}
+                                    >
+                                        {tag.icon && (
+                                            <tag.icon
+                                                fontSize="small"
+                                                sx={{
+                                                    color: tag.iconColor,
+                                                }}
+                                            />
+                                        )}
                                         <Typography
                                             color="textPrimary"
                                             sx={{ ml: 1.25 }}
@@ -198,7 +220,7 @@ export const NotificationsPopover = (props) => {
                                         variant="caption"
                                     >
                                         {format(
-                                            createdAt,
+                                            create_date,
                                             'MMM dd, yyyy - hh:mm a'
                                         )}
                                     </Typography>
