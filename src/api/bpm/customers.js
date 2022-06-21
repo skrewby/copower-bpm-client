@@ -75,6 +75,19 @@ export async function getCustomer(id) {
     return Promise.resolve(data[0]);
 }
 
+export async function searchCustomer(query) {
+    const data = await bpmServer
+        .api()
+        .url(`api/customers`)
+        .query({ q: query })
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(data);
+}
+
 export async function updateCustomer(id, values) {
     const response = await bpmServer
         .api()

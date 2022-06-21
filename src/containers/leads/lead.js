@@ -81,7 +81,6 @@ export const Lead = () => {
                     name: user.name,
                 };
             });
-
             if (mounted.current) {
                 setLeadState(() => ({
                     isLoading: false,

@@ -33,6 +33,10 @@ export const LeadSummary = () => {
     const [roofTypeOptions, setRoofTypeOptions] = useState([]);
     const [statusOptions, setStatusOptions] = useState([]);
 
+    // Used to hold any possible customers that were found matching the lead name
+    // Right now only used when sending it to Installs
+    const [customerSearch, setCustomerSearch] = useState([]);
+
     const getData = useCallback(async () => {
         setSourceOptions([]);
         setPhaseOptions([]);
@@ -40,6 +44,7 @@ export const LeadSummary = () => {
         setStoryOptions([]);
         setRoofTypeOptions([]);
         setStatusOptions([]);
+        setCustomerSearch([]);
 
         try {
             const sourcesAPI = await bpmAPI.getLeadSources();
@@ -86,6 +91,19 @@ export const LeadSummary = () => {
                     colour: row.colour,
                 };
             });
+            // If there's a customer name in the result, search if we already have a customer with same name
+            const customerAPI = await bpmAPI.searchCustomer(
+                leadState.data.name ?? ''
+            );
+            const customerResult = customerAPI.map((row) => {
+                return {
+                    id: row.customer_id,
+                    customer_id: row.customer_id,
+                    name: row.name,
+                    email: row.email,
+                    phone: row.phone,
+                };
+            });
 
             if (mounted.current) {
                 setSourceOptions(sourcesResult);
@@ -94,6 +112,7 @@ export const LeadSummary = () => {
                 setStoryOptions(storyOptionsResult);
                 setRoofTypeOptions(roofTypeResult);
                 setStatusOptions(statusOptionsResult);
+                setCustomerSearch(customerResult);
             }
         } catch (err) {
             console.error(err);
@@ -105,9 +124,12 @@ export const LeadSummary = () => {
                 setStoryOptions(() => ({ error: err.message }));
                 setRoofTypeOptions(() => ({ error: err.message }));
                 setStatusOptions(() => ({ error: err.message }));
+                setCustomerSearch(() => ({
+                    error: err.message,
+                }));
             }
         }
-    }, [mounted]);
+    }, [leadState.data.name, mounted]);
 
     useEffect(() => {
         getData().catch(console.error);
@@ -221,7 +243,6 @@ export const LeadSummary = () => {
                     toast.error('Something went wrong');
                 }
                 setRefresh(true);
-
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);
                 setOpenPropertyDialog(false);
@@ -601,6 +622,7 @@ export const LeadSummary = () => {
                         <Grid item xs={12}>
                             <LeadProgress
                                 lead={leadState.data}
+                                customers={customerSearch}
                                 statusOptions={statusOptions}
                                 refresh={setRefresh}
                             />

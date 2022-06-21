@@ -2,6 +2,9 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import toast from 'react-hot-toast';
 
 // Material UI
 import {
@@ -29,13 +32,14 @@ import { StatusSelect } from '../../components/timeline/status-select';
 import { StatusTimeline } from '../../components/timeline/status-timeline';
 import { StatusDisplay } from '../../components/timeline/status-display';
 import { CommentDialog } from '../../components/dialogs/comment-dialog';
+import { FormDialog } from '../../components/dialogs/form-dialog';
 
 /**
  * Container to be used within other containers therefore props need to be passed to it
  * as if it was a component.
  */
 export const LeadProgress = (props) => {
-    const { lead, refresh, statusOptions, ...other } = props;
+    const { lead, customers, refresh, statusOptions, ...other } = props;
     const { user } = useAuth();
     const [
         sendToOperationsOpen,
@@ -51,11 +55,8 @@ export const LeadProgress = (props) => {
         handleOpenRejectLeadApprove,
         handleCloseRejectLeadApprove,
     ] = useDialog();
-    const [
-        reviewLeadApproveOpen,
-        handleOpenReviewLeadApprove,
-        handleCloseReviewLeadApprove,
-    ] = useDialog();
+    const [openLeadReviewApproveDialog, setOpenLeadReviewApproveDialog] =
+        useState(false);
     const [openLeadRejectDialog, setOpenLeadRejectDialog] = useState(false);
     const [openLeadRejectDenyDialog, setOpenLeadRejectDenyDialog] =
         useState(false);
@@ -109,20 +110,63 @@ export const LeadProgress = (props) => {
         setOpenLeadReviewDenyDialog(true);
     };
 
-    const handleReviewApprove = () => {
-        handleCloseReviewLeadApprove();
-        bpmAPI.createInstall(lead).then((res) => {
-            bpmAPI.createInstallLog(res.install_id, `Install created`, true);
-            bpmAPI.createLeadLog(
-                lead.lead_id,
-                `Lead approved. Sent to installs`,
-                true
-            );
-            bpmAPI
-                .updateLead(lead.lead_id, { status_id: 5 })
-                .then(refresh(true));
-        });
-    };
+    const approveLeadFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            customer_id: '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            customer_id: Yup.number().required(
+                'Select a customer to assign the install to'
+            ),
+        }),
+        onSubmit: async (values, helpers) => {
+            const install = lead;
+            install.customer_id = values.customer_id;
+            try {
+                await bpmAPI.createInstall(lead).then((res) => {
+                    bpmAPI.createInstallLog(
+                        res.install_id,
+                        `Install created`,
+                        true
+                    );
+                    bpmAPI.createLeadLog(
+                        lead.lead_id,
+                        `Lead approved. Sent to installs`,
+                        true
+                    );
+                    bpmAPI
+                        .updateLead(lead.lead_id, { status_id: 5 })
+                        .then(() => {
+                            toast.success('Install Created');
+                            refresh(true);
+                        });
+                });
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const approveLeadFormFields = [
+        {
+            id: 1,
+            variant: 'Customer Search',
+            width: 12,
+            label: 'Assign Customer',
+            touched: approveLeadFormik.touched.customer_id,
+            errors: approveLeadFormik.errors.customer_id,
+            name: 'customer_id',
+        },
+    ];
 
     const ActionListDefault = () => {
         if (user.role === 'Sales') {
@@ -193,7 +237,7 @@ export const LeadProgress = (props) => {
                     <ActionListItem
                         icon={CheckCircleIcon}
                         label="Approve"
-                        onClick={handleOpenReviewLeadApprove}
+                        onClick={() => setOpenLeadReviewApproveDialog(true)}
                     />
                     <ActionListItem
                         icon={CancelIcon}
@@ -352,13 +396,13 @@ export const LeadProgress = (props) => {
                 title="Approve reject request"
                 variant="warning"
             />
-            <ConfirmationDialog
-                message="Approve lead submission?"
-                onCancel={handleCloseReviewLeadApprove}
-                onConfirm={handleReviewApprove}
-                open={reviewLeadApproveOpen}
-                title="Approve lead submission"
-                variant="warning"
+            <FormDialog
+                onClose={() => setOpenLeadReviewApproveDialog(false)}
+                open={openLeadReviewApproveDialog}
+                formik={approveLeadFormik}
+                title="Send Lead to Installs"
+                fields={approveLeadFormFields}
+                submitName="Submit"
             />
             <CommentDialog
                 open={openLeadRejectDialog}

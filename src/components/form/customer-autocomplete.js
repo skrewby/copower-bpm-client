@@ -1,34 +1,41 @@
-import * as React from 'react';
-import throttle from 'lodash/throttle';
-import wretch from 'wretch';
-
-// Material UI
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import Grid from '@mui/material/Grid';
+import PropTypes from 'prop-types';
+import { TextField, Grid } from '@mui/material';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import { alpha } from '@mui/material/styles';
+import { useEffect, useMemo, useState } from 'react';
+import throttle from 'lodash/throttle';
 
-let baseUrl = 'http://165.22.253.133:5000/api/addresses';
+// Local Import
+import { bpmAPI } from '../../api/bpm/bpm-api';
 
-export function AddressAutocomplete(props) {
-    const { formik, error, helperText, label, placeholder, ...other } = props;
+const filter = createFilterOptions();
+
+export const CustomerAutocomplete = (props) => {
+    const {
+        error,
+        helperText,
+        label,
+        placeholder,
+        field_name,
+        formik,
+        ...other
+    } = props;
+
     // eslint-disable-next-line no-unused-vars
-    const [value, setValue] = React.useState(null);
-    const [inputValue, setInputValue] = React.useState('');
-    const [options, setOptions] = React.useState([]);
+    const [value, setValue] = useState();
+    const [options, setOptions] = useState([]);
+    const [inputValue, setInputValue] = useState('');
 
-    const adressAPI = React.useMemo(
+    const customerAPI = useMemo(
         () =>
-            throttle((request, callback) => {
-                const body = { query: request.input };
-                wretch().url(baseUrl).post(body).json(callback);
+            throttle(async (request, callback) => {
+                const response = await bpmAPI.searchCustomer(request.input);
+                callback(response);
             }, 200),
         []
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
         let active = true;
 
         if (inputValue === '') {
@@ -36,7 +43,7 @@ export function AddressAutocomplete(props) {
             return undefined;
         }
 
-        adressAPI({ input: inputValue }, (results) => {
+        customerAPI({ input: inputValue }, async (results) => {
             if (active) {
                 let newOptions = [];
 
@@ -46,7 +53,12 @@ export function AddressAutocomplete(props) {
 
                 if (results) {
                     const data = results.map((item) => {
-                        return { sla: item.sla, id: item.pid };
+                        return {
+                            id: item.customer_id,
+                            name: item.name,
+                            phone: item.phone,
+                            email: item.email,
+                        };
                     });
                     newOptions = [...newOptions, ...data];
                 }
@@ -58,45 +70,51 @@ export function AddressAutocomplete(props) {
         return () => {
             active = false;
         };
-    }, [value, inputValue, adressAPI]);
+    }, [value, inputValue, customerAPI]);
 
     return (
         <Autocomplete
-            id="address"
-            name="address"
+            id="customer-autocomplete"
+            getOptionLabel={(option) => option.name}
+            filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+
+                if (params.inputValue !== '') {
+                    filtered.push({
+                        inputValue: params.inputValue,
+                        name: 'Create new customer',
+                        email: '',
+                        phone: '',
+                    });
+                }
+
+                return filtered;
+            }}
+            filterSelectedOptions
+            options={options}
+            onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+            }}
+            onChange={(event, newValue) => {
+                formik.setFieldValue(
+                    field_name,
+                    newValue !== null ? newValue.id : ''
+                );
+            }}
+            autoComplete
+            freeSolo
             sx={{
                 '& .MuiFilledInput-root .MuiFilledInput-input': {
                     px: 1.5,
                     py: 0.75,
                 },
             }}
-            size="small"
-            freeSolo
-            getOptionLabel={(option) => option.sla}
-            filterOptions={(x) => x}
-            options={options}
-            autoComplete
-            includeInputInList
-            filterSelectedOptions
-            onChange={(event, newValue) => {
-                formik.setFieldValue(
-                    'address',
-                    newValue !== null ? newValue.sla : ''
-                );
-                formik.setFieldValue(
-                    'address_id',
-                    newValue !== null ? newValue.id : ''
-                );
-            }}
-            onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
-            }}
             renderInput={({ InputProps, ...rest }) => (
                 <TextField
                     {...rest}
-                    error={formik.error}
-                    helperText={formik.helperText}
-                    label={formik.label}
+                    error={error}
+                    helperText={helperText}
+                    label={label}
                     placeholder={placeholder}
                     sx={{
                         '& .MuiFilledInput-root': {
@@ -168,20 +186,27 @@ export function AddressAutocomplete(props) {
                 return (
                     <li {...props}>
                         <Grid container alignItems="center">
-                            <Grid item>
-                                <Box
-                                    component={LocationOnIcon}
-                                    sx={{ color: 'text.secondary', mr: 2 }}
-                                />
-                            </Grid>
                             <Grid item xs>
-                                {option.sla}
+                                <Grid container spacing={4}>
+                                    <Grid item>{option.name}</Grid>
+                                    <Grid item>{option.email}</Grid>
+                                    <Grid item>{option.phone}</Grid>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </li>
                 );
             }}
+            ChipProps={{ variant: 'outlined' }}
             {...other}
         />
     );
-}
+};
+
+CustomerAutocomplete.propTypes = {
+    error: PropTypes.bool,
+    helperText: PropTypes.string,
+    label: PropTypes.string,
+    type: PropTypes.string,
+    placeholder: PropTypes.string,
+};

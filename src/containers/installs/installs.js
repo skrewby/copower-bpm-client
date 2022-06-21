@@ -351,8 +351,8 @@ export const Installs = () => {
                             columns={columns}
                             rowFunction={mapFunction}
                             error={installsState.error}
-                            data={installsState.data?.leads}
-                            dataCount={installsState.data?.leadsCount}
+                            data={installsState.data?.installs}
+                            dataCount={installsState.data?.installsCount}
                             isLoading={installsState.isLoading}
                             onPageChange={handlePageChange}
                             onSortChange={handleSortChange}

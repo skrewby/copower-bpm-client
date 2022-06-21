@@ -40,6 +40,7 @@ import {
     updateCustomer,
     createCustomerLog,
     getCustomerLogs,
+    searchCustomer,
 } from './customers';
 
 class API {}
@@ -71,6 +72,7 @@ API.prototype.updateCustomer = updateCustomer;
 API.prototype.createCustomer = createCustomer;
 API.prototype.createCustomerLog = createCustomerLog;
 API.prototype.getCustomerLogs = getCustomerLogs;
+API.prototype.searchCustomer = searchCustomer;
 
 // Users
 API.prototype.getUsers = getUsers;

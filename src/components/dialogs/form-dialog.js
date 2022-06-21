@@ -16,9 +16,10 @@ import {
 // Components
 import { InputField } from '../form/input-field';
 import { AddressAutocomplete } from '../form/address-autocomplete';
+import { CustomerAutocomplete } from '../form/customer-autocomplete';
 
 export const FormDialog = (props) => {
-    const { open, onClose, formik, title, fields } = props;
+    const { open, onClose, formik, title, fields, submitName } = props;
 
     return (
         <Dialog
@@ -101,6 +102,26 @@ export const FormDialog = (props) => {
                                     </Grid>
                                 </React.Fragment>
                             );
+                        } else if (field.variant === 'Customer Search') {
+                            return (
+                                <React.Fragment key={field.id}>
+                                    <Grid item xs={field.width}>
+                                        <CustomerAutocomplete
+                                            fullWidth
+                                            label={field.label}
+                                            error={Boolean(
+                                                field.touched && field.errors
+                                            )}
+                                            helperText={
+                                                field.touched && field.errors
+                                            }
+                                            field_name={field.name}
+                                            formik={formik}
+                                            sx={{ mb: 2 }}
+                                        />
+                                    </Grid>
+                                </React.Fragment>
+                            );
                         } else if (field.variant === 'Custom') {
                             return field.customComponent;
                         }
@@ -126,7 +147,7 @@ export const FormDialog = (props) => {
                     }}
                     variant="contained"
                 >
-                    Save Changes
+                    {submitName ?? 'Save Changes'}
                 </Button>
             </DialogActions>
         </Dialog>
