@@ -97,7 +97,17 @@ export const FormDialog = (props) => {
                                     <Grid item xs={field.width}>
                                         <AddressAutocomplete
                                             fullWidth
+                                            label={field.label}
+                                            error={Boolean(
+                                                field.touched && field.errors
+                                            )}
+                                            helperText={
+                                                field.touched && field.errors
+                                            }
+                                            field_name={field.name}
+                                            field_name_id={field.name_id}
                                             formik={formik}
+                                            sx={{ mb: 2 }}
                                         />
                                     </Grid>
                                 </React.Fragment>

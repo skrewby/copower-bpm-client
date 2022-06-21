@@ -56,6 +56,7 @@ export const CustomerAutocomplete = (props) => {
                         return {
                             id: item.customer_id,
                             name: item.name,
+                            company: item.company_name,
                             phone: item.phone,
                             email: item.email,
                         };
@@ -82,7 +83,10 @@ export const CustomerAutocomplete = (props) => {
                 if (params.inputValue !== '') {
                     filtered.push({
                         inputValue: params.inputValue,
+                        id: -1,
+                        customer_id: -1,
                         name: 'Create new customer',
+                        company: '',
                         email: '',
                         phone: '',
                     });
@@ -188,7 +192,11 @@ export const CustomerAutocomplete = (props) => {
                         <Grid container alignItems="center">
                             <Grid item xs>
                                 <Grid container spacing={4}>
-                                    <Grid item>{option.name}</Grid>
+                                    {option.company ? (
+                                        <Grid item>{option.company}</Grid>
+                                    ) : (
+                                        <Grid item>{option.name}</Grid>
+                                    )}
                                     <Grid item>{option.email}</Grid>
                                     <Grid item>{option.phone}</Grid>
                                 </Grid>

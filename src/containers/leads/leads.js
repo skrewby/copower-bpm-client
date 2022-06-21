@@ -347,6 +347,7 @@ export const Leads = () => {
         validateOnChange: false,
         initialValues: {
             address: '',
+            address_id: '',
             email: '',
             first_name: '',
             last_name: '',
@@ -365,13 +366,12 @@ export const Leads = () => {
             last_name: Yup.string().max(255).required('Last name is required'),
             company_name: Yup.string().max(255),
             company_abn: Yup.string().max(255),
-            email: Yup.string()
-                .email('Must be a valid email')
-                .max(255)
-                .required('Email is required'),
+            email: Yup.string().email('Must be a valid email').max(255),
             sales_id: Yup.string().max(255).required('Must assign to an user'),
             source_id: Yup.number().required('Must choose lead source'),
-            phone: Yup.string().max(255).required('Contact number is required'),
+            phone: Yup.string().max(255),
+            address: Yup.string().max(255),
+            address_id: Yup.string().max(255),
             comment: Yup.string().max(255).nullable(),
         }),
         onSubmit: async (values, helpers) => {
@@ -446,6 +446,11 @@ export const Leads = () => {
         {
             id: 5,
             variant: 'Address',
+            label: 'Address',
+            name: 'address',
+            name_id: 'address_id',
+            touched: addLeadFormik.touched.address,
+            errors: addLeadFormik.errors.address,
             width: 12,
         },
         {

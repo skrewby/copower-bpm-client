@@ -1,25 +1,33 @@
-import * as React from 'react';
+import PropTypes from 'prop-types';
+import { Box, TextField, Grid } from '@mui/material';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import { alpha } from '@mui/material/styles';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { useEffect, useMemo, useState } from 'react';
 import throttle from 'lodash/throttle';
 import wretch from 'wretch';
 
-// Material UI
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import Grid from '@mui/material/Grid';
-import { alpha } from '@mui/material/styles';
+const filter = createFilterOptions();
+const baseUrl = 'http://165.22.253.133:5000/api/addresses';
 
-let baseUrl = 'http://165.22.253.133:5000/api/addresses';
+export const AddressAutocomplete = (props) => {
+    const {
+        error,
+        helperText,
+        label,
+        placeholder,
+        field_name,
+        field_name_id,
+        formik,
+        ...other
+    } = props;
 
-export function AddressAutocomplete(props) {
-    const { formik, error, helperText, label, placeholder, ...other } = props;
     // eslint-disable-next-line no-unused-vars
-    const [value, setValue] = React.useState(null);
-    const [inputValue, setInputValue] = React.useState('');
-    const [options, setOptions] = React.useState([]);
+    const [value, setValue] = useState();
+    const [options, setOptions] = useState([]);
+    const [inputValue, setInputValue] = useState('');
 
-    const adressAPI = React.useMemo(
+    const adressAPI = useMemo(
         () =>
             throttle((request, callback) => {
                 const body = { query: request.input };
@@ -28,7 +36,7 @@ export function AddressAutocomplete(props) {
         []
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
         let active = true;
 
         if (inputValue === '') {
@@ -62,41 +70,50 @@ export function AddressAutocomplete(props) {
 
     return (
         <Autocomplete
-            id="address"
-            name="address"
+            id="address-autocomplete"
+            getOptionLabel={(option) => option.sla}
+            filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+
+                if (params.inputValue !== '') {
+                    filtered.push({
+                        inputValue: params.inputValue,
+                        id: '',
+                        sla: params.inputValue,
+                    });
+                }
+
+                return filtered;
+            }}
+            filterSelectedOptions
+            options={options}
+            onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+            }}
+            onChange={(event, newValue) => {
+                formik.setFieldValue(
+                    field_name,
+                    newValue !== null ? newValue.sla : ''
+                );
+                formik.setFieldValue(
+                    field_name_id,
+                    newValue !== null ? newValue.id : ''
+                );
+            }}
+            autoComplete
+            freeSolo
             sx={{
                 '& .MuiFilledInput-root .MuiFilledInput-input': {
                     px: 1.5,
                     py: 0.75,
                 },
             }}
-            size="small"
-            freeSolo
-            getOptionLabel={(option) => option.sla}
-            filterOptions={(x) => x}
-            options={options}
-            autoComplete
-            includeInputInList
-            filterSelectedOptions
-            onChange={(event, newValue) => {
-                formik.setFieldValue(
-                    'address',
-                    newValue !== null ? newValue.sla : ''
-                );
-                formik.setFieldValue(
-                    'address_id',
-                    newValue !== null ? newValue.id : ''
-                );
-            }}
-            onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
-            }}
             renderInput={({ InputProps, ...rest }) => (
                 <TextField
                     {...rest}
-                    error={formik.error}
-                    helperText={formik.helperText}
-                    label={formik.label}
+                    error={error}
+                    helperText={helperText}
+                    label={label}
                     placeholder={placeholder}
                     sx={{
                         '& .MuiFilledInput-root': {
@@ -181,7 +198,16 @@ export function AddressAutocomplete(props) {
                     </li>
                 );
             }}
+            ChipProps={{ variant: 'outlined' }}
             {...other}
         />
     );
-}
+};
+
+AddressAutocomplete.propTypes = {
+    error: PropTypes.bool,
+    helperText: PropTypes.string,
+    label: PropTypes.string,
+    type: PropTypes.string,
+    placeholder: PropTypes.string,
+};

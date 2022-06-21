@@ -125,8 +125,13 @@ export const LeadProgress = (props) => {
         onSubmit: async (values, helpers) => {
             const install = lead;
             install.customer_id = values.customer_id;
+
             try {
-                await bpmAPI.createInstall(lead).then((res) => {
+                // The Form will return a -1 if the user chose to create a new customer
+                if (install.customer_id === -1) {
+                    install.customer_id = await bpmAPI.createCustomer(lead);
+                }
+                await bpmAPI.createInstall(install).then((res) => {
                     bpmAPI.createInstallLog(
                         res.install_id,
                         `Install created`,
