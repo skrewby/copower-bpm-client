@@ -251,10 +251,10 @@ export const Installs = () => {
         return (
             <TableRow hover key={install.install_id}>
                 <TableCell>{install.install_id}</TableCell>
-                <TableCell>{install.name}</TableCell>
-                <TableCell>{install.company_name}</TableCell>
-                <TableCell>{install.address}</TableCell>
-                <TableCell>{install.phone}</TableCell>
+                <TableCell>{install.customer.name}</TableCell>
+                <TableCell>{install.customer.company}</TableCell>
+                <TableCell>{install.property.address}</TableCell>
+                <TableCell>{install.customer.phone}</TableCell>
                 <TableCell>
                     {format(install.create_date, 'dd MMM yyyy')}
                 </TableCell>
@@ -263,8 +263,8 @@ export const Installs = () => {
                 </TableCell>
                 <TableCell>
                     <Status
-                        color={install.status_colour}
-                        label={install.status}
+                        color={install.status.colour}
+                        label={install.status.label}
                     />
                 </TableCell>
                 <TableCell>

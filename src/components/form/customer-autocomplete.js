@@ -18,6 +18,7 @@ export const CustomerAutocomplete = (props) => {
         placeholder,
         field_name,
         formik,
+        allowCreate,
         ...other
     } = props;
 
@@ -80,7 +81,7 @@ export const CustomerAutocomplete = (props) => {
             filterOptions={(options, params) => {
                 const filtered = filter(options, params);
 
-                if (params.inputValue !== '') {
+                if (params.inputValue !== '' && allowCreate) {
                     filtered.push({
                         inputValue: params.inputValue,
                         id: -1,

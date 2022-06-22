@@ -127,6 +127,7 @@ export const FormDialog = (props) => {
                                             }
                                             field_name={field.name}
                                             formik={formik}
+                                            allowCreate={field.allowCreate}
                                             sx={{ mb: 2 }}
                                         />
                                     </Grid>

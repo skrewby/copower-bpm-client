@@ -21,6 +21,7 @@ import {
     getLeadSources,
     getLeadStatusOptions,
     getPhaseOptions,
+    getRoofPitchOptions,
     getRoofTypeOptions,
     getStoryOptions,
     getValidRoles,
@@ -90,5 +91,6 @@ API.prototype.getStoryOptions = getStoryOptions;
 API.prototype.getRoofTypeOptions = getRoofTypeOptions;
 API.prototype.getLeadStatusOptions = getLeadStatusOptions;
 API.prototype.getValidRoles = getValidRoles;
+API.prototype.getRoofPitchOptions = getRoofPitchOptions;
 
 export const bpmAPI = new API();

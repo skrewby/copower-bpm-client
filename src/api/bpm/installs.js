@@ -62,7 +62,7 @@ export async function getInstall(id) {
             return response;
         });
 
-    return Promise.resolve(data[0]);
+    return Promise.resolve(data);
 }
 
 export async function updateInstall(id, values) {

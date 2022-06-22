@@ -60,6 +60,18 @@ export async function getRoofTypeOptions() {
     return Promise.resolve(data);
 }
 
+export async function getRoofPitchOptions() {
+    const data = await bpmServer
+        .api()
+        .url(`api/info/roof-pitch`)
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(data);
+}
+
 export async function getLeadStatusOptions() {
     const data = await bpmServer
         .api()

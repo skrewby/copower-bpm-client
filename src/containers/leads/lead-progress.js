@@ -169,6 +169,7 @@ export const LeadProgress = (props) => {
             label: 'Assign Customer',
             touched: approveLeadFormik.touched.customer_id,
             errors: approveLeadFormik.errors.customer_id,
+            allowCreate: true,
             name: 'customer_id',
         },
     ];

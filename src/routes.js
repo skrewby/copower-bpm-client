@@ -84,6 +84,20 @@ const Installs = Loadable(
         }))
     )
 );
+const Install = Loadable(
+    lazy(() =>
+        import('./containers/installs/install').then((module) => ({
+            default: module.Install,
+        }))
+    )
+);
+const InstallSummary = Loadable(
+    lazy(() =>
+        import('./containers/installs/install-summary').then((module) => ({
+            default: module.InstallSummary,
+        }))
+    )
+);
 const Customers = Loadable(
     lazy(() =>
         import('./containers/customers/customers').then((module) => ({
@@ -167,6 +181,16 @@ const routes = [
                     {
                         path: '',
                         element: <Installs />,
+                    },
+                    {
+                        path: ':installID',
+                        element: <Install />,
+                        children: [
+                            {
+                                path: '',
+                                element: <InstallSummary />,
+                            },
+                        ],
                     },
                 ],
             },
