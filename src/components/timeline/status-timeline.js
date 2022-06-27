@@ -63,7 +63,7 @@ export const StatusTimeline = (props) => {
             });
         };
 
-        setItems(getItems(data.status));
+        setItems(getItems(data.status.label));
     }, [data.status, statusList]);
 
     return (

@@ -18,6 +18,7 @@ import {
 } from './users';
 import {
     getExistingSystemOptions,
+    getInstallStatusOptions,
     getLeadSources,
     getLeadStatusOptions,
     getPhaseOptions,
@@ -65,6 +66,7 @@ API.prototype.createInstallLog = createInstallLog;
 API.prototype.getInstallLogs = getInstallLogs;
 API.prototype.updateInstall = updateInstall;
 API.prototype.createInstall = createInstall;
+API.prototype.getInstallStatusOptions = getInstallStatusOptions;
 
 // Customers
 API.prototype.getCustomers = getCustomers;

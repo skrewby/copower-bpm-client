@@ -5,6 +5,7 @@ import {
     useLocation,
     useParams,
 } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
 import {
     Box,
@@ -99,7 +100,17 @@ export const Install = () => {
         getInstall().catch(console.error);
     }, [getInstall, refresh]);
 
-    const actions = [];
+    const handleChangeAddress = () => {
+        toast.error('Not implemented yet');
+    };
+
+    const actions = [
+        {
+            label: 'Change Address',
+            onClick: handleChangeAddress,
+            disabled: false,
+        },
+    ];
 
     const renderContent = () => {
         if (installState.isLoading) {

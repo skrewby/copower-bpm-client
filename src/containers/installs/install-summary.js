@@ -16,12 +16,14 @@ import { bpmAPI } from '../../api/bpm/bpm-api';
 // Components
 import { InfoCard } from '../../components/cards/info-card';
 import { FormDialog } from '../../components/dialogs/form-dialog';
+import { InstallProgress } from './install-progress';
 
 export const InstallSummary = () => {
     const [installState, setRefresh] = useOutletContext();
     const mounted = useMounted();
 
     const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
+    const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
     const [openAddressDialog, setOpenAddressDialog] = useState(false);
 
     const [phaseOptions, setPhaseOptions] = useState([]);
@@ -29,6 +31,7 @@ export const InstallSummary = () => {
     const [storyOptions, setStoryOptions] = useState([]);
     const [roofTypeOptions, setRoofTypeOptions] = useState([]);
     const [roofPitchOptions, setRoofPitchOptions] = useState([]);
+    const [statusOptions, setStatusOptions] = useState([]);
 
     const getData = useCallback(async () => {
         setPhaseOptions([]);
@@ -36,6 +39,7 @@ export const InstallSummary = () => {
         setStoryOptions([]);
         setRoofTypeOptions([]);
         setRoofPitchOptions([]);
+        setStatusOptions([]);
 
         try {
             const phasesAPI = await bpmAPI.getPhaseOptions();
@@ -73,12 +77,23 @@ export const InstallSummary = () => {
                     name: row.name,
                 };
             });
+
+            const statusOptionsAPI = await bpmAPI.getInstallStatusOptions();
+            const statusOptionsResult = statusOptionsAPI.map((row) => {
+                return {
+                    id: row.id,
+                    name: row.name,
+                    colour: row.colour,
+                };
+            });
+
             if (mounted.current) {
                 setPhaseOptions(phasesResult);
                 setExistingSystemOptions(existingSystemResult);
                 setStoryOptions(storyOptionsResult);
                 setRoofTypeOptions(roofTypeResult);
                 setRoofPitchOptions(roofPitchResult);
+                setStatusOptions(statusOptionsResult);
             }
         } catch (err) {
             console.error(err);
@@ -89,6 +104,9 @@ export const InstallSummary = () => {
                 setStoryOptions(() => ({ error: err.message }));
                 setRoofTypeOptions(() => ({ error: err.message }));
                 setRoofPitchOptions(() => ({ error: err.message }));
+                setStatusOptions(() => ({
+                    error: err.message,
+                }));
             }
         }
     }, [mounted]);
@@ -321,6 +339,54 @@ export const InstallSummary = () => {
         },
     ];
 
+    const changeCustomerFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            customer_id: '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            customer_id: Yup.number().required(
+                'Select a customer to assign the install to'
+            ),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                setOpenCustomerDialog(false);
+                await bpmAPI
+                    .updateInstall(installState.data.install_id, values)
+                    .then((res) => {
+                        if (res.status === 201) {
+                            toast.success('Customer Update');
+                        }
+                        setRefresh(true);
+                    });
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const changeCustomerFormFields = [
+        {
+            id: 1,
+            variant: 'Customer Search',
+            width: 12,
+            label: 'Assign Customer',
+            touched: changeCustomerFormik.touched.customer_id,
+            errors: changeCustomerFormik.errors.customer_id,
+            allowCreate: false,
+            name: 'customer_id',
+        },
+    ];
+
     const renderContent = () => {
         if (installState.isLoading) {
             return (
@@ -370,7 +436,7 @@ export const InstallSummary = () => {
                     >
                         <Grid item xs={12}>
                             <InfoCard
-                                onEdit={() => setOpenPropertyDialog(true)}
+                                onEdit={() => setOpenCustomerDialog(true)}
                                 title="Customer"
                                 dataLeft={[
                                     {
@@ -486,7 +552,12 @@ export const InstallSummary = () => {
                         xs={12}
                     >
                         <Grid item xs={12}>
-                            {/* <InstallProgress install={installState.data} /> */}
+                            <InstallProgress
+                                install={installState.data}
+                                statusOptions={statusOptions.filter(
+                                    (status) => status.id < 9
+                                )}
+                            />
                         </Grid>
                     </Grid>
                 </Grid>
@@ -503,6 +574,13 @@ export const InstallSummary = () => {
                     formik={propertyFormik}
                     title="Edit Property Details"
                     fields={propertyFormFields}
+                />
+                <FormDialog
+                    onClose={() => setOpenCustomerDialog(false)}
+                    open={openCustomerDialog}
+                    formik={changeCustomerFormik}
+                    title="Change Customer"
+                    fields={changeCustomerFormFields}
                 />
             </>
         );

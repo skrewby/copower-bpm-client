@@ -84,6 +84,18 @@ export async function getLeadStatusOptions() {
     return Promise.resolve(data);
 }
 
+export async function getInstallStatusOptions() {
+    const data = await bpmServer
+        .api()
+        .url(`api/info/install-status`)
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(data);
+}
+
 export async function getValidRoles() {
     const data = await bpmServer
         .api()
