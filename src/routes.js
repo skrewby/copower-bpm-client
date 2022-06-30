@@ -98,6 +98,13 @@ const InstallSummary = Loadable(
         }))
     )
 );
+const InstallMeter = Loadable(
+    lazy(() =>
+        import('./containers/installs/install-meter').then((module) => ({
+            default: module.InstallMeter,
+        }))
+    )
+);
 const InstallLogs = Loadable(
     lazy(() =>
         import('./containers/installs/install-log').then((module) => ({
@@ -196,6 +203,10 @@ const routes = [
                             {
                                 path: '',
                                 element: <InstallSummary />,
+                            },
+                            {
+                                path: 'meter',
+                                element: <InstallMeter />,
                             },
                             {
                                 path: 'log',

@@ -64,10 +64,11 @@ export const Install = () => {
             // We did not make the default in the database to current_timestamp as we don't want
             // the default to be a really old date in case the install was created a few months
             // prior
-            // result.ptc_form_sent_date = result.ptc_form_sent_date ?? now;
-            // result.deposit_paid_date = result.deposit_paid_date ?? now;
-            // result.invoice_paid_date = result.invoice_paid_date ?? now;
-            // result.ptc_approval_date = result.ptc_approval_date ?? now;
+            result.ptc.form_sent_date = result.ptc.form_sent_date ?? now;
+            result.ptc.approval_date = result.ptc.approval_date ?? now;
+            result.retailer_notice.date = result.retailer_notice.date ?? now;
+            result.deposit_paid_date = result.finance.deposit_paid_date ?? now;
+            result.invoice_paid_date = result.finance.invoice_paid_date ?? now;
             // result.schedule = result.schedule ?? now;
             // result.inspection_booked_date =
             //     result.inspection_booked_date ?? now;
@@ -75,7 +76,6 @@ export const Install = () => {
             //     result.inspection_completed_date ?? now;
             // result.review_greenbot_approved_date =
             //     result.review_greenbot_approved_date ?? now;
-            // result.retailer_notice_date = result.retailer_notice_date ?? now;
 
             if (mounted.current) {
                 setInstallState(() => ({

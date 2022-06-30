@@ -11,12 +11,15 @@ import {
     FormHelperText,
     Grid,
     MenuItem,
+    FormControlLabel,
+    Checkbox,
 } from '@mui/material';
 
 // Components
 import { InputField } from '../form/input-field';
 import { AddressAutocomplete } from '../form/address-autocomplete';
 import { CustomerAutocomplete } from '../form/customer-autocomplete';
+import { DateField } from '../form/date-field';
 
 export const FormDialog = (props) => {
     const { open, onClose, formik, title, fields, submitName } = props;
@@ -38,6 +41,9 @@ export const FormDialog = (props) => {
             <DialogContent>
                 <Grid container spacing={2}>
                     {fields.map((field) => {
+                        if (field.hidden) {
+                            return null;
+                        }
                         if (field.variant === 'Input') {
                             return (
                                 <React.Fragment key={field.id}>
@@ -108,6 +114,52 @@ export const FormDialog = (props) => {
                                             field_name_id={field.name_id}
                                             formik={formik}
                                             sx={{ mb: 2 }}
+                                        />
+                                    </Grid>
+                                </React.Fragment>
+                            );
+                        } else if (field.variant === 'Control') {
+                            return (
+                                <React.Fragment key={field.id}>
+                                    <Grid item xs={field.width}>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onChange={(event) =>
+                                                        formik.setFieldValue(
+                                                            field.name,
+                                                            event.target.checked
+                                                        )
+                                                    }
+                                                />
+                                            }
+                                            label={field.label}
+                                        />
+                                    </Grid>
+                                </React.Fragment>
+                            );
+                        } else if (field.variant === 'Date') {
+                            return (
+                                <React.Fragment key={field.id}>
+                                    <Grid item xs={field.width}>
+                                        <DateField
+                                            error={Boolean(
+                                                field.touched && field.errors
+                                            )}
+                                            fullWidth
+                                            helperText={
+                                                field.touched && field.errors
+                                            }
+                                            label={field.label}
+                                            name={field.name}
+                                            initialValue={field.value}
+                                            onChange={(date) => {
+                                                formik.setFieldValue(
+                                                    field.name,
+                                                    date
+                                                );
+                                            }}
                                         />
                                     </Grid>
                                 </React.Fragment>

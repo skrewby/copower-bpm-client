@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { TextField } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import DatePicker from '@mui/lab/DatePicker';
+import { useState } from 'react';
 
 export const DateField = (props) => {
     const {
@@ -11,15 +12,21 @@ export const DateField = (props) => {
         label,
         onChange,
         placeholder,
-        value,
+        initialValue,
         name,
         ...other
     } = props;
 
+    const [value, setValue] = useState(initialValue);
+
     return (
         <DatePicker
             inputFormat="dd/MM/yyyy"
-            onChange={onChange}
+            onChange={(newValue) => {
+                // Run the onChange function passed as a prop
+                onChange(newValue);
+                setValue(newValue);
+            }}
             renderInput={({ InputProps, ...rest }) => (
                 <TextField
                     {...rest}
@@ -100,5 +107,5 @@ DateField.propTypes = {
     name: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     placeholder: PropTypes.string,
-    value: PropTypes.instanceOf(Date),
+    initialValue: PropTypes.instanceOf(Date),
 };

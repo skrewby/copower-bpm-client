@@ -40,7 +40,7 @@ export async function getInstalls(options) {
         }
 
         // In this case, the view represents the resource status
-        return _install.status === view;
+        return _install.status.label === view;
     });
     const filteredInstalls = applyFilters(queriedInstalls, filters);
     const sortedInstalls = applySort(filteredInstalls, sort, sortBy);
