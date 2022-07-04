@@ -105,6 +105,20 @@ const InstallMeter = Loadable(
         }))
     )
 );
+const InstallFinance = Loadable(
+    lazy(() =>
+        import('./containers/installs/install-finance').then((module) => ({
+            default: module.InstallFinance,
+        }))
+    )
+);
+const InstallSchedule = Loadable(
+    lazy(() =>
+        import('./containers/installs/install-schedule').then((module) => ({
+            default: module.InstallSchedule,
+        }))
+    )
+);
 const InstallLogs = Loadable(
     lazy(() =>
         import('./containers/installs/install-log').then((module) => ({
@@ -207,6 +221,14 @@ const routes = [
                             {
                                 path: 'meter',
                                 element: <InstallMeter />,
+                            },
+                            {
+                                path: 'schedule',
+                                element: <InstallSchedule />,
+                            },
+                            {
+                                path: 'finance',
+                                element: <InstallFinance />,
                             },
                             {
                                 path: 'log',

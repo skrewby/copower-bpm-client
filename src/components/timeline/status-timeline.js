@@ -50,9 +50,6 @@ export const StatusTimeline = (props) => {
             });
 
             return items.map((item, index) => {
-                if (currentStatusIndex === 6) {
-                    return { ...item, value: 'complete' };
-                }
                 if (currentStatusIndex > index) {
                     return { ...item, value: 'complete' };
                 }

@@ -44,6 +44,7 @@ import {
     getCustomerLogs,
     searchCustomer,
 } from './customers';
+import { getInstallers } from './installers';
 
 class API {}
 
@@ -94,5 +95,8 @@ API.prototype.getRoofTypeOptions = getRoofTypeOptions;
 API.prototype.getLeadStatusOptions = getLeadStatusOptions;
 API.prototype.getValidRoles = getValidRoles;
 API.prototype.getRoofPitchOptions = getRoofPitchOptions;
+
+// Installers
+API.prototype.getInstallers = getInstallers;
 
 export const bpmAPI = new API();

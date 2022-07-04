@@ -67,15 +67,16 @@ export const Install = () => {
             result.ptc.form_sent_date = result.ptc.form_sent_date ?? now;
             result.ptc.approval_date = result.ptc.approval_date ?? now;
             result.retailer_notice.date = result.retailer_notice.date ?? now;
-            result.deposit_paid_date = result.finance.deposit_paid_date ?? now;
-            result.invoice_paid_date = result.finance.invoice_paid_date ?? now;
-            // result.schedule = result.schedule ?? now;
-            // result.inspection_booked_date =
-            //     result.inspection_booked_date ?? now;
-            // result.inspection_completed_date =
-            //     result.inspection_completed_date ?? now;
-            // result.review_greenbot_approved_date =
-            //     result.review_greenbot_approved_date ?? now;
+            result.finance.deposit_paid_date =
+                result.finance.deposit_paid_date ?? now;
+            result.finance.invoice_paid_date =
+                result.finance.invoice_paid_date ?? now;
+            result.schedule.date = result.schedule.date ?? now;
+            result.inspection.booking_date =
+                result.inspection.booking_date ?? now;
+            result.inspection.completed_date =
+                result.inspection.completed_date ?? now;
+            result.review.date = result.review.date ?? now;
 
             if (mounted.current) {
                 setInstallState(() => ({
