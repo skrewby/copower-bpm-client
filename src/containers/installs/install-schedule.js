@@ -82,7 +82,7 @@ export const InstallSchedule = () => {
         enableReinitialize: true,
         initialValues: {
             install_scheduled: installState.data?.schedule.scheduled || false,
-            schedule: parseISO(installState.data?.schedule.date) || now,
+            schedule: parseISO(installState.data.schedule.date) || now,
             installer_id: installState.data?.schedule.installer.id || '',
             submit: null,
         },
@@ -134,7 +134,7 @@ export const InstallSchedule = () => {
         },
         {
             id: 2,
-            variant: 'Date',
+            variant: 'DateTime',
             label: 'Install Date',
             name: 'schedule',
             touched: scheduleFormik.touched.schedule,
@@ -452,7 +452,7 @@ export const InstallSchedule = () => {
                                                       installState.data.schedule
                                                           .date
                                                   ),
-                                                  'dd MMM yyyy'
+                                                  'dd MMM yyyy - p'
                                               )
                                             : '',
                                     },

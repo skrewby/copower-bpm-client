@@ -23,9 +23,9 @@ export const DateField = (props) => {
         <DatePicker
             inputFormat="dd/MM/yyyy"
             onChange={(newValue) => {
+                setValue(newValue);
                 // Run the onChange function passed as a prop
                 onChange(newValue);
-                setValue(newValue);
             }}
             renderInput={({ InputProps, ...rest }) => (
                 <TextField

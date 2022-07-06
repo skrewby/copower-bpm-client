@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { TextField } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import DateTimePicker from '@mui/lab/DateTimePicker';
+import { useState } from 'react';
 
 export const DateTimeField = (props) => {
     const {
@@ -11,15 +12,20 @@ export const DateTimeField = (props) => {
         label,
         onChange,
         placeholder,
-        value,
+        initialValue,
         name,
         ...other
     } = props;
 
+    const [date, setDate] = useState(initialValue);
+
     return (
         <DateTimePicker
-            inputFormat="dd/MM/yyyy"
-            onChange={onChange}
+            inputFormat="dd/MM/yyyy - p"
+            onChange={(newDate) => {
+                setDate(newDate);
+                onChange(newDate);
+            }}
             renderInput={({ InputProps, ...rest }) => (
                 <TextField
                     {...rest}
@@ -86,7 +92,7 @@ export const DateTimeField = (props) => {
                     }}
                 />
             )}
-            value={value}
+            value={date}
             {...other}
         />
     );

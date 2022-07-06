@@ -20,6 +20,7 @@ import { InputField } from '../form/input-field';
 import { AddressAutocomplete } from '../form/address-autocomplete';
 import { CustomerAutocomplete } from '../form/customer-autocomplete';
 import { DateField } from '../form/date-field';
+import { DateTimeField } from '../form/date-time-field';
 
 export const FormDialog = (props) => {
     const { open, onClose, formik, title, fields, submitName } = props;
@@ -144,6 +145,31 @@ export const FormDialog = (props) => {
                                 <React.Fragment key={field.id}>
                                     <Grid item xs={field.width}>
                                         <DateField
+                                            error={Boolean(
+                                                field.touched && field.errors
+                                            )}
+                                            fullWidth
+                                            helperText={
+                                                field.touched && field.errors
+                                            }
+                                            label={field.label}
+                                            name={field.name}
+                                            initialValue={field.value}
+                                            onChange={(date) => {
+                                                formik.setFieldValue(
+                                                    field.name,
+                                                    date
+                                                );
+                                            }}
+                                        />
+                                    </Grid>
+                                </React.Fragment>
+                            );
+                        } else if (field.variant === 'DateTime') {
+                            return (
+                                <React.Fragment key={field.id}>
+                                    <Grid item xs={field.width}>
+                                        <DateTimeField
                                             error={Boolean(
                                                 field.touched && field.errors
                                             )}
