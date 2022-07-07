@@ -45,6 +45,7 @@ import {
     searchCustomer,
 } from './customers';
 import { getInstallers } from './installers';
+import { getEvents, createEvent, updateEvent, deleteEvent } from './events';
 
 class API {}
 
@@ -98,5 +99,11 @@ API.prototype.getRoofPitchOptions = getRoofPitchOptions;
 
 // Installers
 API.prototype.getInstallers = getInstallers;
+
+// Events
+API.prototype.getEvents = getEvents;
+API.prototype.createEvent = createEvent;
+API.prototype.updateEvent = updateEvent;
+API.prototype.deleteEvent = deleteEvent;
 
 export const bpmAPI = new API();

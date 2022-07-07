@@ -154,6 +154,13 @@ const Account = Loadable(
         }))
     )
 );
+const Calendar = Loadable(
+    lazy(() =>
+        import('./containers/calendar').then((module) => ({
+            default: module.Calendar,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -179,6 +186,10 @@ const routes = [
             {
                 path: '',
                 element: <Navigate to="/bpm/leads" replace />,
+            },
+            {
+                path: 'calendar',
+                element: <Calendar />,
             },
             {
                 path: 'leads',
