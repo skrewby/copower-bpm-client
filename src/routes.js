@@ -161,6 +161,20 @@ const Calendar = Loadable(
         }))
     )
 );
+const Stock = Loadable(
+    lazy(() =>
+        import('./containers/stock/stock').then((module) => ({
+            default: module.Stock,
+        }))
+    )
+);
+const StockItems = Loadable(
+    lazy(() =>
+        import('./containers/stock/stock-items').then((module) => ({
+            default: module.StockItems,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -265,6 +279,16 @@ const routes = [
                                 element: <CustomerSummary />,
                             },
                         ],
+                    },
+                ],
+            },
+            {
+                path: 'stock',
+                element: <Stock />,
+                children: [
+                    {
+                        path: '',
+                        element: <StockItems />,
                     },
                 ],
             },

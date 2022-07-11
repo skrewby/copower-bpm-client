@@ -18,10 +18,9 @@ export async function createEvent(body) {
         .url(`api/events`)
         .post(body)
         .json((response) => {
-            console.log(response);
             return response;
         });
-    console.log(response);
+
     return Promise.resolve(response);
 }
 

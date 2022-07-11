@@ -19,6 +19,7 @@ import { LeadProgress } from './lead-progress';
 // Components
 import { InfoCard } from '../../components/cards/info-card';
 import { FormDialog } from '../../components/dialogs/form-dialog';
+import { TableCard } from '../../components/cards/table-card';
 
 export const LeadSummary = () => {
     const [leadState, setRefresh] = useOutletContext();
@@ -553,6 +554,18 @@ export const LeadSummary = () => {
                                         label: 'Source',
                                         value: leadState.data.source,
                                     },
+                                ]}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TableCard
+                                data={[]}
+                                title="System"
+                                columns={[
+                                    'Variant',
+                                    'SKU',
+                                    'Created',
+                                    'Actions',
                                 ]}
                             />
                         </Grid>

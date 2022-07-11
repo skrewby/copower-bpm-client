@@ -81,6 +81,7 @@ export const getEvents = () => async (dispatch) => {
             title: `${install.customer.first_name} ${install.customer.last_name}`,
             description: install.property.address,
             start: install.schedule.date,
+            color: '#1e9e40',
             end: addHours(parseISO(install.schedule.date), 6).toISOString(),
             extendedProps: {
                 install: true,

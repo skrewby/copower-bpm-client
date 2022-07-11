@@ -276,16 +276,6 @@ export const LeadProgress = (props) => {
         }
     };
 
-    const statusList = [
-        'Created',
-        'New',
-        'Attempting Contact',
-        'Park',
-        'Quotation',
-        'Review',
-        'Win',
-    ];
-
     // Called when someone rejects a lead and provides a comment
     const leadRejectFunction = async (comment) => {
         await bpmAPI.createLeadLog(
@@ -359,7 +349,12 @@ export const LeadProgress = (props) => {
                     </Typography>
                     <Divider sx={{ my: 2 }} />
                     {lead.status_id < 7 ? (
-                        <StatusTimeline data={lead} statusList={statusList} />
+                        <StatusTimeline
+                            data={{ status: { label: lead.status } }}
+                            statusList={statusOptions.map(
+                                (status) => status.name
+                            )}
+                        />
                     ) : (
                         <StatusDisplay
                             status={lead.status}

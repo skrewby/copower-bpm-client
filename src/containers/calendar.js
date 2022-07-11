@@ -15,7 +15,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 
 // Material UI
-import { Box, Button, Card, Container, Grid } from '@mui/material';
+import { Box, Card, Container } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -26,8 +26,6 @@ import { useDispatch, useSelector } from '../store';
 // Components
 import { CalendarEventDialog } from '../components/calendar/calendar-event-dialog';
 import { CalendarToolbar } from '../components/calendar/calendar-toolbar';
-import { BPMLayout } from './bpm-layout';
-import { AuthGuard } from '../components/auth/auth-guard';
 
 const FullCalendarWrapper = styled('div')(({ theme }) => ({
     '& .fc-license-message': {
