@@ -15,6 +15,7 @@ export async function login(email, password) {
 
 export async function logout() {
     window.sessionStorage.removeItem('idToken');
+    await bpmServer.api().url('auth/logout').get();
     bpmServer.notify();
 
     return Promise.resolve();

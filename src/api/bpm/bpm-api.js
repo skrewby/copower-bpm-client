@@ -46,7 +46,13 @@ import {
 } from './customers';
 import { getInstallers } from './installers';
 import { getEvents, createEvent, updateEvent, deleteEvent } from './events';
-import { createStockItem, getStockItems, getStockTypes } from './stock';
+import {
+    createStockItem,
+    getActiveStockItems,
+    getStockItems,
+    getStockTypes,
+    updateStockItem,
+} from './stock';
 
 class API {}
 
@@ -109,7 +115,9 @@ API.prototype.deleteEvent = deleteEvent;
 
 // Stock
 API.prototype.getStockItems = getStockItems;
+API.prototype.getActiveStockItems = getActiveStockItems;
 API.prototype.createStockItem = createStockItem;
 API.prototype.getStockTypes = getStockTypes;
+API.prototype.updateStockItem = updateStockItem;
 
 export const bpmAPI = new API();

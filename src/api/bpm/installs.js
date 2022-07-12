@@ -26,10 +26,18 @@ export async function getInstalls(options) {
     const queriedInstalls = installs.filter((_install) => {
         if (
             !!query &&
-            !_install.name?.toLowerCase().includes(query.toLowerCase()) &&
-            !_install.email?.toLowerCase().includes(query.toLowerCase()) &&
-            !_install.phone?.toLowerCase().includes(query.toLowerCase()) &&
-            !_install.address?.toLowerCase().includes(query.toLowerCase())
+            !_install.customer.name
+                ?.toLowerCase()
+                .includes(query.toLowerCase()) &&
+            !_install.customer.email
+                ?.toLowerCase()
+                .includes(query.toLowerCase()) &&
+            !_install.customer.phone
+                ?.toLowerCase()
+                .includes(query.toLowerCase()) &&
+            !_install.property.address
+                ?.toLowerCase()
+                .includes(query.toLowerCase())
         ) {
             return false;
         }

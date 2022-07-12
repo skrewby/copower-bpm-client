@@ -5,11 +5,12 @@ import { applySort } from '../../utils/apply-sort';
 import { bpmServer } from './bpm-server';
 
 export async function getStockItems(options) {
-    const { filters, sort, sortBy, page, query, view } = options;
+    const { filters, sort, sortBy, page, query, view, activeOnly } = options;
 
     const data = await bpmServer
         .api()
         .url('api/stock')
+        .query({ view: activeOnly ? 'active' : null })
         .get()
         .json((response) => {
             return response;
@@ -32,7 +33,7 @@ export async function getStockItems(options) {
         }
 
         // In this case, the view represents the resource status
-        return _item.status === view;
+        return _item.type_name === view;
     });
     const filteredItems = applyFilters(queriedItems, filters);
     const sortedItems = applySort(filteredItems, sort, sortBy);
@@ -42,6 +43,32 @@ export async function getStockItems(options) {
         items: paginatedItems,
         itemsCount: filteredItems.length,
     });
+}
+
+export async function getActiveStockItems(query) {
+    const data = await bpmServer
+        .api()
+        .url('api/stock')
+        .query({ view: 'active' })
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    const queriedItems = data.filter((_item) => {
+        if (
+            !!query &&
+            !_item.brand?.toLowerCase().includes(query.toLowerCase()) &&
+            !_item.series?.toLowerCase().includes(query.toLowerCase()) &&
+            !_item.model?.toLowerCase().includes(query.toLowerCase())
+        ) {
+            return false;
+        }
+
+        return true;
+    });
+
+    return Promise.resolve(queriedItems);
 }
 
 export async function getStockTypes() {
@@ -62,6 +89,19 @@ export async function createStockItem(body) {
         .url(`api/events`)
         .post(body)
         .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function updateStockItem(id, values) {
+    const response = await bpmServer
+        .api()
+        .url(`api/stock`)
+        .query({ id })
+        .put(values)
+        .res((response) => {
             return response;
         });
 

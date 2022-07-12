@@ -21,6 +21,7 @@ import { AddressAutocomplete } from '../form/address-autocomplete';
 import { CustomerAutocomplete } from '../form/customer-autocomplete';
 import { DateField } from '../form/date-field';
 import { DateTimeField } from '../form/date-time-field';
+import { StockAutocomplete } from '../form/stock-autocomplete';
 
 export const FormDialog = (props) => {
     const { open, onClose, formik, title, fields, submitName } = props;
@@ -206,6 +207,26 @@ export const FormDialog = (props) => {
                                             field_name={field.name}
                                             formik={formik}
                                             allowCreate={field.allowCreate}
+                                            sx={{ mb: 2 }}
+                                        />
+                                    </Grid>
+                                </React.Fragment>
+                            );
+                        } else if (field.variant === 'Stock Search') {
+                            return (
+                                <React.Fragment key={field.id}>
+                                    <Grid item xs={field.width}>
+                                        <StockAutocomplete
+                                            fullWidth
+                                            label={field.label}
+                                            error={Boolean(
+                                                field.touched && field.errors
+                                            )}
+                                            helperText={
+                                                field.touched && field.errors
+                                            }
+                                            field_name={field.name}
+                                            formik={formik}
                                             sx={{ mb: 2 }}
                                         />
                                     </Grid>

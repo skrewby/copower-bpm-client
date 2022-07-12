@@ -98,12 +98,13 @@ export const OrganisationMembers = () => {
     const handleDisableUser = () => {
         handleCloseDisableUser();
         bpmAPI.updateUser(userEdit.account_id, { disabled: true });
-        toast.success('User disabled. Refresh to see changes');
+        setRefresh(true);
     };
+
     const handleEnableUser = () => {
         handleCloseEnableUser();
         bpmAPI.updateUser(userEdit.account_id, { disabled: false });
-        toast.success('User enabled. Refresh to see changes');
+        setRefresh(true);
     };
 
     const addMemberFormik = useFormik({

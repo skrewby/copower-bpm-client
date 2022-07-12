@@ -6,12 +6,22 @@ import { useFormik } from 'formik';
 import toast from 'react-hot-toast';
 
 // Material UI
-import { Box, Container, Grid, Skeleton, Typography } from '@mui/material';
+import {
+    Box,
+    Container,
+    Divider,
+    Grid,
+    Skeleton,
+    TableCell,
+    TableRow,
+    Typography,
+} from '@mui/material';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
 // Local imports
 import { bpmAPI } from '../../api/bpm/bpm-api';
 import { useMounted } from '../../hooks/use-mounted';
+import { useDialog } from '../../hooks/use-dialog';
 
 // Containers
 import { LeadProgress } from './lead-progress';
@@ -20,11 +30,14 @@ import { LeadProgress } from './lead-progress';
 import { InfoCard } from '../../components/cards/info-card';
 import { FormDialog } from '../../components/dialogs/form-dialog';
 import { TableCard } from '../../components/cards/table-card';
+import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
 
 export const LeadSummary = () => {
     const [leadState, setRefresh] = useOutletContext();
     const [openInfoDialog, setOpenInfoDialog] = useState(false);
     const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
+    const [openAddSystemItemDialog, setOpenAddSystemItemDialog] =
+        useState(false);
     const mounted = useMounted();
 
     const [sourceOptions, setSourceOptions] = useState([]);
@@ -37,6 +50,15 @@ export const LeadSummary = () => {
     // Used to hold any possible customers that were found matching the lead name
     // Right now only used when sending it to Installs
     const [customerSearch, setCustomerSearch] = useState([]);
+
+    // Currently selected item in the system card
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    const [
+        deleteItemDialogOpen,
+        handleOpenDeleteItemDialog,
+        handleCloseDeleteItemDialog,
+    ] = useDialog();
 
     const getData = useCallback(async () => {
         setSourceOptions([]);
@@ -451,6 +473,91 @@ export const LeadSummary = () => {
         },
     ];
 
+    const addSystemItemFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            stock_id: '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            stock_id: Yup.number().required('Select an item to add'),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                setOpenAddSystemItemDialog(false);
+                console.log(values);
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const addSystemItemFormFields = [
+        {
+            id: 1,
+            variant: 'Stock Search',
+            width: 12,
+            label: 'Add Item',
+            touched: addSystemItemFormik.touched.stock_id,
+            errors: addSystemItemFormik.errors.stock_id,
+            name: 'stock_id',
+        },
+    ];
+
+    const systemRows = (item) => {
+        return (
+            <TableRow key={item.id}>
+                <TableCell>{item.type_name}</TableCell>
+                <TableCell>{item.brand}</TableCell>
+                <TableCell>{item.series}</TableCell>
+                <TableCell>{item.model}</TableCell>
+                <TableCell>{item.amount}</TableCell>
+                <TableCell sx={{ width: 135 }}>
+                    <Box sx={{ display: 'flex' }}>
+                        <Typography
+                            color="primary"
+                            sx={{ cursor: 'pointer' }}
+                            onClick={() => {
+                                setSelectedItem(item);
+                            }}
+                            variant="subtitle2"
+                        >
+                            Edit
+                        </Typography>
+                        <Divider
+                            flexItem
+                            orientation="vertical"
+                            sx={{ mx: 2 }}
+                        />
+                        <Typography
+                            color="primary"
+                            onClick={() => {
+                                setSelectedItem(item);
+                                handleOpenDeleteItemDialog();
+                            }}
+                            sx={{ cursor: 'pointer' }}
+                            variant="subtitle2"
+                        >
+                            Delete
+                        </Typography>
+                    </Box>
+                </TableCell>
+            </TableRow>
+        );
+    };
+
+    const handleDeleteItem = () => {
+        setSelectedItem(null);
+        handleCloseDeleteItemDialog();
+    };
+
     const renderContent = () => {
         if (leadState.isLoading || sourceOptions.isLoading) {
             return (
@@ -562,11 +669,18 @@ export const LeadSummary = () => {
                                 data={[]}
                                 title="System"
                                 columns={[
-                                    'Variant',
-                                    'SKU',
-                                    'Created',
+                                    'Type',
+                                    'Brand',
+                                    'Series',
+                                    'Model',
+                                    'Amount',
                                     'Actions',
                                 ]}
+                                rows={systemRows}
+                                buttonLabel="Add"
+                                buttonOnClick={() =>
+                                    setOpenAddSystemItemDialog(true)
+                                }
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -660,6 +774,21 @@ export const LeadSummary = () => {
                     formik={propertyFormik}
                     title="Edit Property Details"
                     fields={propertyFormFields}
+                />
+                <ConfirmationDialog
+                    message="Are you sure you want to delete this item? This can't be undone."
+                    onCancel={handleCloseDeleteItemDialog}
+                    onConfirm={handleDeleteItem}
+                    open={deleteItemDialogOpen}
+                    title="Delete item"
+                    variant="error"
+                />
+                <FormDialog
+                    onClose={() => setOpenAddSystemItemDialog(false)}
+                    open={openAddSystemItemDialog}
+                    formik={addSystemItemFormik}
+                    title="Add Item"
+                    fields={addSystemItemFormFields}
                 />
             </>
         );
