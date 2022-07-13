@@ -70,10 +70,17 @@ export const StockAutocomplete = (props) => {
         <Autocomplete
             id="stock-autocomplete"
             getOptionLabel={(option) => option.model}
-            filterOptions={(options, params) => {
-                const filtered = filter(options, params);
-                return filtered;
-            }}
+            filterOptions={(options, { inputValue }) =>
+                options.filter(
+                    (item) =>
+                        item.brand
+                            .toLowerCase()
+                            .includes(inputValue.toLowerCase()) ||
+                        item.model
+                            .toLowerCase()
+                            .includes(inputValue.toLowerCase())
+                )
+            }
             filterSelectedOptions
             options={options}
             onInputChange={(event, newInputValue) => {
@@ -171,9 +178,13 @@ export const StockAutocomplete = (props) => {
                     <li {...props}>
                         <Grid container alignItems="center">
                             <Grid item xs>
-                                <Grid container spacing={4}>
-                                    <Grid item>{option.brand}</Grid>
-                                    <Grid item>{option.model}</Grid>
+                                <Grid container>
+                                    <Grid item xs={6}>
+                                        {option.brand}
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        {option.model}
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>

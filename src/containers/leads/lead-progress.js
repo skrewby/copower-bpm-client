@@ -39,7 +39,8 @@ import { FormDialog } from '../../components/dialogs/form-dialog';
  * as if it was a component.
  */
 export const LeadProgress = (props) => {
-    const { lead, customers, refresh, statusOptions, ...other } = props;
+    const { lead, systemItems, customers, refresh, statusOptions, ...other } =
+        props;
     const { user } = useAuth();
     const [
         sendToOperationsOpen,
@@ -132,11 +133,10 @@ export const LeadProgress = (props) => {
                     install.customer_id = await bpmAPI.createCustomer(lead);
                 }
                 await bpmAPI.createInstall(install).then((res) => {
-                    bpmAPI.createInstallLog(
-                        res.install_id,
-                        `Install created`,
-                        true
-                    );
+                    bpmAPI.createInstallLog(res.id, `Install created`, true);
+                    for (const item of systemItems) {
+                        bpmAPI.addItemToInstall(res.id, item);
+                    }
                     bpmAPI.createLeadLog(
                         lead.lead_id,
                         `Lead approved. Sent to installs`,
@@ -349,12 +349,22 @@ export const LeadProgress = (props) => {
                     </Typography>
                     <Divider sx={{ my: 2 }} />
                     {lead.status_id < 7 ? (
-                        <StatusTimeline
-                            data={{ status: { label: lead.status } }}
-                            statusList={statusOptions.map(
-                                (status) => status.name
-                            )}
-                        />
+                        lead.status_id === 5 ? (
+                            <StatusTimeline
+                                data={{ status: { label: lead.status } }}
+                                statusList={statusOptions
+                                    .filter((status) => status.id < 6)
+                                    .map((status) => status.name)}
+                                inclusive
+                            />
+                        ) : (
+                            <StatusTimeline
+                                data={{ status: { label: lead.status } }}
+                                statusList={statusOptions.map(
+                                    (status) => status.name
+                                )}
+                            />
+                        )
                     ) : (
                         <StatusDisplay
                             status={lead.status}

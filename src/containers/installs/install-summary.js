@@ -6,17 +6,29 @@ import * as Yup from 'yup';
 import toast from 'react-hot-toast';
 
 // Material UI
-import { Box, Container, Grid, Skeleton, Typography } from '@mui/material';
+import {
+    Box,
+    Container,
+    Divider,
+    Grid,
+    Skeleton,
+    TableCell,
+    TableRow,
+    Typography,
+} from '@mui/material';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
 // Local Imports
 import { useMounted } from '../../hooks/use-mounted';
 import { bpmAPI } from '../../api/bpm/bpm-api';
+import { useDialog } from '../../hooks/use-dialog';
 
 // Components
 import { InfoCard } from '../../components/cards/info-card';
 import { FormDialog } from '../../components/dialogs/form-dialog';
 import { InstallProgress } from './install-progress';
+import { TableCard } from '../../components/cards/table-card';
+import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
 
 export const InstallSummary = () => {
     const [installState, setRefresh] = useOutletContext();
@@ -25,6 +37,9 @@ export const InstallSummary = () => {
     const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
     const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
     const [openAddressDialog, setOpenAddressDialog] = useState(false);
+    const [openEditItemDialog, setOpenEditItemDialog] = useState(false);
+    const [openAddSystemItemDialog, setOpenAddSystemItemDialog] =
+        useState(false);
 
     const [phaseOptions, setPhaseOptions] = useState([]);
     const [existingSystemOptions, setExistingSystemOptions] = useState([]);
@@ -33,6 +48,15 @@ export const InstallSummary = () => {
     const [roofPitchOptions, setRoofPitchOptions] = useState([]);
     const [statusOptions, setStatusOptions] = useState([]);
 
+    const [systemItems, setSystemItems] = useState([]);
+    // Currently selected item in the system card
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [
+        deleteItemDialogOpen,
+        handleOpenDeleteItemDialog,
+        handleCloseDeleteItemDialog,
+    ] = useDialog();
+
     const getData = useCallback(async () => {
         setPhaseOptions([]);
         setExistingSystemOptions([]);
@@ -40,6 +64,7 @@ export const InstallSummary = () => {
         setRoofTypeOptions([]);
         setRoofPitchOptions([]);
         setStatusOptions([]);
+        setSystemItems([]);
 
         try {
             const phasesAPI = await bpmAPI.getPhaseOptions();
@@ -87,6 +112,10 @@ export const InstallSummary = () => {
                 };
             });
 
+            const systemResult = await bpmAPI.getInstallSystemItems(
+                installState.data.install_id
+            );
+
             if (mounted.current) {
                 setPhaseOptions(phasesResult);
                 setExistingSystemOptions(existingSystemResult);
@@ -94,6 +123,7 @@ export const InstallSummary = () => {
                 setRoofTypeOptions(roofTypeResult);
                 setRoofPitchOptions(roofPitchResult);
                 setStatusOptions(statusOptionsResult);
+                setSystemItems(systemResult);
             }
         } catch (err) {
             console.error(err);
@@ -107,9 +137,12 @@ export const InstallSummary = () => {
                 setStatusOptions(() => ({
                     error: err.message,
                 }));
+                setSystemItems(() => ({
+                    error: err.message,
+                }));
             }
         }
-    }, [mounted]);
+    }, [installState.data.install_id, mounted]);
 
     useEffect(() => {
         getData().catch(console.error);
@@ -387,6 +420,150 @@ export const InstallSummary = () => {
         },
     ];
 
+    const addSystemItemFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            item_id: '',
+            amount: 0,
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            item_id: Yup.number().required('Select an item to add'),
+            amount: Yup.number().min(0).required('Select amount'),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                setOpenAddSystemItemDialog(false);
+                await bpmAPI.addItemToInstall(
+                    installState.data.install_id,
+                    values
+                );
+                setRefresh(true);
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const addSystemItemFormFields = [
+        {
+            id: 1,
+            variant: 'Stock Search',
+            width: 10,
+            label: 'Add Item',
+            touched: addSystemItemFormik.touched.item_id,
+            errors: addSystemItemFormik.errors.item_id,
+            name: 'item_id',
+        },
+        {
+            id: 2,
+            variant: 'Input',
+            width: 2,
+            touched: addSystemItemFormik.touched.amount,
+            errors: addSystemItemFormik.errors.amount,
+            value: addSystemItemFormik.values.amount,
+            label: 'Amount',
+            name: 'amount',
+        },
+    ];
+
+    const editSystemItemFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            amount: selectedItem?.amount || 0,
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            amount: Yup.number().min(0).required('Select amount'),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                await bpmAPI.editInstallSystemItem(selectedItem.id, values);
+                setRefresh(true);
+                setOpenEditItemDialog(false);
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const editSystemItemFormFields = [
+        {
+            id: 1,
+            variant: 'Input',
+            width: 6,
+            touched: editSystemItemFormik.touched.amount,
+            errors: editSystemItemFormik.errors.amount,
+            value: editSystemItemFormik.values.amount,
+            label: 'Amount',
+            name: 'amount',
+        },
+    ];
+
+    const systemRows = (item) => {
+        return (
+            <TableRow key={item.id}>
+                <TableCell>{item.type_name}</TableCell>
+                <TableCell>{item.brand}</TableCell>
+                <TableCell>{item.series}</TableCell>
+                <TableCell>{item.model}</TableCell>
+                <TableCell>{item.amount}</TableCell>
+                <TableCell sx={{ width: 135 }}>
+                    <Box sx={{ display: 'flex' }}>
+                        <Typography
+                            color="primary"
+                            sx={{ cursor: 'pointer' }}
+                            onClick={() => {
+                                setSelectedItem(item);
+                                setOpenEditItemDialog(true);
+                            }}
+                            variant="subtitle2"
+                        >
+                            Edit
+                        </Typography>
+                        <Divider
+                            flexItem
+                            orientation="vertical"
+                            sx={{ mx: 2 }}
+                        />
+                        <Typography
+                            color="error"
+                            onClick={() => {
+                                setSelectedItem(item);
+                                handleOpenDeleteItemDialog();
+                            }}
+                            sx={{ cursor: 'pointer' }}
+                            variant="subtitle2"
+                        >
+                            Delete
+                        </Typography>
+                    </Box>
+                </TableCell>
+            </TableRow>
+        );
+    };
+
+    const handleDeleteItem = () => {
+        bpmAPI.deleteLeadSystemItem(selectedItem.id);
+        setRefresh(true);
+        setSelectedItem(null);
+        handleCloseDeleteItemDialog();
+    };
+
     const renderContent = () => {
         if (installState.isLoading) {
             return (
@@ -474,6 +651,25 @@ export const InstallSummary = () => {
                                         value: installState.data.customer.phone,
                                     },
                                 ]}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TableCard
+                                data={systemItems}
+                                title="System"
+                                columns={[
+                                    'Type',
+                                    'Brand',
+                                    'Series',
+                                    'Model',
+                                    'Amount',
+                                    'Actions',
+                                ]}
+                                rows={systemRows}
+                                buttonLabel="Add"
+                                buttonOnClick={() =>
+                                    setOpenAddSystemItemDialog(true)
+                                }
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -581,6 +777,28 @@ export const InstallSummary = () => {
                     formik={changeCustomerFormik}
                     title="Change Customer"
                     fields={changeCustomerFormFields}
+                />
+                <ConfirmationDialog
+                    message="Are you sure you want to delete this item? This can't be undone."
+                    onCancel={handleCloseDeleteItemDialog}
+                    onConfirm={handleDeleteItem}
+                    open={deleteItemDialogOpen}
+                    title="Delete item"
+                    variant="error"
+                />
+                <FormDialog
+                    onClose={() => setOpenAddSystemItemDialog(false)}
+                    open={openAddSystemItemDialog}
+                    formik={addSystemItemFormik}
+                    title="Add Item"
+                    fields={addSystemItemFormFields}
+                />
+                <FormDialog
+                    onClose={() => setOpenEditItemDialog(false)}
+                    open={openEditItemDialog}
+                    formik={editSystemItemFormik}
+                    title="Edit Item"
+                    fields={editSystemItemFormFields}
                 />
             </>
         );

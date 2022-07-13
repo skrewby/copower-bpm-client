@@ -7,6 +7,10 @@ import {
     getLeadLogs,
     updateLead,
     createLead,
+    addItemToLead,
+    getLeadSystemItems,
+    deleteLeadSystemItem,
+    editLeadSystemItem,
 } from './leads';
 import {
     changePassword,
@@ -34,6 +38,10 @@ import {
     getInstallLogs,
     updateInstall,
     createInstall,
+    addItemToInstall,
+    getInstallSystemItems,
+    deleteInstallSystemItem,
+    editInstallSystemItem,
 } from './installs';
 import {
     getCustomers,
@@ -67,6 +75,10 @@ API.prototype.createLeadLog = createLeadLog;
 API.prototype.getLeadLogs = getLeadLogs;
 API.prototype.updateLead = updateLead;
 API.prototype.createLead = createLead;
+API.prototype.addItemToLead = addItemToLead;
+API.prototype.getLeadSystemItems = getLeadSystemItems;
+API.prototype.deleteLeadSystemItem = deleteLeadSystemItem;
+API.prototype.editLeadSystemItem = editLeadSystemItem;
 
 // Installs
 API.prototype.getInstalls = getInstalls;
@@ -76,6 +88,10 @@ API.prototype.getInstallLogs = getInstallLogs;
 API.prototype.updateInstall = updateInstall;
 API.prototype.createInstall = createInstall;
 API.prototype.getInstallStatusOptions = getInstallStatusOptions;
+API.prototype.addItemToInstall = addItemToInstall;
+API.prototype.getInstallSystemItems = getInstallSystemItems;
+API.prototype.deleteInstallSystemItem = deleteInstallSystemItem;
+API.prototype.editInstallSystemItem = editInstallSystemItem;
 
 // Customers
 API.prototype.getCustomers = getCustomers;

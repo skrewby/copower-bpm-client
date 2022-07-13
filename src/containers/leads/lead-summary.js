@@ -36,6 +36,7 @@ export const LeadSummary = () => {
     const [leadState, setRefresh] = useOutletContext();
     const [openInfoDialog, setOpenInfoDialog] = useState(false);
     const [openPropertyDialog, setOpenPropertyDialog] = useState(false);
+    const [openEditItemDialog, setOpenEditItemDialog] = useState(false);
     const [openAddSystemItemDialog, setOpenAddSystemItemDialog] =
         useState(false);
     const mounted = useMounted();
@@ -46,6 +47,8 @@ export const LeadSummary = () => {
     const [storyOptions, setStoryOptions] = useState([]);
     const [roofTypeOptions, setRoofTypeOptions] = useState([]);
     const [statusOptions, setStatusOptions] = useState([]);
+
+    const [systemItems, setSystemItems] = useState([]);
 
     // Used to hold any possible customers that were found matching the lead name
     // Right now only used when sending it to Installs
@@ -68,6 +71,7 @@ export const LeadSummary = () => {
         setRoofTypeOptions([]);
         setStatusOptions([]);
         setCustomerSearch([]);
+        setSystemItems([]);
 
         try {
             const sourcesAPI = await bpmAPI.getLeadSources();
@@ -128,6 +132,10 @@ export const LeadSummary = () => {
                 };
             });
 
+            const systemResult = await bpmAPI.getLeadSystemItems(
+                leadState.data.lead_id
+            );
+
             if (mounted.current) {
                 setSourceOptions(sourcesResult);
                 setPhaseOptions(phasesResult);
@@ -136,6 +144,7 @@ export const LeadSummary = () => {
                 setRoofTypeOptions(roofTypeResult);
                 setStatusOptions(statusOptionsResult);
                 setCustomerSearch(customerResult);
+                setSystemItems(systemResult);
             }
         } catch (err) {
             console.error(err);
@@ -150,9 +159,12 @@ export const LeadSummary = () => {
                 setCustomerSearch(() => ({
                     error: err.message,
                 }));
+                setSystemItems(() => ({
+                    error: err.message,
+                }));
             }
         }
-    }, [leadState.data.name, mounted]);
+    }, [leadState.data.lead_id, leadState.data.name, mounted]);
 
     useEffect(() => {
         getData().catch(console.error);
@@ -477,16 +489,19 @@ export const LeadSummary = () => {
         enableReinitialize: true,
         validateOnChange: false,
         initialValues: {
-            stock_id: '',
+            item_id: '',
+            amount: 0,
             submit: null,
         },
         validationSchema: Yup.object().shape({
-            stock_id: Yup.number().required('Select an item to add'),
+            item_id: Yup.number().required('Select an item to add'),
+            amount: Yup.number().min(0).required('Select amount'),
         }),
         onSubmit: async (values, helpers) => {
             try {
                 setOpenAddSystemItemDialog(false);
-                console.log(values);
+                await bpmAPI.addItemToLead(leadState.data.lead_id, values);
+                setRefresh(true);
                 helpers.resetForm();
                 helpers.setStatus({ success: true });
                 helpers.setSubmitting(false);
@@ -503,11 +518,61 @@ export const LeadSummary = () => {
         {
             id: 1,
             variant: 'Stock Search',
-            width: 12,
+            width: 10,
             label: 'Add Item',
-            touched: addSystemItemFormik.touched.stock_id,
-            errors: addSystemItemFormik.errors.stock_id,
-            name: 'stock_id',
+            touched: addSystemItemFormik.touched.item_id,
+            errors: addSystemItemFormik.errors.item_id,
+            name: 'item_id',
+        },
+        {
+            id: 2,
+            variant: 'Input',
+            width: 2,
+            touched: addSystemItemFormik.touched.amount,
+            errors: addSystemItemFormik.errors.amount,
+            value: addSystemItemFormik.values.amount,
+            label: 'Amount',
+            name: 'amount',
+        },
+    ];
+
+    const editSystemItemFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            amount: selectedItem?.amount || 0,
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            amount: Yup.number().min(0).required('Select amount'),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                await bpmAPI.editLeadSystemItem(selectedItem.id, values);
+                setRefresh(true);
+                setOpenEditItemDialog(false);
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const editSystemItemFormFields = [
+        {
+            id: 1,
+            variant: 'Input',
+            width: 6,
+            touched: editSystemItemFormik.touched.amount,
+            errors: editSystemItemFormik.errors.amount,
+            value: editSystemItemFormik.values.amount,
+            label: 'Amount',
+            name: 'amount',
         },
     ];
 
@@ -526,6 +591,7 @@ export const LeadSummary = () => {
                             sx={{ cursor: 'pointer' }}
                             onClick={() => {
                                 setSelectedItem(item);
+                                setOpenEditItemDialog(true);
                             }}
                             variant="subtitle2"
                         >
@@ -537,7 +603,7 @@ export const LeadSummary = () => {
                             sx={{ mx: 2 }}
                         />
                         <Typography
-                            color="primary"
+                            color="error"
                             onClick={() => {
                                 setSelectedItem(item);
                                 handleOpenDeleteItemDialog();
@@ -554,6 +620,8 @@ export const LeadSummary = () => {
     };
 
     const handleDeleteItem = () => {
+        bpmAPI.deleteLeadSystemItem(selectedItem.id);
+        setRefresh(true);
         setSelectedItem(null);
         handleCloseDeleteItemDialog();
     };
@@ -666,7 +734,7 @@ export const LeadSummary = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <TableCard
-                                data={[]}
+                                data={systemItems}
                                 title="System"
                                 columns={[
                                     'Type',
@@ -754,6 +822,7 @@ export const LeadSummary = () => {
                         <Grid item xs={12}>
                             <LeadProgress
                                 lead={leadState.data}
+                                systemItems={systemItems}
                                 customers={customerSearch}
                                 statusOptions={statusOptions}
                                 refresh={setRefresh}
@@ -789,6 +858,13 @@ export const LeadSummary = () => {
                     formik={addSystemItemFormik}
                     title="Add Item"
                     fields={addSystemItemFormFields}
+                />
+                <FormDialog
+                    onClose={() => setOpenEditItemDialog(false)}
+                    open={openEditItemDialog}
+                    formik={editSystemItemFormik}
+                    title="Edit Item"
+                    fields={editSystemItemFormFields}
                 />
             </>
         );

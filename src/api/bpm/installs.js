@@ -124,3 +124,55 @@ export async function getInstallLogs(id) {
 
     return Promise.resolve(response);
 }
+
+export async function addItemToInstall(id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/system`)
+        .query({ id })
+        .post(body)
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function getInstallSystemItems(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/system`)
+        .query({ id })
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function editInstallSystemItem(id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/system`)
+        .query({ id })
+        .put(body)
+        .res((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function deleteInstallSystemItem(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/system`)
+        .query({ id })
+        .delete()
+        .res((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}

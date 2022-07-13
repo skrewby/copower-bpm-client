@@ -38,7 +38,7 @@ const getDotStyles = (value) => {
 };
 
 export const StatusTimeline = (props) => {
-    const { data, statusList, ...other } = props;
+    const { data, statusList, inclusive, ...other } = props;
     const [items, setItems] = useState([]);
 
     useEffect(() => {
@@ -53,9 +53,17 @@ export const StatusTimeline = (props) => {
                 if (currentStatusIndex > index) {
                     return { ...item, value: 'complete' };
                 }
-                if (currentStatusIndex === index) {
-                    return { ...item, value: 'active' };
+
+                if (inclusive) {
+                    if (currentStatusIndex === index) {
+                        return { ...item, value: 'complete' };
+                    }
+                } else {
+                    if (currentStatusIndex === index) {
+                        return { ...item, value: 'active' };
+                    }
                 }
+
                 return { ...item, value: 'inactive' };
             });
         };

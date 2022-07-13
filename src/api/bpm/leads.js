@@ -119,3 +119,55 @@ export async function getLeadLogs(id) {
 
     return Promise.resolve(response);
 }
+
+export async function addItemToLead(id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/system`)
+        .query({ id })
+        .post(body)
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function getLeadSystemItems(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/system`)
+        .query({ id })
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function editLeadSystemItem(id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/system`)
+        .query({ id })
+        .put(body)
+        .res((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function deleteLeadSystemItem(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/system`)
+        .query({ id })
+        .delete()
+        .res((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
