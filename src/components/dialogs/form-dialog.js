@@ -22,6 +22,7 @@ import { CustomerAutocomplete } from '../form/customer-autocomplete';
 import { DateField } from '../form/date-field';
 import { DateTimeField } from '../form/date-time-field';
 import { StockAutocomplete } from '../form/stock-autocomplete';
+import { UploadField } from '../form/upload-field';
 
 export const FormDialog = (props) => {
     const { open, onClose, formik, title, fields, submitName } = props;
@@ -96,6 +97,14 @@ export const FormDialog = (props) => {
                                                 </MenuItem>
                                             ))}
                                         </InputField>
+                                    </Grid>
+                                </React.Fragment>
+                            );
+                        } else if (field.variant === 'Upload') {
+                            return (
+                                <React.Fragment key={field.id}>
+                                    <Grid item xs={field.width}>
+                                        <UploadField />
                                     </Grid>
                                 </React.Fragment>
                             );

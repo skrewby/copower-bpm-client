@@ -8,6 +8,8 @@ import toast from 'react-hot-toast';
 // Material UI
 import {
     Box,
+    Button,
+    ButtonGroup,
     Container,
     Divider,
     Grid,
@@ -39,6 +41,7 @@ export const LeadSummary = () => {
     const [openEditItemDialog, setOpenEditItemDialog] = useState(false);
     const [openAddSystemItemDialog, setOpenAddSystemItemDialog] =
         useState(false);
+    const [openEditSystemDialog, setOpenEditSystemDialog] = useState(false);
     const mounted = useMounted();
 
     const [sourceOptions, setSourceOptions] = useState([]);
@@ -519,7 +522,7 @@ export const LeadSummary = () => {
             id: 1,
             variant: 'Stock Search',
             width: 10,
-            label: 'Add Item',
+            label: 'Item',
             touched: addSystemItemFormik.touched.item_id,
             errors: addSystemItemFormik.errors.item_id,
             name: 'item_id',
@@ -625,6 +628,100 @@ export const LeadSummary = () => {
         setSelectedItem(null);
         handleCloseDeleteItemDialog();
     };
+
+    const systemStats = [
+        {
+            content: `${leadState?.data.system_size || ''} kW`,
+            label: 'System Size',
+        },
+        {
+            content: 'Download',
+            label: 'Panel Design',
+        },
+        {
+            content: 'Download',
+            label: 'Datasheets',
+        },
+        {
+            content: 'Download',
+            label: 'Warranties',
+        },
+    ];
+
+    const systemCustomButton = () => {
+        return (
+            <ButtonGroup variant="text">
+                <Button
+                    color="primary"
+                    onClick={() => setOpenAddSystemItemDialog(true)}
+                    variant="text"
+                >
+                    Add Item
+                </Button>
+                <Button
+                    color="primary"
+                    onClick={() => setOpenEditSystemDialog(true)}
+                    variant="text"
+                >
+                    Edit
+                </Button>
+            </ButtonGroup>
+        );
+    };
+
+    const editSystemFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            system_size: leadState?.data.system_size || 0,
+            panel_design: '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            system_size: Yup.number()
+                .min(0, 'Must be a positive number')
+                .typeError('Size must be a number. Example: 6.66'),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                console.log(values);
+                await bpmAPI.updateLead(leadState.data.lead_id, values);
+                setRefresh(true);
+                setOpenEditItemDialog(false);
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const editSystemFormFields = [
+        {
+            id: 1,
+            variant: 'Input',
+            width: 12,
+            touched: editSystemFormik.touched.system_size,
+            errors: editSystemFormik.errors.system_size,
+            value: editSystemFormik.values.system_size,
+            label: 'System Size',
+            name: 'system_size',
+        },
+        {
+            id: 2,
+            variant: 'Upload',
+            width: 12,
+            touched: editSystemFormik.touched.panel_design,
+            errors: editSystemFormik.errors.panel_design,
+            value: editSystemFormik.values.panel_design,
+            label: 'Panel Design',
+            name: 'panel_design',
+        },
+    ];
 
     const renderContent = () => {
         if (leadState.isLoading || sourceOptions.isLoading) {
@@ -745,10 +842,9 @@ export const LeadSummary = () => {
                                     'Actions',
                                 ]}
                                 rows={systemRows}
-                                buttonLabel="Add"
-                                buttonOnClick={() =>
-                                    setOpenAddSystemItemDialog(true)
-                                }
+                                showStats
+                                stats={systemStats}
+                                customButton={systemCustomButton}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -865,6 +961,13 @@ export const LeadSummary = () => {
                     formik={editSystemItemFormik}
                     title="Edit Item"
                     fields={editSystemItemFormFields}
+                />
+                <FormDialog
+                    onClose={() => setOpenEditSystemDialog(false)}
+                    open={openEditSystemDialog}
+                    formik={editSystemFormik}
+                    title="Edit System"
+                    fields={editSystemFormFields}
                 />
             </>
         );

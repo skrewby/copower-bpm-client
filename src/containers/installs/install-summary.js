@@ -457,7 +457,7 @@ export const InstallSummary = () => {
             id: 1,
             variant: 'Stock Search',
             width: 10,
-            label: 'Add Item',
+            label: 'Item',
             touched: addSystemItemFormik.touched.item_id,
             errors: addSystemItemFormik.errors.item_id,
             name: 'item_id',
