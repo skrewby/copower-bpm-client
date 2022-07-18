@@ -82,8 +82,13 @@ export const TableCard = (props) => {
                                             {item.label}
                                         </Typography>
                                         <Typography
-                                            color="textPrimary"
+                                            color={
+                                                item.onClick
+                                                    ? 'info'
+                                                    : 'textPrimary'
+                                            }
                                             variant="subtitle2"
+                                            onClick={item.onClick}
                                         >
                                             {item.content}
                                         </Typography>

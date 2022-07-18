@@ -61,6 +61,7 @@ import {
     getStockTypes,
     updateStockItem,
 } from './stock';
+import { addFile, deleteFile, downloadFile, getFile } from './files';
 
 class API {}
 
@@ -135,5 +136,11 @@ API.prototype.getActiveStockItems = getActiveStockItems;
 API.prototype.createStockItem = createStockItem;
 API.prototype.getStockTypes = getStockTypes;
 API.prototype.updateStockItem = updateStockItem;
+
+// Files
+API.prototype.getFile = getFile;
+API.prototype.addFile = addFile;
+API.prototype.deleteFile = deleteFile;
+API.prototype.downloadFile = downloadFile;
 
 export const bpmAPI = new API();

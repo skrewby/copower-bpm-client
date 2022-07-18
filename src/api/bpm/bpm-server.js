@@ -24,6 +24,11 @@ class Server {
         this.observer.forEach((item) => item(data));
     }
 
+    uploadURL() {
+        const url = `${this.server_url}api/upload`;
+        return url;
+    }
+
     api() {
         const bpmServer = wretch()
             // Set the base url

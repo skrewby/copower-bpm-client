@@ -104,7 +104,13 @@ export const FormDialog = (props) => {
                             return (
                                 <React.Fragment key={field.id}>
                                     <Grid item xs={field.width}>
-                                        <UploadField />
+                                        <UploadField
+                                            allowMultiple={field.multiple}
+                                            formik={formik}
+                                            name={field.name}
+                                            onUpload={field.onUpload}
+                                            onDelete={field.onDelete}
+                                        />
                                     </Grid>
                                 </React.Fragment>
                             );

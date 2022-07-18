@@ -629,6 +629,13 @@ export const LeadSummary = () => {
         handleCloseDeleteItemDialog();
     };
 
+    const downloadPanelDesign = () => {
+        bpmAPI.downloadFile(
+            leadState.data.panel_design,
+            `Panel Design - ${leadState.data.address}.${leadState.data.panel_design_ext}`
+        );
+    };
+
     const systemStats = [
         {
             content: `${leadState?.data.system_size || ''} kW`,
@@ -637,6 +644,8 @@ export const LeadSummary = () => {
         {
             content: 'Download',
             label: 'Panel Design',
+            variant: 'Download',
+            onClick: downloadPanelDesign,
         },
         {
             content: 'Download',
@@ -669,18 +678,23 @@ export const LeadSummary = () => {
         );
     };
 
+    const onPanelDesignUpload = (file, id) => {};
+
+    const onPanelDesignDelete = (pondID) => {};
+
     const editSystemFormik = useFormik({
         enableReinitialize: true,
         validateOnChange: false,
         initialValues: {
             system_size: leadState?.data.system_size || 0,
-            panel_design: '',
+            panel_design: leadState?.data.panel_design || '',
             submit: null,
         },
         validationSchema: Yup.object().shape({
             system_size: Yup.number()
                 .min(0, 'Must be a positive number')
                 .typeError('Size must be a number. Example: 6.66'),
+            panel_design: Yup.string().max(255),
         }),
         onSubmit: async (values, helpers) => {
             try {
@@ -720,6 +734,9 @@ export const LeadSummary = () => {
             value: editSystemFormik.values.panel_design,
             label: 'Panel Design',
             name: 'panel_design',
+            multiple: false,
+            onUpload: onPanelDesignUpload,
+            onDelete: onPanelDesignDelete,
         },
     ];
 
