@@ -81,17 +81,27 @@ export const TableCard = (props) => {
                                         >
                                             {item.label}
                                         </Typography>
-                                        <Typography
-                                            color={
-                                                item.onClick
-                                                    ? 'info'
-                                                    : 'textPrimary'
-                                            }
-                                            variant="subtitle2"
-                                            onClick={item.onClick}
-                                        >
-                                            {item.content}
-                                        </Typography>
+                                        {item.onClick ? (
+                                            <Button
+                                                color="primary"
+                                                onClick={item.onClick}
+                                                variant="text"
+                                                disabled={
+                                                    item.disabled ?? false
+                                                }
+                                            >
+                                                {item.content}
+                                            </Button>
+                                        ) : (
+                                            <Typography
+                                                color="textPrimary"
+                                                variant="subtitle2"
+                                                py={0.5}
+                                                px={2}
+                                            >
+                                                {item.content}
+                                            </Typography>
+                                        )}
                                     </Box>
                                 </Grid>
                             ))}

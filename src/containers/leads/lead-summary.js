@@ -33,6 +33,7 @@ import { InfoCard } from '../../components/cards/info-card';
 import { FormDialog } from '../../components/dialogs/form-dialog';
 import { TableCard } from '../../components/cards/table-card';
 import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
+import { UploadDialog } from '../../components/dialogs/upload-dialog';
 
 export const LeadSummary = () => {
     const [leadState, setRefresh] = useOutletContext();
@@ -42,6 +43,7 @@ export const LeadSummary = () => {
     const [openAddSystemItemDialog, setOpenAddSystemItemDialog] =
         useState(false);
     const [openEditSystemDialog, setOpenEditSystemDialog] = useState(false);
+    const [openAddFileDialog, setOpenAddFileDialog] = useState(false);
     const mounted = useMounted();
 
     const [sourceOptions, setSourceOptions] = useState([]);
@@ -50,8 +52,8 @@ export const LeadSummary = () => {
     const [storyOptions, setStoryOptions] = useState([]);
     const [roofTypeOptions, setRoofTypeOptions] = useState([]);
     const [statusOptions, setStatusOptions] = useState([]);
-
     const [systemItems, setSystemItems] = useState([]);
+    const [files, setFiles] = useState([]);
 
     // Used to hold any possible customers that were found matching the lead name
     // Right now only used when sending it to Installs
@@ -59,11 +61,18 @@ export const LeadSummary = () => {
 
     // Currently selected item in the system card
     const [selectedItem, setSelectedItem] = useState(null);
+    // Currently selected file in the files card
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const [
         deleteItemDialogOpen,
         handleOpenDeleteItemDialog,
         handleCloseDeleteItemDialog,
+    ] = useDialog();
+    const [
+        deleteFileDialogOpen,
+        handleOpenDeleteFileDialog,
+        handleCloseDeleteFileDialog,
     ] = useDialog();
 
     const getData = useCallback(async () => {
@@ -75,6 +84,7 @@ export const LeadSummary = () => {
         setStatusOptions([]);
         setCustomerSearch([]);
         setSystemItems([]);
+        setFiles([]);
 
         try {
             const sourcesAPI = await bpmAPI.getLeadSources();
@@ -139,6 +149,10 @@ export const LeadSummary = () => {
                 leadState.data.lead_id
             );
 
+            const fileResult = await bpmAPI.getLeadFiles(
+                leadState.data.lead_id
+            );
+
             if (mounted.current) {
                 setSourceOptions(sourcesResult);
                 setPhaseOptions(phasesResult);
@@ -148,6 +162,7 @@ export const LeadSummary = () => {
                 setStatusOptions(statusOptionsResult);
                 setCustomerSearch(customerResult);
                 setSystemItems(systemResult);
+                setFiles(fileResult);
             }
         } catch (err) {
             console.error(err);
@@ -163,6 +178,9 @@ export const LeadSummary = () => {
                     error: err.message,
                 }));
                 setSystemItems(() => ({
+                    error: err.message,
+                }));
+                setFiles(() => ({
                     error: err.message,
                 }));
             }
@@ -636,46 +654,11 @@ export const LeadSummary = () => {
         );
     };
 
-    const systemStats = [
-        {
-            content: `${leadState?.data.system_size || ''} kW`,
-            label: 'System Size',
-        },
-        {
-            content: 'Download',
-            label: 'Panel Design',
-            variant: 'Download',
-            onClick: downloadPanelDesign,
-        },
-        {
-            content: 'Download',
-            label: 'Datasheets',
-        },
-        {
-            content: 'Download',
-            label: 'Warranties',
-        },
-    ];
-
-    const systemCustomButton = () => {
-        return (
-            <ButtonGroup variant="text">
-                <Button
-                    color="primary"
-                    onClick={() => setOpenAddSystemItemDialog(true)}
-                    variant="text"
-                >
-                    Add Item
-                </Button>
-                <Button
-                    color="primary"
-                    onClick={() => setOpenEditSystemDialog(true)}
-                    variant="text"
-                >
-                    Edit
-                </Button>
-            </ButtonGroup>
-        );
+    const downloadDatasheets = () => {
+        toast.error('Not implemented yet');
+    };
+    const downloadWarranties = () => {
+        toast.error('Not implemented yet');
     };
 
     const onPanelDesignUpload = (file, id) => {};
@@ -698,7 +681,6 @@ export const LeadSummary = () => {
         }),
         onSubmit: async (values, helpers) => {
             try {
-                console.log(values);
                 await bpmAPI.updateLead(leadState.data.lead_id, values);
                 setRefresh(true);
                 setOpenEditItemDialog(false);
@@ -732,13 +714,121 @@ export const LeadSummary = () => {
             touched: editSystemFormik.touched.panel_design,
             errors: editSystemFormik.errors.panel_design,
             value: editSystemFormik.values.panel_design,
-            label: 'Panel Design',
+            label: 'Update Panel Design',
             name: 'panel_design',
             multiple: false,
             onUpload: onPanelDesignUpload,
             onDelete: onPanelDesignDelete,
         },
     ];
+
+    const systemStats = [
+        {
+            content: `${leadState?.data.system_size || ''} kW`,
+            label: 'System Size',
+        },
+        {
+            content: 'Download',
+            label: 'Panel Design',
+            onClick: downloadPanelDesign,
+            disabled: !editSystemFormik.initialValues.panel_design,
+        },
+        {
+            content: 'Download',
+            label: 'Datasheets',
+            onClick: downloadDatasheets,
+        },
+        {
+            content: 'Download',
+            label: 'Warranties',
+            onClick: downloadWarranties,
+        },
+    ];
+
+    const systemCustomButton = () => {
+        return (
+            <ButtonGroup variant="text">
+                <Button
+                    color="primary"
+                    onClick={() => setOpenAddSystemItemDialog(true)}
+                    variant="text"
+                >
+                    Add Item
+                </Button>
+                <Button
+                    color="primary"
+                    onClick={() => setOpenEditSystemDialog(true)}
+                    variant="text"
+                >
+                    Edit
+                </Button>
+            </ButtonGroup>
+        );
+    };
+
+    const onFileUpload = async (file, id) => {
+        await bpmAPI.addFileToLead(leadState.data.lead_id, id);
+    };
+
+    const onFileDelete = (pondID) => {};
+
+    const handleDeleteFile = async () => {
+        await bpmAPI.deleteFileFromLead(
+            leadState.data.lead_id,
+            selectedFile.file_id
+        );
+        setRefresh(true);
+    };
+
+    const AddFileField = {
+        id: 1,
+        width: 12,
+        label: 'Files',
+        multiple: true,
+        onUpload: onFileUpload,
+        onDelete: onFileDelete,
+    };
+
+    const fileRows = (item) => {
+        return (
+            <TableRow key={item.id}>
+                <TableCell>{item.file_name}</TableCell>
+                <TableCell sx={{ width: 135 }}>
+                    <Box sx={{ display: 'flex' }}>
+                        <Typography
+                            color="primary"
+                            sx={{ cursor: 'pointer' }}
+                            onClick={() => {
+                                bpmAPI.downloadFile(
+                                    item.file_id,
+                                    item.file_name
+                                );
+                            }}
+                            variant="subtitle2"
+                        >
+                            Download
+                        </Typography>
+                        <Divider
+                            flexItem
+                            orientation="vertical"
+                            sx={{ mx: 2 }}
+                        />
+                        <Typography
+                            color="error"
+                            onClick={() => {
+                                setSelectedFile(item);
+                                handleOpenDeleteFileDialog();
+                            }}
+                            sx={{ cursor: 'pointer' }}
+                            variant="subtitle2"
+                        >
+                            Delete
+                        </Typography>
+                    </Box>
+                </TableCell>
+            </TableRow>
+        );
+    };
 
     const renderContent = () => {
         if (leadState.isLoading || sourceOptions.isLoading) {
@@ -923,6 +1013,16 @@ export const LeadSummary = () => {
                                 ]}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <TableCard
+                                data={files}
+                                title="Files"
+                                columns={['File', 'Actions']}
+                                rows={fileRows}
+                                buttonLabel="Add Files"
+                                buttonOnClick={() => setOpenAddFileDialog(true)}
+                            />
+                        </Grid>
                     </Grid>
                     <Grid
                         container
@@ -965,6 +1065,14 @@ export const LeadSummary = () => {
                     title="Delete item"
                     variant="error"
                 />
+                <ConfirmationDialog
+                    message="Are you sure you want to delete this file? This can't be undone."
+                    onCancel={handleCloseDeleteFileDialog}
+                    onConfirm={handleDeleteFile}
+                    open={deleteFileDialogOpen}
+                    title="Delete file"
+                    variant="error"
+                />
                 <FormDialog
                     onClose={() => setOpenAddSystemItemDialog(false)}
                     open={openAddSystemItemDialog}
@@ -985,6 +1093,15 @@ export const LeadSummary = () => {
                     formik={editSystemFormik}
                     title="Edit System"
                     fields={editSystemFormFields}
+                />
+                <UploadDialog
+                    onClose={() => {
+                        setRefresh(true);
+                        setOpenAddFileDialog(false);
+                    }}
+                    open={openAddFileDialog}
+                    title="Upload Files"
+                    field={AddFileField}
                 />
             </>
         );

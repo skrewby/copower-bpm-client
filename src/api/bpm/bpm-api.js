@@ -11,6 +11,9 @@ import {
     getLeadSystemItems,
     deleteLeadSystemItem,
     editLeadSystemItem,
+    addFileToLead,
+    getLeadFiles,
+    deleteFileFromLead,
 } from './leads';
 import {
     changePassword,
@@ -80,6 +83,9 @@ API.prototype.addItemToLead = addItemToLead;
 API.prototype.getLeadSystemItems = getLeadSystemItems;
 API.prototype.deleteLeadSystemItem = deleteLeadSystemItem;
 API.prototype.editLeadSystemItem = editLeadSystemItem;
+API.prototype.addFileToLead = addFileToLead;
+API.prototype.getLeadFiles = getLeadFiles;
+API.prototype.deleteFileFromLead = deleteFileFromLead;
 
 // Installs
 API.prototype.getInstalls = getInstalls;

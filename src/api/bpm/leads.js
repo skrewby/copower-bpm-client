@@ -171,3 +171,36 @@ export async function deleteLeadSystemItem(id) {
 
     return Promise.resolve(response);
 }
+
+export async function addFileToLead(id, file_id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/files`)
+        .query({ id })
+        .post({ file_id })
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function getLeadFiles(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/files`)
+        .query({ id })
+        .get()
+        .json((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function deleteFileFromLead(lead_id, file_id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/files`)
+        .query({ lead_id, file_id })
+        .delete()
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}

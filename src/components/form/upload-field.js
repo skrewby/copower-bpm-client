@@ -19,7 +19,14 @@ import { bpmAPI } from '../../api/bpm/bpm-api';
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 export const UploadField = (props) => {
-    const { formik, name, onUpload, onDelete, allowMultiple = false } = props;
+    const {
+        formik,
+        name,
+        onUpload,
+        onDelete,
+        label,
+        allowMultiple = false,
+    } = props;
     const [files, setFiles] = useState([]);
 
     const onFileUpload = async (error, file) => {
@@ -83,7 +90,7 @@ export const UploadField = (props) => {
                     md: 5,
                 }}
             >
-                Panel Design
+                {label}
             </Typography>
             <FilePond
                 files={files}

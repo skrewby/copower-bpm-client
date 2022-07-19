@@ -110,6 +110,9 @@ export const FormDialog = (props) => {
                                             name={field.name}
                                             onUpload={field.onUpload}
                                             onDelete={field.onDelete}
+                                            label={field.label}
+                                            buttonLabel={field.buttonLabel}
+                                            buttonOnClick={field.buttonOnClick}
                                         />
                                     </Grid>
                                 </React.Fragment>
