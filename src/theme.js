@@ -761,6 +761,12 @@ const lightThemeOptions = {
             light: lightError.light,
             main: lightError.main,
         },
+        positive: {
+            contrastText: lightSuccess.contrast,
+            dark: lightSuccess.dark,
+            light: lightSuccess.light,
+            main: lightSuccess.main,
+        },
         info: {
             contrastText: lightInfo.contrast,
             dark: lightInfo.dark,

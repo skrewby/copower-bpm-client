@@ -204,3 +204,47 @@ export async function deleteFileFromLead(lead_id, file_id) {
 
     return Promise.resolve(response);
 }
+
+export async function addExtraToLead(id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/extras`)
+        .query({ id })
+        .post(body)
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function getLeadExtras(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/extras`)
+        .query({ id })
+        .get()
+        .json((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function deleteExtraFromLead(lead_id, extra_id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/extras`)
+        .query({ lead_id, extra_id })
+        .delete()
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function updateLeadExtra(lead_id, extra_id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/leads/extras`)
+        .query({ lead_id, extra_id })
+        .put(body)
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}

@@ -54,6 +54,13 @@ const LeadSummary = Loadable(
         }))
     )
 );
+const LeadFinance = Loadable(
+    lazy(() =>
+        import('./containers/leads/lead-finance').then((module) => ({
+            default: module.LeadFinance,
+        }))
+    )
+);
 const LeadLog = Loadable(
     lazy(() =>
         import('./containers/leads/lead-log').then((module) => ({
@@ -219,6 +226,10 @@ const routes = [
                             {
                                 path: '',
                                 element: <LeadSummary />,
+                            },
+                            {
+                                path: 'finance',
+                                element: <LeadFinance />,
                             },
                             {
                                 path: 'log',

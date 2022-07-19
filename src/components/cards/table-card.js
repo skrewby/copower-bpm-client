@@ -67,10 +67,6 @@ export const TableCard = (props) => {
                                     <Box
                                         sx={{
                                             alignItems: 'center',
-                                            backgroundColor: (theme) =>
-                                                theme.palette.mode === 'light'
-                                                    ? 'neutral.50'
-                                                    : 'neutral.800',
                                             borderRadius: 1,
                                             p: 2,
                                         }}
@@ -94,7 +90,9 @@ export const TableCard = (props) => {
                                             </Button>
                                         ) : (
                                             <Typography
-                                                color="textPrimary"
+                                                color={
+                                                    item.colour || 'textPrimary'
+                                                }
                                                 variant="subtitle2"
                                                 py={0.5}
                                                 px={2}

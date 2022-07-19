@@ -51,6 +51,10 @@ export const Lead = () => {
             label: 'Summary',
         },
         {
+            href: `/bpm/leads/${leadID}/finance`,
+            label: 'Finance',
+        },
+        {
             href: `/bpm/leads/${leadID}/log`,
             label: 'Log',
         },

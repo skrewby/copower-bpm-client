@@ -724,7 +724,9 @@ export const LeadSummary = () => {
 
     const systemStats = [
         {
-            content: `${leadState?.data.system_size || ''} kW`,
+            content: `${leadState?.data.system_size || ''} ${
+                leadState?.data.system_size ? 'kW' : ''
+            }`,
             label: 'System Size',
         },
         {
