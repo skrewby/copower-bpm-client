@@ -34,6 +34,8 @@ import { getStatusDetails } from '../../utils/get-status-details';
 import { ActionsMenu } from '../../components/actions-menu';
 import { FormDialog } from '../../components/dialogs/form-dialog';
 
+const now = new Date().toISOString();
+
 export const Lead = () => {
     const { leadID } = useParams();
     const { user } = useAuth();
@@ -67,6 +69,12 @@ export const Lead = () => {
 
         try {
             const result = await bpmAPI.getLead(leadID);
+            // Need to set null dates to now in order to avoid infinite loops due to the dialogs
+            // We did not make the default in the database to current_timestamp as we don't want
+            // the default to be a really old date in case the install was created a few months
+            // prior
+            result.rebate_expiry = result.rebate_expiry ?? now;
+
             const statusOptionsAPI = await bpmAPI.getLeadStatusOptions();
             const statusOptionsResult = statusOptionsAPI.map((row) => {
                 return {

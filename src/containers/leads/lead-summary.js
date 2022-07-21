@@ -731,7 +731,7 @@ export const LeadSummary = () => {
         },
         {
             content: 'Download',
-            label: 'Panel Design',
+            label: 'Proposal',
             onClick: downloadPanelDesign,
             disabled: !editSystemFormik.initialValues.panel_design,
         },
@@ -785,7 +785,7 @@ export const LeadSummary = () => {
     const AddFileField = {
         id: 1,
         width: 12,
-        label: 'Files',
+        label: '',
         multiple: true,
         onUpload: onFileUpload,
         onDelete: onFileDelete,

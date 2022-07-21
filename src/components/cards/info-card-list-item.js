@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import { Box, ListItem, ListItemText, Typography } from '@mui/material';
 
 export const InfoCardListItem = (props) => {
-    const { align, children, component, value, label, ...other } = props;
+    const { align, children, component, value, label, onClick, ...other } =
+        props;
 
     return (
         <ListItem
@@ -35,7 +36,15 @@ export const InfoCardListItem = (props) => {
                         }}
                     >
                         {children || (
-                            <Typography color="textSecondary" variant="body2">
+                            <Typography
+                                color={
+                                    onClick && value
+                                        ? 'info.main'
+                                        : 'textSecondary'
+                                }
+                                variant="body2"
+                                onClick={onClick}
+                            >
                                 {value ?? 'No Info'}
                             </Typography>
                         )}
@@ -61,5 +70,6 @@ InfoCardListItem.propTypes = {
     component: PropTypes.elementType,
     children: PropTypes.node,
     label: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };

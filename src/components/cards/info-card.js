@@ -38,6 +38,7 @@ export const InfoCard = (props) => {
                                 <InfoCardListItem
                                     label={data.label}
                                     value={data.value}
+                                    onClick={data.onClick}
                                 />
                             </React.Fragment>
                         ))}
@@ -50,6 +51,7 @@ export const InfoCard = (props) => {
                                 <InfoCardListItem
                                     label={data.label}
                                     value={data.value}
+                                    onClick={data.onClick}
                                 />
                             </React.Fragment>
                         ))}
