@@ -681,7 +681,12 @@ export const LeadSummary = () => {
         }),
         onSubmit: async (values, helpers) => {
             try {
-                await bpmAPI.updateLead(leadState.data.lead_id, values);
+                const form_values = Object.fromEntries(
+                    Object.entries(values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
+                await bpmAPI.updateLead(leadState.data.lead_id, form_values);
                 setRefresh(true);
                 setOpenEditItemDialog(false);
                 helpers.resetForm();

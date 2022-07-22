@@ -8,6 +8,8 @@ import toast from 'react-hot-toast';
 // Material UI
 import {
     Box,
+    Button,
+    ButtonGroup,
     Container,
     Divider,
     Grid,
@@ -40,6 +42,7 @@ export const InstallSummary = () => {
     const [openEditItemDialog, setOpenEditItemDialog] = useState(false);
     const [openAddSystemItemDialog, setOpenAddSystemItemDialog] =
         useState(false);
+    const [openEditSystemDialog, setOpenEditSystemDialog] = useState(false);
 
     const [phaseOptions, setPhaseOptions] = useState([]);
     const [existingSystemOptions, setExistingSystemOptions] = useState([]);
@@ -564,6 +567,136 @@ export const InstallSummary = () => {
         handleCloseDeleteItemDialog();
     };
 
+    const downloadPanelDesign = () => {
+        bpmAPI.downloadFile(
+            installState.data.system.panel_design,
+            `Panel Design - ${installState.data.property.address}.${installState.data.system.panel_design_ext}`
+        );
+    };
+
+    const downloadDatasheets = () => {
+        toast.error('Not implemented yet');
+    };
+    const downloadWarranties = () => {
+        toast.error('Not implemented yet');
+    };
+
+    const onPanelDesignUpload = (file, id) => {};
+
+    const onPanelDesignDelete = (pondID) => {};
+
+    const editSystemFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            system_size: installState?.data.system.size || 0,
+            panel_design: installState?.data.system.panel_design || '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            system_size: Yup.number()
+                .min(0, 'Must be a positive number')
+                .typeError('Size must be a number. Example: 6.66'),
+            panel_design: Yup.string().max(255),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                const form_values = Object.fromEntries(
+                    Object.entries(values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
+
+                await bpmAPI.updateInstall(
+                    installState.data.install_id,
+                    form_values
+                );
+                setRefresh(true);
+                setOpenEditItemDialog(false);
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const editSystemFormFields = [
+        {
+            id: 1,
+            variant: 'Input',
+            width: 12,
+            touched: editSystemFormik.touched.system_size,
+            errors: editSystemFormik.errors.system_size,
+            value: editSystemFormik.values.system_size,
+            label: 'System Size',
+            name: 'system_size',
+        },
+        {
+            id: 2,
+            variant: 'Upload',
+            width: 12,
+            touched: editSystemFormik.touched.panel_design,
+            errors: editSystemFormik.errors.panel_design,
+            value: editSystemFormik.values.panel_design,
+            label: 'Update Panel Design',
+            name: 'panel_design',
+            multiple: false,
+            onUpload: onPanelDesignUpload,
+            onDelete: onPanelDesignDelete,
+        },
+    ];
+
+    const systemStats = [
+        {
+            content: `${installState?.data.system.size || ''} ${
+                installState?.data.system.size ? 'kW' : ''
+            }`,
+            label: 'System Size',
+        },
+        {
+            content: 'Download',
+            label: 'Proposal',
+            onClick: downloadPanelDesign,
+            disabled: !editSystemFormik.initialValues.panel_design,
+        },
+        {
+            content: 'Download',
+            label: 'Datasheets',
+            onClick: downloadDatasheets,
+        },
+        {
+            content: 'Download',
+            label: 'Warranties',
+            onClick: downloadWarranties,
+        },
+    ];
+
+    const systemCustomButton = () => {
+        return (
+            <ButtonGroup variant="text">
+                <Button
+                    color="primary"
+                    onClick={() => setOpenAddSystemItemDialog(true)}
+                    variant="text"
+                >
+                    Add Item
+                </Button>
+                <Button
+                    color="primary"
+                    onClick={() => setOpenEditSystemDialog(true)}
+                    variant="text"
+                >
+                    Edit
+                </Button>
+            </ButtonGroup>
+        );
+    };
+
     const renderContent = () => {
         if (installState.isLoading) {
             return (
@@ -666,10 +799,9 @@ export const InstallSummary = () => {
                                     'Actions',
                                 ]}
                                 rows={systemRows}
-                                buttonLabel="Add"
-                                buttonOnClick={() =>
-                                    setOpenAddSystemItemDialog(true)
-                                }
+                                showStats
+                                stats={systemStats}
+                                customButton={systemCustomButton}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -799,6 +931,13 @@ export const InstallSummary = () => {
                     formik={editSystemItemFormik}
                     title="Edit Item"
                     fields={editSystemItemFormFields}
+                />
+                <FormDialog
+                    onClose={() => setOpenEditSystemDialog(false)}
+                    open={openEditSystemDialog}
+                    formik={editSystemFormik}
+                    title="Edit System"
+                    fields={editSystemFormFields}
                 />
             </>
         );
