@@ -2,8 +2,25 @@ import PropTypes from 'prop-types';
 import { Box, ListItem, ListItemText, Typography } from '@mui/material';
 
 export const InfoCardListItem = (props) => {
-    const { align, children, component, value, label, onClick, ...other } =
-        props;
+    const {
+        align,
+        children,
+        component,
+        value: valueProps,
+        label,
+        onClick,
+        active = false,
+        ...other
+    } = props;
+
+    const getValue = () => {
+        if (onClick && !active) {
+            return 'No Attachment';
+        } else {
+            return valueProps;
+        }
+    };
+    const value = getValue();
 
     return (
         <ListItem
@@ -38,12 +55,14 @@ export const InfoCardListItem = (props) => {
                         {children || (
                             <Typography
                                 color={
-                                    onClick && value
+                                    onClick && active
                                         ? 'info.main'
                                         : 'textSecondary'
                                 }
                                 variant="body2"
-                                onClick={onClick}
+                                onClick={() => {
+                                    active && onClick();
+                                }}
                             >
                                 {value ?? 'No Info'}
                             </Typography>

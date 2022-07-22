@@ -176,3 +176,80 @@ export async function deleteInstallSystemItem(id) {
 
     return Promise.resolve(response);
 }
+
+export async function addFileToInstall(id, file_id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/files`)
+        .query({ id })
+        .post({ file_id })
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function getInstallFiles(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/files`)
+        .query({ id })
+        .get()
+        .json((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function deleteFileFromInstall(install_id, file_id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/files`)
+        .query({ install_id, file_id })
+        .delete()
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function addExtraToInstall(id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/extras`)
+        .query({ id })
+        .post(body)
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function getInstallExtras(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/extras`)
+        .query({ id })
+        .get()
+        .json((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function deleteExtraFromInstall(install_id, extra_id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/extras`)
+        .query({ install_id, extra_id })
+        .delete()
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function updateInstallExtra(install_id, extra_id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/extras`)
+        .query({ install_id, extra_id })
+        .put(body)
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}

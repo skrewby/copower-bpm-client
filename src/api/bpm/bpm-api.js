@@ -49,6 +49,13 @@ import {
     getInstallSystemItems,
     deleteInstallSystemItem,
     editInstallSystemItem,
+    addFileToInstall,
+    getInstallFiles,
+    deleteFileFromInstall,
+    addExtraToInstall,
+    getInstallExtras,
+    deleteExtraFromInstall,
+    updateInstallExtra,
 } from './installs';
 import {
     getCustomers,
@@ -107,6 +114,13 @@ API.prototype.addItemToInstall = addItemToInstall;
 API.prototype.getInstallSystemItems = getInstallSystemItems;
 API.prototype.deleteInstallSystemItem = deleteInstallSystemItem;
 API.prototype.editInstallSystemItem = editInstallSystemItem;
+API.prototype.addFileToInstall = addFileToInstall;
+API.prototype.getInstallFiles = getInstallFiles;
+API.prototype.deleteFileFromInstall = deleteFileFromInstall;
+API.prototype.addExtraToInstall = addExtraToInstall;
+API.prototype.getInstallExtras = getInstallExtras;
+API.prototype.deleteExtraFromInstall = deleteExtraFromInstall;
+API.prototype.updateInstallExtra = updateInstallExtra;
 
 // Customers
 API.prototype.getCustomers = getCustomers;

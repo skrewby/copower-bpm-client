@@ -71,6 +71,7 @@ export const Install = () => {
                 result.finance.deposit_paid_date ?? now;
             result.finance.invoice_paid_date =
                 result.finance.invoice_paid_date ?? now;
+            result.finance.rebate_expiry = result.finance.rebate_expiry ?? now;
             result.schedule.date = result.schedule.date ?? now;
             result.inspection.booking_date =
                 result.inspection.booking_date ?? now;
