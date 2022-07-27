@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
@@ -36,17 +35,23 @@ export const InstallProgress = (props) => {
                 <CardContent>
                     <StatusTimeline
                         data={install}
+                        inclusive={install.status.label === 'Complete'}
                         statusList={statusOptions.map((status) => status.name)}
                     />
                 </CardContent>
-                <Divider />
-                <ActionList>
-                    <ActionListItem
-                        icon={CancelIcon}
-                        label="Cancel"
-                        onClick={handleOpenCancelInstall}
-                    />
-                </ActionList>
+                {install.status.label !== 'Complete' &&
+                    install.status.label !== 'Cancelled' && (
+                        <>
+                            <Divider />
+                            <ActionList>
+                                <ActionListItem
+                                    icon={CancelIcon}
+                                    label="Cancel"
+                                    onClick={handleOpenCancelInstall}
+                                />
+                            </ActionList>
+                        </>
+                    )}
             </Card>
             <ConfirmationDialog
                 message="Are you sure you want to cancel this install?"

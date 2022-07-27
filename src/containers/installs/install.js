@@ -78,6 +78,8 @@ export const Install = () => {
             result.inspection.completed_date =
                 result.inspection.completed_date ?? now;
             result.review.date = result.review.date ?? now;
+            result.stc.submission_date = result.stc.submission_date ?? now;
+            result.stc.approval_date = result.stc.approval_date ?? now;
 
             if (mounted.current) {
                 setInstallState(() => ({

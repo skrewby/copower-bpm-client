@@ -43,6 +43,7 @@ export const InstallFinance = () => {
     const [openAddExtraDialog, setOpenAddExtraDialog] = useState(false);
     const [openEditPriceDialog, setOpenEditPriceDialog] = useState(false);
     const [openFinanceDialog, setOpenFinanceDialog] = useState(false);
+    const [openSTCDialog, setOpenSTCDialog] = useState(false);
 
     const [statusOptions, setStatusOptions] = useState([]);
     const [extras, setExtras] = useState([]);
@@ -739,6 +740,210 @@ export const InstallFinance = () => {
             `Rebate - ${installState.data.property.address}.${installState.data.finance.rebate_attachment_ext}`
         );
     };
+    const downloadSTCForm = () => {
+        if (!installState.data.stc.form) {
+            return;
+        }
+
+        bpmAPI.downloadFile(
+            installState.data.stc.form,
+            `STC Form - ${installState.data.property.address}.${installState.data.stc.form_ext}`
+        );
+    };
+
+    const stcFormik = useFormik({
+        validateOnChange: false,
+        enableReinitialize: true,
+        initialValues: {
+            stc_submitted: installState.data?.stc.submitted || false,
+            stc_submission_date:
+                parseISO(installState.data?.stc.submission_date) || now,
+            stc_submission_numbers:
+                installState.data?.stc.submission_numbers || '',
+            stc_submitted_through:
+                installState.data?.stc.submitted_through || '',
+            stc_approval_received: installState.data?.stc.approved || false,
+            stc_approval_date:
+                parseISO(installState.data?.stc.approval_date) || now,
+            stc_approved_numbers: installState.data?.stc.approved_numbers || '',
+            stc_approved_values: installState.data?.stc.approved_values || '',
+            stc_receipt_number: installState.data?.stc.receipt_number || '',
+            stc_comment: installState.data?.stc.comment || '',
+            stc_form: installState.data?.stc.form || '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            stc_submitted: Yup.bool(),
+            stc_submission_date: Yup.date(),
+            stc_submission_numbers: Yup.number()
+                .min(0, 'Must be a positive number')
+                .typeError('Must be an integer'),
+            stc_submitted_through: Yup.string().max(255),
+            stc_approval_received: Yup.bool(),
+            stc_approval_date: Yup.date(),
+            stc_approved_numbers: Yup.number()
+                .min(0, 'Must be a positive number')
+                .typeError('Must be an integer'),
+            stc_approved_values: Yup.number()
+                .min(0, 'Must be a positive number')
+                .typeError('Must be an integer'),
+            stc_receipt_number: Yup.string().max(255),
+            stc_comment: Yup.string().max(255),
+            stc_form: Yup.string().max(255),
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                // Remove empty strings and null values
+                let install_values = Object.fromEntries(
+                    Object.entries(values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
+
+                const res = await bpmAPI.updateInstall(
+                    installState.data.install_id,
+                    install_values
+                );
+                if (res.status === 201) {
+                    toast.success('Install updated');
+                } else {
+                    toast.error('Something went wrong');
+                }
+                setRefresh(true);
+
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+                setOpenFinanceDialog(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const stcFormFields = [
+        {
+            id: 1,
+            variant: 'Control',
+            width: 12,
+            touched: stcFormik.touched.stc_submitted,
+            errors: stcFormik.errors.stc_submitted,
+            value: stcFormik.values.stc_submitted,
+            label: 'STC Submitted',
+            name: 'stc_submitted',
+        },
+        {
+            id: 2,
+            variant: 'Date',
+            label: 'Submission Date',
+            name: 'stc_submission_date',
+            touched: stcFormik.touched.stc_submission_date,
+            errors: stcFormik.errors.stc_submission_date,
+            value: stcFormik.values.stc_submission_date,
+            hidden: !stcFormik.values.stc_submitted,
+            width: 6,
+        },
+        {
+            id: 3,
+            variant: 'Input',
+            width: 6,
+            touched: stcFormik.touched.stc_submission_numbers,
+            errors: stcFormik.errors.stc_submission_numbers,
+            value: stcFormik.values.stc_submission_numbers,
+            label: 'Number of STC Submitted',
+            name: 'stc_submission_numbers',
+            hidden: !stcFormik.values.stc_submitted,
+        },
+        {
+            id: 4,
+            variant: 'Input',
+            width: 12,
+            touched: stcFormik.touched.stc_submitted_through,
+            errors: stcFormik.errors.stc_submitted_through,
+            value: stcFormik.values.stc_submitted_through,
+            label: 'Submitted Through',
+            name: 'stc_submitted_through',
+            hidden: !stcFormik.values.stc_submitted,
+        },
+        {
+            id: 5,
+            variant: 'Control',
+            width: 12,
+            touched: stcFormik.touched.stc_approval_received,
+            errors: stcFormik.errors.stc_approval_received,
+            value: stcFormik.values.stc_approval_received,
+            label: 'STC Approved',
+            name: 'stc_approval_received',
+        },
+        {
+            id: 6,
+            variant: 'Date',
+            label: 'Approval Date',
+            name: 'stc_approval_date',
+            touched: stcFormik.touched.stc_approval_date,
+            errors: stcFormik.errors.stc_approval_date,
+            value: stcFormik.values.stc_approval_date,
+            hidden: !stcFormik.values.stc_approval_received,
+            width: 6,
+        },
+        {
+            id: 7,
+            variant: 'Input',
+            width: 6,
+            touched: stcFormik.touched.stc_receipt_number,
+            errors: stcFormik.errors.stc_receipt_number,
+            value: stcFormik.values.stc_receipt_number,
+            label: 'Receipt Number',
+            name: 'stc_receipt_number',
+            hidden: !stcFormik.values.stc_approval_received,
+        },
+        {
+            id: 8,
+            variant: 'Input',
+            width: 6,
+            touched: stcFormik.touched.stc_approved_numbers,
+            errors: stcFormik.errors.stc_approved_numbers,
+            value: stcFormik.values.stc_approved_numbers,
+            label: 'Number of STC Approved',
+            name: 'stc_approved_numbers',
+            hidden: !stcFormik.values.stc_approval_received,
+        },
+        {
+            id: 9,
+            variant: 'Input',
+            width: 6,
+            touched: stcFormik.touched.stc_approved_values,
+            errors: stcFormik.errors.stc_approved_values,
+            value: stcFormik.values.stc_approved_values,
+            label: 'Approved STC Value',
+            name: 'stc_approved_values',
+            hidden: !stcFormik.values.stc_approval_received,
+        },
+        {
+            id: 10,
+            variant: 'Input',
+            width: 12,
+            touched: stcFormik.touched.stc_comment,
+            errors: stcFormik.errors.stc_comment,
+            value: stcFormik.values.stc_comment,
+            label: 'Comment',
+            name: 'stc_comment',
+            hidden: !stcFormik.values.stc_approval_received,
+        },
+        {
+            id: 11,
+            variant: 'Upload',
+            width: 12,
+            touched: stcFormik.touched.stc_form,
+            errors: stcFormik.errors.stc_form,
+            value: stcFormik.values.stc_form,
+            label: 'Upload STC Form',
+            name: 'stc_form',
+            multiple: false,
+        },
+    ];
 
     const renderContent = () => {
         if (installState.isLoading) {
@@ -970,6 +1175,113 @@ export const InstallFinance = () => {
                                 ]}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <InfoCard
+                                onEdit={() => setOpenSTCDialog(true)}
+                                title="STC"
+                                dataLeft={[
+                                    {
+                                        id: 1,
+                                        label: 'STC Submitted',
+                                        value: installState.data.stc.submitted
+                                            ? 'Submitted'
+                                            : 'Not Submitted',
+                                    },
+                                    {
+                                        id: 2,
+                                        label: 'STC Submission Date',
+                                        value: installState.data.stc.submitted
+                                            ? format(
+                                                  parseISO(
+                                                      installState.data.stc
+                                                          .submission_date
+                                                  ),
+                                                  'dd MMM yyyy'
+                                              )
+                                            : 'No Info',
+                                    },
+                                    {
+                                        id: 3,
+                                        label: 'Submission Numbers',
+                                        value: installState.data.stc.submitted
+                                            ? installState.data.stc
+                                                  .submission_numbers
+                                            : 'No Info',
+                                    },
+                                    {
+                                        id: 4,
+                                        label: 'Receipt Number',
+                                        value: installState.data.stc.approved
+                                            ? installState.data.stc
+                                                  .receipt_number
+                                            : 'No Info',
+                                    },
+                                    {
+                                        id: 5,
+                                        label: 'Approved Numbers',
+                                        value: installState.data.stc.approved
+                                            ? installState.data.stc
+                                                  .approved_numbers
+                                            : 'No Info',
+                                    },
+                                    {
+                                        id: 6,
+                                        label: 'Form',
+                                        value: installState.data.stc.approved
+                                            ? 'Download'
+                                            : null,
+                                        active: installState.data.stc.form,
+                                        onClick: downloadSTCForm,
+                                    },
+                                ]}
+                                dataRight={[
+                                    {
+                                        id: 1,
+                                        label: 'Submitted By',
+                                        value: installState.data.stc.submitted
+                                            ? installState.data.stc.submitted_by
+                                            : 'No Info',
+                                    },
+                                    {
+                                        id: 2,
+                                        label: 'Submitted Through',
+                                        value: installState.data.stc.submitted
+                                            ? installState.data.stc
+                                                  .submitted_through
+                                            : 'No Info',
+                                    },
+                                    {
+                                        id: 3,
+                                        label: 'STC Approved',
+                                        value: installState.data.stc.approved
+                                            ? 'Approved'
+                                            : 'Not Approved',
+                                    },
+                                    {
+                                        id: 4,
+                                        label: 'Confirmed By',
+                                        value: installState.data.stc.approved
+                                            ? installState.data.stc.approved_by
+                                            : 'No Info',
+                                    },
+                                    {
+                                        id: 5,
+                                        label: 'Approved Values',
+                                        value: installState.data.stc.approved
+                                            ? installState.data.stc
+                                                  .approved_values
+                                            : 'No Info',
+                                    },
+                                    {
+                                        id: 6,
+                                        label: 'Comment',
+                                        value: installState.data.stc.approved
+                                            ? installState.data.stc.comment
+                                            : 'No Info',
+                                    },
+                                ]}
+                            />
+                        </Grid>
                     </Grid>
                     <Grid
                         container
@@ -1031,6 +1343,13 @@ export const InstallFinance = () => {
                     formik={financeFormik}
                     title="Edit Finance Info"
                     fields={financeFormFields}
+                />
+                <FormDialog
+                    onClose={() => setOpenSTCDialog(false)}
+                    open={openSTCDialog}
+                    formik={stcFormik}
+                    title="Edit STC Info"
+                    fields={stcFormFields}
                 />
             </>
         );
