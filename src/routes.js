@@ -206,7 +206,7 @@ const routes = [
         children: [
             {
                 path: '',
-                element: <Navigate to="/bpm/leads" replace />,
+                element: <Navigate to="/bpm/calendar" replace />,
             },
             {
                 path: 'calendar',

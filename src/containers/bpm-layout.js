@@ -35,11 +35,6 @@ const getNavbarItems = (role) => {
     if (role === 'System Administrator' || role === 'Manager') {
         return [
             {
-                icon: HomeOutlinedIcon,
-                title: 'Dashboard',
-                href: '/bpm/dashboard',
-            },
-            {
                 icon: CalendarMonthOutlinedIcon,
                 title: 'Calendar',
                 href: '/bpm/calendar',
@@ -82,11 +77,6 @@ const getNavbarItems = (role) => {
     ) {
         return [
             {
-                icon: HomeOutlinedIcon,
-                title: 'Dashboard',
-                href: '/bpm/dashboard',
-            },
-            {
                 icon: CalendarMonthOutlinedIcon,
                 title: 'Calendar',
                 href: '/bpm/calendar',
@@ -120,11 +110,6 @@ const getNavbarItems = (role) => {
     } else if (role === 'Sales' || role === 'Sales Manager') {
         return [
             {
-                icon: HomeOutlinedIcon,
-                title: 'Dashboard',
-                href: '/bpm/dashboard',
-            },
-            {
                 icon: CalendarMonthOutlinedIcon,
                 title: 'Calendar',
                 href: '/bpm/calendar',
@@ -147,11 +132,6 @@ const getNavbarItems = (role) => {
         ];
     } else if (role === 'Services') {
         return [
-            {
-                icon: HomeOutlinedIcon,
-                title: 'Dashboard',
-                href: '/bpm/dashboard',
-            },
             {
                 icon: CalendarMonthOutlinedIcon,
                 title: 'Calendar',
