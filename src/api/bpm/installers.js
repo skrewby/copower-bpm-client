@@ -11,3 +11,28 @@ export async function getInstallers() {
 
     return Promise.resolve(data);
 }
+
+export async function updateInstaller(id, data) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installers`)
+        .query({ id })
+        .put(data)
+        .res((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function createInstaller(data) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installers`)
+        .post(data)
+        .res((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}

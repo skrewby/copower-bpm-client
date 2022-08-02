@@ -84,6 +84,15 @@ const OrganisationMembers = Loadable(
         )
     )
 );
+const OrganisationInstallers = Loadable(
+    lazy(() =>
+        import('./containers/organisation/organisation-installers').then(
+            (module) => ({
+                default: module.OrganisationInstallers,
+            })
+        )
+    )
+);
 const Installs = Loadable(
     lazy(() =>
         import('./containers/installs/installs').then((module) => ({
@@ -310,6 +319,10 @@ const routes = [
                     {
                         path: '',
                         element: <OrganisationMembers />,
+                    },
+                    {
+                        path: 'installers',
+                        element: <OrganisationInstallers />,
                     },
                 ],
             },

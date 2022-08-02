@@ -29,6 +29,10 @@ export const Organisation = () => {
             href: `/bpm/organisation`,
             label: 'Members',
         },
+        {
+            href: `/bpm/organisation/installers`,
+            label: 'Installers',
+        },
     ];
 
     const getData = useCallback(async () => {

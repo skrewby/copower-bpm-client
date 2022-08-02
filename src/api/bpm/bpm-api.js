@@ -66,7 +66,7 @@ import {
     getCustomerLogs,
     searchCustomer,
 } from './customers';
-import { getInstallers } from './installers';
+import { createInstaller, getInstallers, updateInstaller } from './installers';
 import { getEvents, createEvent, updateEvent, deleteEvent } from './events';
 import {
     createStockItem,
@@ -151,6 +151,8 @@ API.prototype.getRoofPitchOptions = getRoofPitchOptions;
 
 // Installers
 API.prototype.getInstallers = getInstallers;
+API.prototype.updateInstaller = updateInstaller;
+API.prototype.createInstaller = createInstaller;
 
 // Events
 API.prototype.getEvents = getEvents;

@@ -691,7 +691,7 @@ export const StockItems = () => {
     return (
         <>
             <Helmet>
-                <title>Leads | Copower BPM</title>
+                <title>Stock | Copower BPM</title>
             </Helmet>
             <Box
                 sx={{
