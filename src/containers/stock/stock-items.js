@@ -60,6 +60,14 @@ const columns = [
         label: 'Count',
     },
     {
+        id: 'datasheet',
+        label: 'Datasheet',
+    },
+    {
+        id: 'warranty',
+        label: 'Warranty',
+    },
+    {
         id: 'actions',
         label: 'Actions',
     },
@@ -251,6 +259,44 @@ export const StockItems = () => {
                 >
                     {item.count}
                 </TableCell>
+                <TableCell>
+                    <Typography
+                        color={item.datasheet ? 'primary' : 'textSecondary'}
+                        onClick={() => {
+                            if (item.datasheet) {
+                                bpmAPI.downloadFile(
+                                    item.datasheet,
+                                    `Datasheet - ${item.brand} - ${item.model}.${item.datasheet_extension}`
+                                );
+                            }
+                        }}
+                        sx={{
+                            cursor: 'pointer',
+                        }}
+                        variant="subtitle2"
+                    >
+                        {item.datasheet ? 'Download' : ''}
+                    </Typography>
+                </TableCell>
+                <TableCell>
+                    <Typography
+                        color={item.warranty ? 'primary' : 'textSecondary'}
+                        onClick={() => {
+                            if (item.warranty) {
+                                bpmAPI.downloadFile(
+                                    item.warranty,
+                                    `Warranty - ${item.brand} - ${item.model}.${item.datasheet_extension}`
+                                );
+                            }
+                        }}
+                        sx={{
+                            cursor: 'pointer',
+                        }}
+                        variant="subtitle2"
+                    >
+                        {item.warranty ? 'Download' : ''}
+                    </Typography>
+                </TableCell>
                 <TableCell sx={{ width: 145 }}>
                     <Box sx={{ display: 'flex' }}>
                         <Typography
@@ -379,7 +425,9 @@ export const StockItems = () => {
             brand: itemEdit.brand || '',
             series: itemEdit.series || '',
             model: itemEdit.model || '',
-            count: itemEdit.count || 0,
+            count: itemEdit.count || '',
+            datasheet: itemEdit.datasheet || '',
+            warranty: itemEdit.warranty || '',
             submit: null,
         },
         validationSchema: Yup.object().shape({
@@ -390,11 +438,19 @@ export const StockItems = () => {
             count: Yup.number()
                 .integer()
                 .min(0, 'Number must be positive or 0'),
+            datasheet: Yup.string().max(255),
+            warranty: Yup.string().max(255),
         }),
         onSubmit: async (values, helpers) => {
             try {
+                const form_values = Object.fromEntries(
+                    Object.entries(values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
+
                 await bpmAPI
-                    .updateStockItem(itemEdit.id, values)
+                    .updateStockItem(itemEdit.id, form_values)
                     .then((res) => {
                         setOpenEditDialog(false);
                         toast.success(`Item Changed`);
@@ -466,6 +522,28 @@ export const StockItems = () => {
             value: editItemFormik.values.count,
             label: 'Count',
             name: 'count',
+        },
+        {
+            id: 6,
+            variant: 'Upload',
+            width: 12,
+            touched: editItemFormik.touched.datasheet,
+            errors: editItemFormik.errors.datasheet,
+            value: editItemFormik.values.datasheet,
+            label: 'Update Datasheet',
+            name: 'datasheet',
+            multiple: false,
+        },
+        {
+            id: 7,
+            variant: 'Upload',
+            width: 12,
+            touched: editItemFormik.touched.warranty,
+            errors: editItemFormik.errors.warranty,
+            value: editItemFormik.values.warranty,
+            label: 'Update Warranty',
+            name: 'warranty',
+            multiple: false,
         },
     ];
 

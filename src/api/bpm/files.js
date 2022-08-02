@@ -63,3 +63,29 @@ export async function downloadFile(id, filename) {
 
     return Promise.resolve();
 }
+
+export async function downloadMultipleFiles(ids, archiveName) {
+    await bpmServer
+        .api()
+        .url(`api/files/download-multiple`)
+        .query({ files: ids })
+        .get()
+        .blob((file) => {
+            // Create blob link to download
+            const url = window.URL.createObjectURL(new Blob([file]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${archiveName}.zip`);
+
+            // Append to html link element page
+            document.body.appendChild(link);
+
+            // Start download
+            link.click();
+
+            // Clean up and remove the link
+            link.parentNode.removeChild(link);
+        });
+
+    return Promise.resolve();
+}

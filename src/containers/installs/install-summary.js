@@ -575,10 +575,18 @@ export const InstallSummary = () => {
     };
 
     const downloadDatasheets = () => {
-        toast.error('Not implemented yet');
+        const systemDatasheets = systemItems.map((item) => item.datasheet);
+        bpmAPI.downloadMultipleFiles(
+            systemDatasheets,
+            `Datasheets - ${installState.data.property.address}`
+        );
     };
     const downloadWarranties = () => {
-        toast.error('Not implemented yet');
+        const systemWarranties = systemItems.map((item) => item.warranty);
+        bpmAPI.downloadMultipleFiles(
+            systemWarranties,
+            `Warranties - ${installState.data.property.address}`
+        );
     };
 
     const onPanelDesignUpload = (file, id) => {};
