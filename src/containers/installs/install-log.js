@@ -14,6 +14,7 @@ import { bpmAPI } from '../../api/bpm/bpm-api';
 // Components
 import { LogAdd } from '../../components/logs/log-add';
 import { LogEntry } from '../../components/logs/log-entry';
+import { getRoleID } from '../../utils/get-role-id';
 
 export const InstallLog = () => {
     // eslint-disable-next-line no-unused-vars
@@ -55,9 +56,31 @@ export const InstallLog = () => {
         getData().catch(console.error);
     }, [getData, setRefresh]);
 
-    const handleCreateLog = (content) => {
+    const handleCreateLog = async (content) => {
         setRefresh(true);
         bpmAPI.createInstallLog(installID, content, false);
+        bpmAPI.createNotification({
+            icon: 'comment',
+            title: `New entry added to log`,
+            details: `${installState.data.customer.name}: ${installState.data.property.address}`,
+            user: `${installState.data.sold_by.id}`,
+            href: `/bpm/installs/${installID}`,
+        });
+        const roles = await bpmAPI.getValidRoles();
+        bpmAPI.createNotification({
+            icon: 'comment',
+            title: `New entry added to log`,
+            details: `${installState.data.customer.name}: ${installState.data.property.address}`,
+            role: getRoleID(roles, 'Administration Officer'),
+            href: `/bpm/installs/${installID}`,
+        });
+        bpmAPI.createNotification({
+            icon: 'comment',
+            title: `New entry added to log`,
+            details: `${installState.data.customer.name}: ${installState.data.property.address}`,
+            role: getRoleID(roles, 'Operations'),
+            href: `/bpm/installs/${installID}`,
+        });
         toast.success('Log added');
     };
 

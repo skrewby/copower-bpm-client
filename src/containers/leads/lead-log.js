@@ -14,6 +14,7 @@ import { bpmAPI } from '../../api/bpm/bpm-api';
 // Components
 import { LogAdd } from '../../components/logs/log-add';
 import { LogEntry } from '../../components/logs/log-entry';
+import { getRoleID } from '../../utils/get-role-id';
 
 export const LeadLog = () => {
     // eslint-disable-next-line no-unused-vars
@@ -52,9 +53,24 @@ export const LeadLog = () => {
         getData().catch(console.error);
     }, [getData, setRefresh]);
 
-    const handleCreateLog = (content) => {
+    const handleCreateLog = async (content) => {
         setRefresh(true);
         bpmAPI.createLeadLog(leadID, content, false);
+        bpmAPI.createNotification({
+            icon: 'comment',
+            title: `New entry added to log`,
+            details: `${leadState.data.name}: ${leadState.data.address}`,
+            user: `${leadState.data.sales_id}`,
+            href: `/bpm/leads/${leadID}`,
+        });
+        const roles = await bpmAPI.getValidRoles();
+        bpmAPI.createNotification({
+            icon: 'comment',
+            title: `New entry added to log`,
+            details: `${leadState.data.name}: ${leadState.data.address}`,
+            role: getRoleID(roles, 'Administration Officer'),
+            href: `/bpm/leads/${leadID}`,
+        });
         toast.success('Log added');
     };
 

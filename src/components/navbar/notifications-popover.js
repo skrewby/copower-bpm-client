@@ -76,7 +76,6 @@ export const NotificationsPopover = (props) => {
     useEffect(() => {
         socket.on('new-notification', () => {
             getData();
-            console.log('New');
         });
     }, [getData]);
 

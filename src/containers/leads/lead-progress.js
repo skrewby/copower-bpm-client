@@ -80,25 +80,11 @@ export const LeadProgress = (props) => {
     const handleSendToOperations = async () => {
         handleCloseSendToOperations();
         const roles = await bpmAPI.getValidRoles();
-        bpmAPI.createNotification({
+        await bpmAPI.createNotification({
             icon: 'success',
-            title: `${user.name}: Lead Won`,
-            details: `${lead.address}`,
-            role: getRoleID(roles, 'Administration Officer'),
-            href: `/bpm/leads/${lead.lead_id}`,
-        });
-        bpmAPI.createNotification({
-            icon: 'success',
-            title: `${user.name}: Lead Won`,
-            details: `${lead.address}`,
-            role: getRoleID(roles, 'Manager'),
-            href: `/bpm/leads/${lead.lead_id}`,
-        });
-        bpmAPI.createNotification({
-            icon: 'success',
-            title: `${user.name}: Lead Won`,
-            details: `${lead.address}`,
-            role: getRoleID(roles, 'Sales Manager'),
+            title: `Sale marked for review`,
+            details: `${lead.name}: ${lead.address}`,
+            role: getRoleID(roles, 'Operations'),
             href: `/bpm/leads/${lead.lead_id}`,
         });
         bpmAPI.createLeadLog(
@@ -118,15 +104,22 @@ export const LeadProgress = (props) => {
         setOpenLeadRejectDenyDialog(true);
     };
 
-    const handleCloseLead = () => {
+    const handleCloseLead = async () => {
         handleCloseCloseLead();
         bpmAPI.createLeadLog(lead.lead_id, `Closed lead`, true);
         bpmAPI.updateLead(lead.lead_id, { status_id: 10 }).then(refresh(true));
     };
 
-    const handleRejectLeadApproved = () => {
+    const handleRejectLeadApproved = async () => {
         bpmAPI.createLeadLog(lead.lead_id, `Approved reject request`, true);
         bpmAPI.updateLead(lead.lead_id, { status_id: 7 }).then(refresh(true));
+        bpmAPI.createNotification({
+            icon: 'failure',
+            title: `Lead Rejection Approved`,
+            details: `${lead.address}`,
+            user: `${lead.sales_id}`,
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
         handleCloseRejectLeadApprove();
     };
 
@@ -156,17 +149,43 @@ export const LeadProgress = (props) => {
                     const customer = await bpmAPI.createCustomer(lead);
                     install.customer_id = customer.id;
                 }
-                await bpmAPI.createInstall(install).then((res) => {
-                    bpmAPI.createInstallLog(res.id, `Install created`, true);
+                await bpmAPI.createInstall(install).then(async (res) => {
+                    await bpmAPI.createInstallLog(
+                        res.id,
+                        `Install created`,
+                        true
+                    );
                     for (const item of systemItems) {
-                        bpmAPI.addItemToInstall(res.id, item);
+                        await bpmAPI.addItemToInstall(res.id, item);
                     }
-                    bpmAPI.createLeadLog(
+                    await bpmAPI.createLeadLog(
                         lead.lead_id,
                         `Lead approved. Sent to installs`,
                         true
                     );
-                    bpmAPI
+                    const roles = await bpmAPI.getValidRoles();
+                    bpmAPI.createNotification({
+                        icon: 'success',
+                        title: `${user.name}: New Sale`,
+                        details: `${lead.name} - ${lead.address}`,
+                        role: getRoleID(roles, 'Administration Officer'),
+                        href: `/bpm/installs/${res.id}`,
+                    });
+                    bpmAPI.createNotification({
+                        icon: 'success',
+                        title: `${user.name}: New Sale`,
+                        details: `${lead.name} - ${lead.address}`,
+                        role: getRoleID(roles, 'Manager'),
+                        href: `/bpm/installs/${res.id}`,
+                    });
+                    bpmAPI.createNotification({
+                        icon: 'success',
+                        title: `${user.name}: New Sale`,
+                        details: `${lead.name} - ${lead.address}`,
+                        role: getRoleID(roles, 'Sales Manager'),
+                        href: `/bpm/installs/${res.id}`,
+                    });
+                    await bpmAPI
                         .updateLead(lead.lead_id, { status_id: 5 })
                         .then(() => {
                             toast.success('Install Created');
@@ -311,6 +330,14 @@ export const LeadProgress = (props) => {
             .updateLead(lead.lead_id, { status_id: 9 })
             .then(refresh(true));
 
+        const roles = await bpmAPI.getValidRoles();
+        bpmAPI.createNotification({
+            icon: 'failure',
+            title: `${user.name}: Lead Rejected`,
+            details: `${lead.address}`,
+            role: getRoleID(roles, 'Administration Officer'),
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
         return res;
     };
 
@@ -318,9 +345,16 @@ export const LeadProgress = (props) => {
     const leadRejectDenyFunction = async (comment) => {
         await bpmAPI.createLeadLog(
             lead.lead_id,
-            `Denied reject request. Comment: ${comment}`,
+            `Info requested: Reject Lead. Comment: ${comment}`,
             true
         );
+        await bpmAPI.createNotification({
+            icon: 'failure',
+            title: `Info requested: Reject Lead`,
+            details: `${lead.address}`,
+            user: `${lead.sales_id}`,
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
         const res = await bpmAPI
             .updateLead(lead.lead_id, { status_id: 1 })
             .then(refresh(true));
@@ -332,9 +366,16 @@ export const LeadProgress = (props) => {
     const leadReviewDenyFunction = async (comment) => {
         await bpmAPI.createLeadLog(
             lead.lead_id,
-            `More information required. Comment: ${comment}`,
+            `Info requested: Sale Review. Comment: ${comment}`,
             true
         );
+        await bpmAPI.createNotification({
+            icon: 'failure',
+            title: `Info requested: Sale Review`,
+            details: `${lead.address}`,
+            user: `${lead.sales_id}`,
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
         const res = await bpmAPI
             .updateLead(lead.lead_id, { status_id: 4 })
             .then(refresh(true));

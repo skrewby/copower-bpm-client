@@ -32,6 +32,7 @@ export const AuthGuard = (props) => {
     // We add the SocketContext here instead of at the BPMLayout because we only want users
     // that can send a valid JWT to connect to the socket server
     socket.emit('join-room', user.role_id);
+    socket.emit('join-room', user.account_id);
     return (
         <SocketContext.Provider value={socket}>
             <>{children}</>

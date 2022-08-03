@@ -19,7 +19,8 @@ export async function createNotification(body) {
         .url(`api/notifications`)
         .post(body)
         .res((response) => {
-            socket.emit('notify', body.role);
+            const room = body.user ? body.user : body.role;
+            socket.emit('notify', room);
             return response;
         });
 
