@@ -33,6 +33,7 @@ import { StatusTimeline } from '../../components/timeline/status-timeline';
 import { StatusDisplay } from '../../components/timeline/status-display';
 import { CommentDialog } from '../../components/dialogs/comment-dialog';
 import { FormDialog } from '../../components/dialogs/form-dialog';
+import { getRoleID } from '../../utils/get-role-id';
 
 /**
  * Container to be used within other containers therefore props need to be passed to it
@@ -76,8 +77,30 @@ export const LeadProgress = (props) => {
             .then(refresh(true));
     };
 
-    const handleSendToOperations = () => {
+    const handleSendToOperations = async () => {
         handleCloseSendToOperations();
+        const roles = await bpmAPI.getValidRoles();
+        bpmAPI.createNotification({
+            icon: 'success',
+            title: `${user.name}: Lead Won`,
+            details: `${lead.address}`,
+            role: getRoleID(roles, 'Administration Officer'),
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
+        bpmAPI.createNotification({
+            icon: 'success',
+            title: `${user.name}: Lead Won`,
+            details: `${lead.address}`,
+            role: getRoleID(roles, 'Manager'),
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
+        bpmAPI.createNotification({
+            icon: 'success',
+            title: `${user.name}: Lead Won`,
+            details: `${lead.address}`,
+            role: getRoleID(roles, 'Sales Manager'),
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
         bpmAPI.createLeadLog(
             lead.lead_id,
             `Marked lead as Win - Awaiting review`,

@@ -11,7 +11,7 @@ export const AuthGuard = (props) => {
     const { children } = props;
     const location = useLocation();
     const [requestedLocation, setRequestedLocation] = useState(null);
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
 
     if (!isAuthenticated) {
         if (location.pathname !== requestedLocation) {
@@ -31,6 +31,7 @@ export const AuthGuard = (props) => {
 
     // We add the SocketContext here instead of at the BPMLayout because we only want users
     // that can send a valid JWT to connect to the socket server
+    socket.emit('join-room', user.role_id);
     return (
         <SocketContext.Provider value={socket}>
             <>{children}</>

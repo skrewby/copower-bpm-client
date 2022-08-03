@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -22,60 +22,9 @@ import CommentIcon from '@mui/icons-material/Comment';
 
 // Local Import
 import { usePopover } from '../../hooks/use-popover';
-import { useState } from 'react';
-
-const notificationsDefault = [
-    {
-        id: '1',
-        create_date: new Date().getTime(),
-        icon_tag: 'success',
-        title: 'Lead: Marked as win',
-        href: '/bpm/leads/1',
-        details: 'John Smith - UNIT 1 354 CHISHOLM ROAD, AUBURN NSW 2144',
-        user_id: '19203904821',
-    },
-    {
-        id: '2',
-        create_date: new Date().getTime(),
-        icon_tag: 'failure',
-        title: 'Lead: Reject Request',
-        href: '/bpm/leads/2',
-        details: 'Marcus Aurelius - 48 HACKETT RD, ABBOTSBURY NSW 2176',
-        user_id: '19203904821',
-    },
-    {
-        id: '3',
-        create_date: new Date().getTime(),
-        icon_tag: 'success',
-        title: 'New Lead!',
-        details: 'Scipio Africanus - 3 MIOWERA RD, NORTHBRIDGE NSW 2063',
-        user_id: '19203904821',
-    },
-    {
-        id: '4',
-        create_date: new Date().getTime(),
-        icon_tag: 'announcement',
-        title: 'BPM v0.1 has been released',
-        details: 'Notifications, Calendar and Installs have been added',
-        user_id: '19203904821',
-    },
-    {
-        id: '5',
-        create_date: new Date().getTime(),
-        icon_tag: 'success',
-        title: 'New Lead!',
-        details: 'Scipio Africanus - 3 MIOWERA RD, NORTHBRIDGE NSW 2063',
-        user_id: '19203904821',
-    },
-    {
-        id: '6',
-        create_date: new Date().getTime(),
-        icon_tag: 'comment',
-        title: 'Lead: New message',
-        details: 'Scipio Africanus - 3 MIOWERA RD, NORTHBRIDGE NSW 2063',
-        user_id: '19203904821',
-    },
-];
+import { useCallback, useEffect, useState } from 'react';
+import { bpmAPI } from '../../api/bpm/bpm-api';
+import { socket } from '../../contexts/socket-context';
 
 const iconTags = [
     {
@@ -107,8 +56,29 @@ const iconTags = [
 
 export const NotificationsPopover = (props) => {
     const [anchorRef, open, handleOpen, handleClose] = usePopover();
-    const [notifications, setNotifications] = useState(notificationsDefault);
+    const [notifications, setNotifications] = useState([]);
     const navigate = useNavigate();
+
+    const getData = useCallback(async () => {
+        const result = await bpmAPI.getNotifications();
+        const data = result.map((notification) => {
+            notification.create_date = parseISO(notification.create_date);
+            return notification;
+        });
+        setNotifications(data);
+        socket.emit('notify', 'Hello World');
+    }, []);
+
+    useEffect(() => {
+        getData();
+    }, [getData]);
+
+    useEffect(() => {
+        socket.on('new-notification', () => {
+            getData();
+            console.log('New');
+        });
+    }, [getData]);
 
     return (
         <>
@@ -157,90 +127,97 @@ export const NotificationsPopover = (props) => {
                         </ListSubheader>
                     }
                 >
-                    {notifications.map((notification, index) => {
-                        const { title, create_date, icon_tag, details } =
-                            notification;
+                    {notifications.length > 0 &&
+                        notifications.map((notification, index) => {
+                            const { title, create_date, icon, details } =
+                                notification;
 
-                        const tag = iconTags.find(
-                            (iconTag) => iconTag.id === icon_tag
-                        );
-                        return (
-                            <Stack key={notification.id} direction="row">
-                                <ListItem
-                                    disableGutters
-                                    divider={notifications.length > index + 1}
-                                    key={notification.id}
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'flex-start',
-                                        flexDirection: 'column',
-                                        p: 1,
-                                    }}
-                                    onClick={() => {
-                                        if (notification.href) {
-                                            handleClose();
-                                            navigate(notification.href);
+                            const tag = iconTags.find(
+                                (iconTag) => iconTag.id === icon
+                            );
+                            return (
+                                <Stack key={notification.id} direction="row">
+                                    <ListItem
+                                        disableGutters
+                                        divider={
+                                            notifications.length > index + 1
                                         }
-                                    }}
-                                    style={
-                                        notification.href && {
-                                            cursor: 'pointer',
-                                        }
-                                    }
-                                >
-                                    <Box
+                                        key={notification.id}
                                         sx={{
                                             display: 'flex',
+                                            alignItems: 'flex-start',
+                                            flexDirection: 'column',
+                                            p: 1,
                                         }}
+                                        onClick={() => {
+                                            if (notification.href) {
+                                                handleClose();
+                                                navigate(notification.href);
+                                            }
+                                        }}
+                                        style={
+                                            notification.href && {
+                                                cursor: 'pointer',
+                                            }
+                                        }
                                     >
-                                        {tag.icon && (
-                                            <tag.icon
-                                                fontSize="small"
-                                                sx={{
-                                                    color: tag.iconColor,
-                                                }}
-                                            />
-                                        )}
-                                        <Typography
-                                            color="textPrimary"
-                                            sx={{ ml: 1.25 }}
-                                            variant="body1"
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                            }}
                                         >
-                                            {title}
+                                            {tag.icon && (
+                                                <tag.icon
+                                                    fontSize="small"
+                                                    sx={{
+                                                        color: tag.iconColor,
+                                                    }}
+                                                />
+                                            )}
+                                            <Typography
+                                                color="textPrimary"
+                                                sx={{ ml: 1.25 }}
+                                                variant="body1"
+                                            >
+                                                {title}
+                                            </Typography>
+                                        </Box>
+                                        <Typography
+                                            color="textSecondary"
+                                            variant="body2"
+                                        >
+                                            {details}
                                         </Typography>
-                                    </Box>
-                                    <Typography
-                                        color="textSecondary"
-                                        variant="body2"
+                                        <Typography
+                                            color="textSecondary"
+                                            variant="caption"
+                                        >
+                                            {format(
+                                                create_date,
+                                                'MMM dd, yyyy - hh:mm a'
+                                            )}
+                                        </Typography>
+                                    </ListItem>
+                                    <IconButton
+                                        onClick={() => {
+                                            setNotifications(
+                                                notifications.filter(
+                                                    (item) =>
+                                                        item.id !==
+                                                        notification.id
+                                                )
+                                            );
+                                            bpmAPI.deleteNotification(
+                                                notification.id
+                                            );
+                                        }}
+                                        color="error"
                                     >
-                                        {details}
-                                    </Typography>
-                                    <Typography
-                                        color="textSecondary"
-                                        variant="caption"
-                                    >
-                                        {format(
-                                            create_date,
-                                            'MMM dd, yyyy - hh:mm a'
-                                        )}
-                                    </Typography>
-                                </ListItem>
-                                <IconButton
-                                    onClick={() =>
-                                        setNotifications(
-                                            notifications.filter(
-                                                (item) =>
-                                                    item.id !== notification.id
-                                            )
-                                        )
-                                    }
-                                    color="error"
-                                >
-                                    <ClearIcon />
-                                </IconButton>
-                            </Stack>
-                        );
-                    })}
+                                        <ClearIcon />
+                                    </IconButton>
+                                </Stack>
+                            );
+                        })}
                 </List>
             </Popover>
         </>

@@ -82,6 +82,11 @@ import {
     downloadMultipleFiles,
     getFile,
 } from './files';
+import {
+    createNotification,
+    deleteNotification,
+    getNotifications,
+} from './notifications';
 
 class API {}
 
@@ -179,5 +184,10 @@ API.prototype.addFile = addFile;
 API.prototype.deleteFile = deleteFile;
 API.prototype.downloadFile = downloadFile;
 API.prototype.downloadMultipleFiles = downloadMultipleFiles;
+
+// Notifications
+API.prototype.getNotifications = getNotifications;
+API.prototype.createNotification = createNotification;
+API.prototype.deleteNotification = deleteNotification;
 
 export const bpmAPI = new API();
