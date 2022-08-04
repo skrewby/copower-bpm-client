@@ -382,6 +382,13 @@ export const Leads = () => {
                         setOpenCreateDialog(false);
                         bpmAPI.createLeadLog(res.id, 'Created Lead', true);
                         toast.success(`Lead Created`);
+                        bpmAPI.createNotification({
+                            icon: 'announcement',
+                            title: `New Lead`,
+                            details: `${values.first_name} ${values.last_name}: ${values.address}`,
+                            user: `${values.sales_id}`,
+                            href: `/bpm/leads/${res.id}`,
+                        });
                         setRefresh(true);
                     })
                     .catch((err) => {
@@ -445,13 +452,13 @@ export const Leads = () => {
         },
         {
             id: 5,
-            variant: 'Address',
-            label: 'Address',
-            name: 'address',
-            name_id: 'address_id',
+            variant: 'Input',
+            width: 12,
             touched: addLeadFormik.touched.address,
             errors: addLeadFormik.errors.address,
-            width: 12,
+            value: addLeadFormik.values.address,
+            label: 'Address',
+            name: 'address',
         },
         {
             id: 6,

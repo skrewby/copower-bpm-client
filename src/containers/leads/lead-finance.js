@@ -33,7 +33,6 @@ import { InfoCard } from '../../components/cards/info-card';
 import { FormDialog } from '../../components/dialogs/form-dialog';
 import { TableCard } from '../../components/cards/table-card';
 import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
-import { UploadDialog } from '../../components/dialogs/upload-dialog';
 import { format, parseISO } from 'date-fns';
 
 const now = new Date().toISOString();

@@ -72,14 +72,14 @@ export const InstallLog = () => {
             title: `New entry added to log`,
             details: `${installState.data.customer.name}: ${installState.data.property.address}`,
             role: getRoleID(roles, 'Administration Officer'),
-            href: `/bpm/installs/${installID}`,
+            href: `/bpm/installs/${installID}/log`,
         });
         bpmAPI.createNotification({
             icon: 'comment',
             title: `New entry added to log`,
             details: `${installState.data.customer.name}: ${installState.data.property.address}`,
             role: getRoleID(roles, 'Operations'),
-            href: `/bpm/installs/${installID}`,
+            href: `/bpm/installs/${installID}/log`,
         });
         toast.success('Log added');
     };

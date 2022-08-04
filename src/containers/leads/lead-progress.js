@@ -158,6 +158,11 @@ export const LeadProgress = (props) => {
                     for (const item of systemItems) {
                         await bpmAPI.addItemToInstall(res.id, item);
                     }
+                    const leadExtras = await bpmAPI.getLeadExtras(lead.lead_id);
+                    for (const extra of leadExtras) {
+                        console.log(extra);
+                        await bpmAPI.addExtraToInstall(res.id, extra);
+                    }
                     await bpmAPI.createLeadLog(
                         lead.lead_id,
                         `Lead approved. Sent to installs`,
@@ -166,21 +171,21 @@ export const LeadProgress = (props) => {
                     const roles = await bpmAPI.getValidRoles();
                     bpmAPI.createNotification({
                         icon: 'success',
-                        title: `${user.name}: New Sale`,
+                        title: `${lead.sales}: New Sale`,
                         details: `${lead.name} - ${lead.address}`,
                         role: getRoleID(roles, 'Administration Officer'),
                         href: `/bpm/installs/${res.id}`,
                     });
                     bpmAPI.createNotification({
                         icon: 'success',
-                        title: `${user.name}: New Sale`,
+                        title: `${lead.sales}: New Sale`,
                         details: `${lead.name} - ${lead.address}`,
                         role: getRoleID(roles, 'Manager'),
                         href: `/bpm/installs/${res.id}`,
                     });
                     bpmAPI.createNotification({
                         icon: 'success',
-                        title: `${user.name}: New Sale`,
+                        title: `${lead.sales}: New Sale`,
                         details: `${lead.name} - ${lead.address}`,
                         role: getRoleID(roles, 'Sales Manager'),
                         href: `/bpm/installs/${res.id}`,

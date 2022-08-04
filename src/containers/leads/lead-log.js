@@ -61,7 +61,7 @@ export const LeadLog = () => {
             title: `New entry added to log`,
             details: `${leadState.data.name}: ${leadState.data.address}`,
             user: `${leadState.data.sales_id}`,
-            href: `/bpm/leads/${leadID}`,
+            href: `/bpm/leads/${leadID}/log`,
         });
         const roles = await bpmAPI.getValidRoles();
         bpmAPI.createNotification({
@@ -69,7 +69,14 @@ export const LeadLog = () => {
             title: `New entry added to log`,
             details: `${leadState.data.name}: ${leadState.data.address}`,
             role: getRoleID(roles, 'Administration Officer'),
-            href: `/bpm/leads/${leadID}`,
+            href: `/bpm/leads/${leadID}/log`,
+        });
+        bpmAPI.createNotification({
+            icon: 'comment',
+            title: `New entry added to log`,
+            details: `${leadState.data.name}: ${leadState.data.address}`,
+            role: getRoleID(roles, 'Operations'),
+            href: `/bpm/leads/${leadID}/log`,
         });
         toast.success('Log added');
     };
