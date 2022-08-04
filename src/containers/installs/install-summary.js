@@ -380,21 +380,26 @@ export const InstallSummary = () => {
         validateOnChange: false,
         initialValues: {
             customer_id: '',
+            address: installState.data.property.address || '',
             submit: null,
         },
         validationSchema: Yup.object().shape({
-            customer_id: Yup.number().required(
-                'Select a customer to assign the install to'
-            ),
+            customer_id: Yup.number(),
+            address: Yup.string().max(255),
         }),
-        onSubmit: async (values, helpers) => {
+        onSubmit: async (form_values, helpers) => {
             try {
                 setOpenCustomerDialog(false);
+                const values = Object.fromEntries(
+                    Object.entries(form_values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
                 await bpmAPI
                     .updateInstall(installState.data.install_id, values)
                     .then((res) => {
                         if (res.status === 201) {
-                            toast.success('Customer Update');
+                            toast.success('Install Updated');
                         }
                         setRefresh(true);
                     });
@@ -420,6 +425,16 @@ export const InstallSummary = () => {
             errors: changeCustomerFormik.errors.customer_id,
             allowCreate: false,
             name: 'customer_id',
+        },
+        {
+            id: 2,
+            variant: 'Input',
+            width: 12,
+            touched: changeCustomerFormik.touched.address,
+            errors: changeCustomerFormik.errors.address,
+            value: changeCustomerFormik.values.address,
+            label: 'Address',
+            name: 'address',
         },
     ];
 
@@ -915,7 +930,7 @@ export const InstallSummary = () => {
                     onClose={() => setOpenCustomerDialog(false)}
                     open={openCustomerDialog}
                     formik={changeCustomerFormik}
-                    title="Change Customer"
+                    title="Edit Install"
                     fields={changeCustomerFormFields}
                 />
                 <ConfirmationDialog

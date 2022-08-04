@@ -357,13 +357,13 @@ export const LeadSummary = () => {
         },
         {
             id: 5,
-            variant: 'Address',
-            label: 'Address',
-            name: 'address',
-            name_id: 'address_id',
+            variant: 'Input',
+            width: 12,
             touched: leadInfoFormik.touched.address,
             errors: leadInfoFormik.errors.address,
-            width: 12,
+            value: leadInfoFormik.values.address,
+            label: 'Address',
+            name: 'address',
         },
         {
             id: 6,
