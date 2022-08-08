@@ -139,3 +139,14 @@ export async function getCustomerLogs(id) {
 
     return Promise.resolve(response);
 }
+
+export async function getCustomerInstalls(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/customers/installs`)
+        .query({ id })
+        .get()
+        .json((response) => response);
+
+    return Promise.resolve(response);
+}

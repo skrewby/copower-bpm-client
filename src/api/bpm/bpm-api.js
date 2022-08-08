@@ -65,6 +65,7 @@ import {
     createCustomerLog,
     getCustomerLogs,
     searchCustomer,
+    getCustomerInstalls,
 } from './customers';
 import { createInstaller, getInstallers, updateInstaller } from './installers';
 import { getEvents, createEvent, updateEvent, deleteEvent } from './events';
@@ -141,6 +142,7 @@ API.prototype.createCustomer = createCustomer;
 API.prototype.createCustomerLog = createCustomerLog;
 API.prototype.getCustomerLogs = getCustomerLogs;
 API.prototype.searchCustomer = searchCustomer;
+API.prototype.getCustomerInstalls = getCustomerInstalls;
 
 // Users
 API.prototype.getUsers = getUsers;

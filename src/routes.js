@@ -163,6 +163,13 @@ const CustomerSummary = Loadable(
         }))
     )
 );
+const CustomerInstalls = Loadable(
+    lazy(() =>
+        import('./containers/customers/customer-installs').then((module) => ({
+            default: module.CustomerInstalls,
+        }))
+    )
+);
 const Account = Loadable(
     lazy(() =>
         import('./containers/account/account').then((module) => ({
@@ -297,6 +304,10 @@ const routes = [
                             {
                                 path: '',
                                 element: <CustomerSummary />,
+                            },
+                            {
+                                path: 'installs',
+                                element: <CustomerInstalls />,
                             },
                         ],
                     },
