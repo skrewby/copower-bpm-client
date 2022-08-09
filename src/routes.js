@@ -198,6 +198,27 @@ const StockItems = Loadable(
         }))
     )
 );
+const Services = Loadable(
+    lazy(() =>
+        import('./containers/services/services').then((module) => ({
+            default: module.Services,
+        }))
+    )
+);
+const Service = Loadable(
+    lazy(() =>
+        import('./containers/services/service').then((module) => ({
+            default: module.Service,
+        }))
+    )
+);
+const ServiceSummary = Loadable(
+    lazy(() =>
+        import('./containers/services/service-summary').then((module) => ({
+            default: module.ServiceSummary,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -308,6 +329,25 @@ const routes = [
                             {
                                 path: 'installs',
                                 element: <CustomerInstalls />,
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                path: 'services',
+                children: [
+                    {
+                        path: '',
+                        element: <Services />,
+                    },
+                    {
+                        path: ':serviceID',
+                        element: <Service />,
+                        children: [
+                            {
+                                path: '',
+                                element: <ServiceSummary />,
                             },
                         ],
                     },

@@ -96,6 +96,18 @@ export async function getInstallStatusOptions() {
     return Promise.resolve(data);
 }
 
+export async function getServiceStatusOptions() {
+    const data = await bpmServer
+        .api()
+        .url(`api/info/service-status`)
+        .get()
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(data);
+}
+
 export async function getValidRoles() {
     const data = await bpmServer
         .api()

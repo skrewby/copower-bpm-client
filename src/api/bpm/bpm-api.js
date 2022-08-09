@@ -35,6 +35,7 @@ import {
     getPhaseOptions,
     getRoofPitchOptions,
     getRoofTypeOptions,
+    getServiceStatusOptions,
     getStoryOptions,
     getValidRoles,
 } from './info';
@@ -88,6 +89,7 @@ import {
     deleteNotification,
     getNotifications,
 } from './notifications';
+import { createService, getService, getServices } from './services';
 
 class API {}
 
@@ -159,6 +161,7 @@ API.prototype.getExistingSystemOptions = getExistingSystemOptions;
 API.prototype.getStoryOptions = getStoryOptions;
 API.prototype.getRoofTypeOptions = getRoofTypeOptions;
 API.prototype.getLeadStatusOptions = getLeadStatusOptions;
+API.prototype.getServiceStatusOptions = getServiceStatusOptions;
 API.prototype.getValidRoles = getValidRoles;
 API.prototype.getRoofPitchOptions = getRoofPitchOptions;
 
@@ -191,5 +194,10 @@ API.prototype.downloadMultipleFiles = downloadMultipleFiles;
 API.prototype.getNotifications = getNotifications;
 API.prototype.createNotification = createNotification;
 API.prototype.deleteNotification = deleteNotification;
+
+// Services
+API.prototype.getServices = getServices;
+API.prototype.createService = createService;
+API.prototype.getService = getService;
 
 export const bpmAPI = new API();

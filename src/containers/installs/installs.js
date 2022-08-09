@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
-import toast from 'react-hot-toast';
 
 // Material UI
 import {
@@ -12,13 +11,11 @@ import {
     TableRow,
     Tooltip,
     IconButton,
-    Button,
     Typography,
     Divider,
     Card,
 } from '@mui/material';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 // Local import
 import { bpmAPI } from '../../api/bpm/bpm-api';
@@ -243,10 +240,6 @@ export const Installs = () => {
         });
     };
 
-    const handleCreateInstall = () => {
-        toast.error('Not implemented yet');
-    };
-
     const mapFunction = (install) => {
         return (
             <TableRow hover key={install.install_id}>
@@ -315,15 +308,6 @@ export const Installs = () => {
                                 Installs
                             </Typography>
                             <Box sx={{ flexGrow: 1 }} />
-                            <Button
-                                color="primary"
-                                size="large"
-                                startIcon={<AddOutlinedIcon fontSize="small" />}
-                                onClick={handleCreateInstall}
-                                variant="contained"
-                            >
-                                Add
-                            </Button>
                         </Box>
                     </Box>
                     <Card
