@@ -6,6 +6,9 @@ import {
     useParams,
 } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import toast from 'react-hot-toast';
 
 // Material UI
 import {
@@ -24,6 +27,8 @@ import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 // Local import
 import { bpmAPI } from '../../api/bpm/bpm-api';
 import { useMounted } from '../../hooks/use-mounted';
+import { ActionsMenu } from '../../components/actions-menu';
+import { FormDialog } from '../../components/dialogs/form-dialog';
 
 // Components
 const now = new Date().toISOString();
@@ -33,6 +38,10 @@ export const Service = () => {
     const mounted = useMounted();
     const [service, setService] = useState({ isLoading: true });
     const [statusOptions, setStatusOptions] = useState({ isLoading: true });
+    const [items, setItems] = useState([]);
+    const [files, setFiles] = useState([]);
+    const [openChangeCustomerDialog, setOpenChangeCustomerDialog] =
+        useState(false);
     const [refresh, setRefresh] = useState(false);
     const location = useLocation();
 
@@ -50,6 +59,8 @@ export const Service = () => {
     const getService = useCallback(async () => {
         setService(() => ({ isLoading: true }));
         setStatusOptions(() => ({ isLoading: true }));
+        setItems([]);
+        setFiles([]);
 
         try {
             const result = await bpmAPI.getService(serviceID);
@@ -62,6 +73,16 @@ export const Service = () => {
                     colour: row.colour,
                 };
             });
+            const itemsResult = await bpmAPI.getServiceItems(serviceID);
+            const service_prices = itemsResult.map((row) => Number(row.price));
+            const service_total = service_prices.reduce(
+                (previousValue, currentValue) => previousValue + currentValue,
+                0
+            );
+            result.cost = service_total ?? 0;
+
+            const filesResult = await bpmAPI.getServiceFiles(serviceID);
+
             if (mounted.current) {
                 setService(() => ({
                     isLoading: false,
@@ -71,6 +92,8 @@ export const Service = () => {
                     isLoading: false,
                     data: statusOptionsResult,
                 }));
+                setItems(itemsResult);
+                setFiles(filesResult);
             }
         } catch (err) {
             console.error(err);
@@ -92,6 +115,69 @@ export const Service = () => {
         setRefresh(false);
         getService().catch(console.error);
     }, [getService, refresh]);
+
+    const handleChangeCustomer = () => {
+        setOpenChangeCustomerDialog(true);
+    };
+
+    const actions = [
+        {
+            label: 'Change Customer',
+            onClick: handleChangeCustomer,
+        },
+    ];
+
+    const changeCustomerFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            customer_id: '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            customer_id: Yup.number(),
+        }),
+        onSubmit: async (form_values, helpers) => {
+            try {
+                // Remove empty strings and null values
+                const values = Object.fromEntries(
+                    Object.entries(form_values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
+                const res = await bpmAPI
+                    .updateService(serviceID, values)
+                    .then(setRefresh(true));
+                setOpenChangeCustomerDialog(false);
+                if (res.status === 201) {
+                    toast.success(`Customer assigned`);
+                } else {
+                    toast.error(`Something went wrong`);
+                }
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const changeCustomerFormFields = [
+        {
+            id: 1,
+            variant: 'Customer Search',
+            width: 12,
+            touched: changeCustomerFormik.touched.customer_id,
+            errors: changeCustomerFormik.errors.customer_id,
+            label: 'Change Customer',
+            name: 'customer_id',
+            allowCreate: false,
+        },
+    ];
 
     const renderContent = () => {
         if (service.isLoading) {
@@ -153,6 +239,7 @@ export const Service = () => {
                             {`#${service.data.id} - ${service.data.customer_name}`}
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
+                        <ActionsMenu actions={actions} />
                     </Box>
                     <Tabs
                         allowScrollButtonsMobile
@@ -173,7 +260,16 @@ export const Service = () => {
                     </Tabs>
                     <Divider />
                 </Box>
-                <Outlet context={[service, setRefresh, statusOptions]} />
+                <Outlet
+                    context={[service, setRefresh, statusOptions, items, files]}
+                />
+                <FormDialog
+                    onClose={() => setOpenChangeCustomerDialog(false)}
+                    open={openChangeCustomerDialog}
+                    formik={changeCustomerFormik}
+                    title="Change customer"
+                    fields={changeCustomerFormFields}
+                />
             </>
         );
     };

@@ -84,3 +84,93 @@ export async function createService(body) {
 
     return Promise.resolve(response);
 }
+
+export async function updateService(id, values) {
+    const response = await bpmServer
+        .api()
+        .url(`api/services`)
+        .query({ id })
+        .put(values)
+        .res((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
+export async function addItemToService(id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/services/items`)
+        .query({ id })
+        .post(body)
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function getServiceItems(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/services/items`)
+        .query({ id })
+        .get()
+        .json((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function deleteItemFromService(service_id, item_id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/services/items`)
+        .query({ service_id, item_id })
+        .delete()
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function updateServiceItem(service_id, item_id, body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/services/items`)
+        .query({ service_id, item_id })
+        .put(body)
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function addFileToService(id, file_id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/services/files`)
+        .query({ id })
+        .post({ file_id })
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function getServiceFiles(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/services/files`)
+        .query({ id })
+        .get()
+        .json((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function deleteFileFromService(service_id, file_id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/services/files`)
+        .query({ service_id, file_id })
+        .delete()
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}

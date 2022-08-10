@@ -89,7 +89,19 @@ import {
     deleteNotification,
     getNotifications,
 } from './notifications';
-import { createService, getService, getServices } from './services';
+import {
+    addFileToService,
+    addItemToService,
+    createService,
+    deleteFileFromService,
+    deleteItemFromService,
+    getService,
+    getServiceFiles,
+    getServiceItems,
+    getServices,
+    updateService,
+    updateServiceItem,
+} from './services';
 
 class API {}
 
@@ -199,5 +211,13 @@ API.prototype.deleteNotification = deleteNotification;
 API.prototype.getServices = getServices;
 API.prototype.createService = createService;
 API.prototype.getService = getService;
+API.prototype.updateService = updateService;
+API.prototype.addItemToService = addItemToService;
+API.prototype.getServiceItems = getServiceItems;
+API.prototype.deleteItemFromService = deleteItemFromService;
+API.prototype.updateServiceItem = updateServiceItem;
+API.prototype.addFileToService = addFileToService;
+API.prototype.getServiceFiles = getServiceFiles;
+API.prototype.deleteFileFromService = deleteFileFromService;
 
 export const bpmAPI = new API();
