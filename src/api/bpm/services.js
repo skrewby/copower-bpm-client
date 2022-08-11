@@ -174,3 +174,30 @@ export async function deleteFileFromService(service_id, file_id) {
 
     return Promise.resolve(response);
 }
+
+export async function createServiceLog(id, entry, action) {
+    const body = {
+        content: entry,
+        action: action,
+    };
+
+    const response = await bpmServer
+        .api()
+        .url(`api/services/logs`)
+        .query({ id })
+        .post(body)
+        .res((response) => response);
+
+    return Promise.resolve(response);
+}
+
+export async function getServiceLogs(id) {
+    const response = await bpmServer
+        .api()
+        .url(`api/services/logs`)
+        .query({ id })
+        .get()
+        .json((response) => response);
+
+    return Promise.resolve(response);
+}

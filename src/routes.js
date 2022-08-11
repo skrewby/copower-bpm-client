@@ -219,6 +219,13 @@ const ServiceSummary = Loadable(
         }))
     )
 );
+const ServiceLog = Loadable(
+    lazy(() =>
+        import('./containers/services/service-log').then((module) => ({
+            default: module.ServiceLog,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -348,6 +355,10 @@ const routes = [
                             {
                                 path: '',
                                 element: <ServiceSummary />,
+                            },
+                            {
+                                path: 'log',
+                                element: <ServiceLog />,
                             },
                         ],
                     },

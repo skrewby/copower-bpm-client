@@ -33,6 +33,7 @@ import { FormDialog } from '../../components/dialogs/form-dialog';
 import { TableCard } from '../../components/cards/table-card';
 import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
 import { UploadDialog } from '../../components/dialogs/upload-dialog';
+import { ServiceProgress } from './service-progress';
 
 export const ServiceSummary = () => {
     const [service, setRefresh, statusOptions, items, files] =
@@ -349,7 +350,7 @@ export const ServiceSummary = () => {
     };
 
     const renderContent = () => {
-        if (service.isLoading) {
+        if (service.isLoading || statusOptions.isLoading) {
             return (
                 <Box sx={{ py: 4 }}>
                     <Skeleton height={42} />
@@ -359,7 +360,7 @@ export const ServiceSummary = () => {
             );
         }
 
-        if (service.error) {
+        if (service.error || statusOptions.error) {
             return (
                 <Box sx={{ py: 4 }}>
                     <Box
@@ -466,7 +467,13 @@ export const ServiceSummary = () => {
                         sx={{ height: 'fit-content' }}
                         xs={12}
                     >
-                        <Grid item xs={12}></Grid>
+                        <Grid item xs={12}>
+                            <ServiceProgress
+                                service={service.data}
+                                statusOptions={statusOptions.data}
+                                refresh={setRefresh}
+                            />
+                        </Grid>
                     </Grid>
                 </Grid>
                 <FormDialog

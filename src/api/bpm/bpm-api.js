@@ -93,11 +93,13 @@ import {
     addFileToService,
     addItemToService,
     createService,
+    createServiceLog,
     deleteFileFromService,
     deleteItemFromService,
     getService,
     getServiceFiles,
     getServiceItems,
+    getServiceLogs,
     getServices,
     updateService,
     updateServiceItem,
@@ -219,5 +221,7 @@ API.prototype.updateServiceItem = updateServiceItem;
 API.prototype.addFileToService = addFileToService;
 API.prototype.getServiceFiles = getServiceFiles;
 API.prototype.deleteFileFromService = deleteFileFromService;
+API.prototype.getServiceLogs = getServiceLogs;
+API.prototype.createServiceLog = createServiceLog;
 
 export const bpmAPI = new API();
