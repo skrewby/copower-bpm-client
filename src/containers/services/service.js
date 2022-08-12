@@ -64,6 +64,7 @@ export const Service = () => {
 
         try {
             const result = await bpmAPI.getService(serviceID);
+            result.visit = result.visit ?? now;
 
             const statusOptionsAPI = await bpmAPI.getServiceStatusOptions();
             const statusOptionsResult = statusOptionsAPI.map((row) => {

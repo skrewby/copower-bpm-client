@@ -770,7 +770,7 @@ export const InstallSummary = () => {
                         <Grid item xs={12}>
                             <InfoCard
                                 onEdit={() => setOpenCustomerDialog(true)}
-                                title="Customer"
+                                title="Details"
                                 dataLeft={[
                                     {
                                         id: 1,

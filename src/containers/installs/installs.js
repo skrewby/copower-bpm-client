@@ -25,6 +25,7 @@ import { useMounted } from '../../hooks/use-mounted';
 import { DataTable } from '../../components/tables/data-table';
 import { Filter } from '../../components/tables/filter';
 import { Status } from '../../components/tables/status';
+import { useAuth } from '../../hooks/use-auth';
 
 const views = [
     {
@@ -139,6 +140,7 @@ export const Installs = () => {
     });
     const [installsState, setInstallsState] = useState({ isLoading: true });
     let navigate = useNavigate();
+    const { user } = useAuth();
 
     const getData = useCallback(async () => {
         setInstallsState(() => ({ isLoading: true }));
@@ -260,20 +262,24 @@ export const Installs = () => {
                         label={install.status.label}
                     />
                 </TableCell>
-                <TableCell>
-                    <Tooltip title="Install details">
-                        <IconButton
-                            color="primary"
-                            onClick={() => {
-                                navigate(`/bpm/installs/${install.install_id}`);
-                            }}
-                            size="large"
-                            sx={{ order: 3 }}
-                        >
-                            <ArrowForwardOutlinedIcon />
-                        </IconButton>
-                    </Tooltip>
-                </TableCell>
+                {user.role !== 'Sales' && (
+                    <TableCell>
+                        <Tooltip title="Install details">
+                            <IconButton
+                                color="primary"
+                                onClick={() => {
+                                    navigate(
+                                        `/bpm/installs/${install.install_id}`
+                                    );
+                                }}
+                                size="large"
+                                sx={{ order: 3 }}
+                            >
+                                <ArrowForwardOutlinedIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </TableCell>
+                )}
             </TableRow>
         );
     };

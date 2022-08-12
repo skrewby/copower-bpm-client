@@ -20,7 +20,7 @@ export async function getServices(options) {
     const services = data.map((service) => {
         service.create_date = parseISO(service.create_date);
         if (service.visit) {
-            service.visit = parseISO(service.vist);
+            service.visit = parseISO(service.visit);
         }
         return service;
     });

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
@@ -59,6 +59,8 @@ export const InstallFinance = () => {
         handleOpenDeleteExtraDialog,
         handleCloseDeleteExtraDialog,
     ] = useDialog();
+
+    let navigate = useNavigate();
 
     const getData = useCallback(async () => {
         setStatusOptions([]);
@@ -995,7 +997,7 @@ export const InstallFinance = () => {
                         <Grid item xs={12}>
                             <InfoCard
                                 onEdit={() => setOpenPaymentsDialog(true)}
-                                title="Payments"
+                                title="Details"
                                 dataLeft={[
                                     {
                                         id: 1,
@@ -1025,6 +1027,11 @@ export const InstallFinance = () => {
                                               )
                                             : 'Awaiting Final Payment',
                                     },
+                                    {
+                                        id: 3,
+                                        label: 'Sold By',
+                                        value: installState.data.sold_by.name,
+                                    },
                                 ]}
                                 dataRight={[
                                     {
@@ -1034,7 +1041,7 @@ export const InstallFinance = () => {
                                             .deposit_paid
                                             ? installState.data.finance
                                                   .deposit_amount
-                                            : '',
+                                            : '-',
                                     },
                                     {
                                         id: 2,
@@ -1043,7 +1050,26 @@ export const InstallFinance = () => {
                                             .invoice_paid
                                             ? installState.data.finance
                                                   .invoice_amount
-                                            : '',
+                                            : '-',
+                                    },
+                                    {
+                                        id: 3,
+                                        label: 'Lead',
+                                        value: installState.data.lead_id
+                                            ? 'Go to lead'
+                                            : '-',
+                                        onClick: () => {
+                                            if (installState.data.lead_id) {
+                                                navigate(
+                                                    `/bpm/leads/${installState.data.lead_id}`
+                                                );
+                                            } else {
+                                                toast.error(
+                                                    'Install is not linked to a lead!'
+                                                );
+                                            }
+                                        },
+                                        active: installState.data.lead_id,
                                     },
                                 ]}
                             />

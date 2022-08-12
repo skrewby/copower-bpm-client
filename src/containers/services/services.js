@@ -251,7 +251,7 @@ export const Services = () => {
             company_abn: Yup.string().max(255),
             email: Yup.string().email('Must be a valid email').max(255),
             phone: Yup.string().max(255),
-            address: Yup.string().max(255),
+            address: Yup.string().max(255).required('Must enter an address'),
             address_id: Yup.string().max(255),
             comment: Yup.string().max(255).nullable(),
         }),
@@ -358,17 +358,6 @@ export const Services = () => {
         {
             id: 6,
             variant: 'Input',
-            width: 12,
-            touched: addServiceFormik.touched.address,
-            errors: addServiceFormik.errors.address,
-            value: addServiceFormik.values.address,
-            label: 'Address',
-            name: 'address',
-            hidden: !(addServiceFormik.values.customer_id === -1),
-        },
-        {
-            id: 7,
-            variant: 'Input',
             width: 6,
             touched: addServiceFormik.touched.email,
             errors: addServiceFormik.errors.email,
@@ -379,7 +368,7 @@ export const Services = () => {
             hidden: !(addServiceFormik.values.customer_id === -1),
         },
         {
-            id: 8,
+            id: 7,
             variant: 'Input',
             width: 6,
             touched: addServiceFormik.touched.phone,
@@ -390,7 +379,7 @@ export const Services = () => {
             hidden: !(addServiceFormik.values.customer_id === -1),
         },
         {
-            id: 9,
+            id: 8,
             variant: 'Input',
             width: 12,
             touched: addServiceFormik.touched.comment,
@@ -398,6 +387,16 @@ export const Services = () => {
             value: addServiceFormik.values.comment,
             label: 'Comment',
             name: 'comment',
+        },
+        {
+            id: 9,
+            variant: 'Input',
+            width: 12,
+            touched: addServiceFormik.touched.address,
+            errors: addServiceFormik.errors.address,
+            value: addServiceFormik.values.address,
+            label: 'Address',
+            name: 'address',
         },
     ];
 
@@ -414,7 +413,9 @@ export const Services = () => {
                     {format(service.create_date, 'dd MMM yyyy')}
                 </TableCell>
                 <TableCell>
-                    {service.visit ? format(service.visit, 'dd MMM yyyy') : '-'}
+                    {service.visit && service.visit_scheduled
+                        ? format(service.visit, 'dd MMM yyyy')
+                        : '-'}
                 </TableCell>
                 <TableCell>
                     <Status

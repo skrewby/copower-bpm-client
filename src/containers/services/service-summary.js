@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useOutletContext } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -8,8 +8,6 @@ import toast from 'react-hot-toast';
 // Material UI
 import {
     Box,
-    Button,
-    ButtonGroup,
     Container,
     Divider,
     Grid,
@@ -22,7 +20,6 @@ import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
 // Local imports
 import { bpmAPI } from '../../api/bpm/bpm-api';
-import { useMounted } from '../../hooks/use-mounted';
 import { useDialog } from '../../hooks/use-dialog';
 
 // Containers
@@ -34,6 +31,7 @@ import { TableCard } from '../../components/cards/table-card';
 import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
 import { UploadDialog } from '../../components/dialogs/upload-dialog';
 import { ServiceProgress } from './service-progress';
+import { format, parseISO } from 'date-fns';
 
 export const ServiceSummary = () => {
     const [service, setRefresh, statusOptions, items, files] =
@@ -41,6 +39,7 @@ export const ServiceSummary = () => {
 
     const [openChangeAddressDialog, setOpenChangeAddressDialog] =
         useState(false);
+    const [openEditServiceDialog, setOpenEditServiceDialog] = useState(false);
     const [openEditItemDialog, setOpenEditItemDialog] = useState(false);
     const [openAddItemDialog, setOpenAddItemDialog] = useState(false);
     const [openAddFileDialog, setOpenAddFileDialog] = useState(false);
@@ -59,11 +58,13 @@ export const ServiceSummary = () => {
         handleCloseDeleteFileDialog,
     ] = useDialog();
 
+    const now = new Date();
+
     const changeAddressFormik = useFormik({
         enableReinitialize: true,
         validateOnChange: false,
         initialValues: {
-            address: service.address || '',
+            address: service.data.address || '',
             submit: null,
         },
         validationSchema: Yup.object().shape({
@@ -349,6 +350,84 @@ export const ServiceSummary = () => {
         );
     };
 
+    const editServiceFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            visit_scheduled: service.data?.visit_scheduled || false,
+            visit: parseISO(service.data.visit) || now,
+            paid: service.data?.paid || false,
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            visit_scheduled: Yup.boolean(),
+            visit: Yup.date(),
+            paid: Yup.boolean(),
+        }),
+        onSubmit: async (form_values, helpers) => {
+            try {
+                // Remove empty strings and null values
+                const values = Object.fromEntries(
+                    Object.entries(form_values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
+
+                const res = await bpmAPI
+                    .updateService(service.data.id, values)
+                    .then(setRefresh(true));
+                setOpenEditServiceDialog(false);
+                if (res.status === 201) {
+                    toast.success(`Success`);
+                } else {
+                    toast.error(`Something went wrong`);
+                }
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const editServiceFormFields = [
+        {
+            id: 1,
+            variant: 'Control',
+            label: 'Visit Booked',
+            name: 'visit_scheduled',
+            touched: editServiceFormik.touched.visit_scheduled,
+            errors: editServiceFormik.errors.visit_scheduled,
+            value: editServiceFormik.values.visit_scheduled,
+            width: 12,
+        },
+        {
+            id: 2,
+            variant: 'DateTime',
+            label: 'Visit Date',
+            name: 'visit',
+            touched: editServiceFormik.touched.visit,
+            errors: editServiceFormik.errors.visit,
+            value: editServiceFormik.values.visit,
+            hidden: !editServiceFormik.values.visit_scheduled,
+            width: 6,
+        },
+        {
+            id: 3,
+            variant: 'Control',
+            label: 'Paid',
+            name: 'paid',
+            touched: editServiceFormik.touched.paid,
+            errors: editServiceFormik.errors.paid,
+            value: editServiceFormik.values.paid,
+            width: 12,
+        },
+    ];
+
     const renderContent = () => {
         if (service.isLoading || statusOptions.isLoading) {
             return (
@@ -437,6 +516,33 @@ export const ServiceSummary = () => {
                             />
                         </Grid>
                         <Grid item xs={12}>
+                            <InfoCard
+                                onEdit={() => setOpenEditServiceDialog(true)}
+                                title="Details"
+                                dataLeft={[
+                                    {
+                                        id: 1,
+                                        label: 'Visit Date',
+                                        value: service.data.visit_scheduled
+                                            ? format(
+                                                  parseISO(service.data.visit),
+                                                  'dd MMM yyyy - p'
+                                              )
+                                            : 'No visit scheduled',
+                                    },
+                                ]}
+                                dataRight={[
+                                    {
+                                        id: 1,
+                                        label: 'Payment',
+                                        value: service.data.paid
+                                            ? 'Paid'
+                                            : 'Not paid',
+                                    },
+                                ]}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
                             <TableCard
                                 data={items}
                                 title="Items"
@@ -482,6 +588,13 @@ export const ServiceSummary = () => {
                     formik={changeAddressFormik}
                     title="Change Address"
                     fields={changeAddressFormFields}
+                />
+                <FormDialog
+                    onClose={() => setOpenEditServiceDialog(false)}
+                    open={openEditServiceDialog}
+                    formik={editServiceFormik}
+                    title="Edit Service"
+                    fields={editServiceFormFields}
                 />
                 <ConfirmationDialog
                     message="Are you sure you want to delete this item? This can't be undone."

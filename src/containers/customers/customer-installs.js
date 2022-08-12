@@ -25,12 +25,14 @@ import { useMounted } from '../../hooks/use-mounted';
 import { TableCard } from '../../components/cards/table-card';
 import { format, parseISO } from 'date-fns';
 import { Status } from '../../components/tables/status';
+import { useAuth } from '../../hooks/use-auth';
 
 export const CustomerInstalls = () => {
     const { customerID } = useParams();
     const mounted = useMounted();
     const [installs, setInstalls] = useState({ isLoading: true });
     let navigate = useNavigate();
+    const { user } = useAuth();
 
     const getData = useCallback(async () => {
         setInstalls(() => ({ isLoading: true }));
@@ -78,20 +80,22 @@ export const CustomerInstalls = () => {
                         ? format(parseISO(item.install_date), 'dd MMM yyyy')
                         : 'No Date'}
                 </TableCell>
-                <TableCell>
-                    <Tooltip title="Install details">
-                        <IconButton
-                            color="primary"
-                            onClick={() => {
-                                navigate(`/bpm/installs/${item.id}`);
-                            }}
-                            size="large"
-                            sx={{ order: 3 }}
-                        >
-                            <ArrowForwardOutlinedIcon />
-                        </IconButton>
-                    </Tooltip>
-                </TableCell>
+                {user.role !== 'Sales' && (
+                    <TableCell>
+                        <Tooltip title="Install details">
+                            <IconButton
+                                color="primary"
+                                onClick={() => {
+                                    navigate(`/bpm/installs/${item.id}`);
+                                }}
+                                size="large"
+                                sx={{ order: 3 }}
+                            >
+                                <ArrowForwardOutlinedIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </TableCell>
+                )}
             </TableRow>
         );
     };

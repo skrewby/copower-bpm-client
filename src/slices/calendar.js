@@ -85,7 +85,34 @@ export const getEvents = () => async (dispatch) => {
             end: addHours(parseISO(install.schedule.date), 6).toISOString(),
             extendedProps: {
                 install: true,
+                service: false,
                 install_id: install.install_id,
+            },
+        };
+    });
+    const services = await bpmServer
+        .api()
+        .url('api/services')
+        .get()
+        .json((response) => {
+            return response;
+        });
+    const scheduledServices = services.filter(
+        (service) => service.visit_scheduled
+    );
+    const serviceSchedules = scheduledServices.map((service) => {
+        return {
+            id: generateResourceId(),
+            allDay: false,
+            title: `${service.customer_first_name} ${service.customer_last_name}`,
+            description: service.address,
+            start: service.visit,
+            color: '#bd428b',
+            end: addHours(parseISO(service.visit), 1).toISOString(),
+            extendedProps: {
+                install: false,
+                service: true,
+                service_id: service.id,
             },
         };
     });
@@ -98,10 +125,18 @@ export const getEvents = () => async (dispatch) => {
             description: event.description,
             start: event.startdate,
             end: event.enddate,
+            extendedProps: {
+                install: false,
+                service: false,
+            },
         };
     });
 
-    dispatch(slice.actions.getEvents(events.concat(installSchedules)));
+    dispatch(
+        slice.actions.getEvents(
+            events.concat(installSchedules, serviceSchedules)
+        )
+    );
 };
 
 export const createEvent = (createData) => async (dispatch) => {
@@ -116,7 +151,7 @@ export const selectEvent = (eventId) => async (dispatch) => {
 export const updateEvent = (eventId, update) => async (dispatch) => {
     if (update.extendedProps.install) {
         await bpmAPI.updateInstall(update.extendedProps.install_id, {
-            schedule: update.start,
+            schedule: update.startdate,
         });
     } else {
         const data = await bpmAPI.updateEvent(eventId, update);

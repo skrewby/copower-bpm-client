@@ -59,13 +59,6 @@ export const InstallLog = () => {
     const handleCreateLog = async (content) => {
         setRefresh(true);
         bpmAPI.createInstallLog(installID, content, false);
-        bpmAPI.createNotification({
-            icon: 'comment',
-            title: `New entry added to log`,
-            details: `${installState.data.customer.name}: ${installState.data.property.address}`,
-            user: `${installState.data.sold_by.id}`,
-            href: `/bpm/installs/${installID}`,
-        });
         const roles = await bpmAPI.getValidRoles();
         bpmAPI.createNotification({
             icon: 'comment',

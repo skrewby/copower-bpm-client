@@ -9,7 +9,6 @@ import { bpmAPI } from '../../api/bpm/bpm-api';
 // Components
 import { StatusSelect } from '../../components/timeline/status-select';
 import { StatusTimeline } from '../../components/timeline/status-timeline';
-import { StatusDisplay } from '../../components/timeline/status-display';
 
 /**
  * Container to be used within other containers therefore props need to be passed to it
