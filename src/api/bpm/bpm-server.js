@@ -3,9 +3,7 @@ import wretch from 'wretch';
 class Server {
     constructor() {
         this.observer = [];
-        this.serverRemote = process.env.REACT_APP_SERVER_URL;
-        this.serverLocal = 'http://localhost:5000/';
-        this.server_url = this.serverRemote ?? this.serverLocal;
+        this.server_url = process.env.REACT_APP_SERVER_URL;
     }
 
     subscribe(item) {
