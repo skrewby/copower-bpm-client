@@ -31,6 +31,7 @@ import { FormDialog } from '../../components/dialogs/form-dialog';
 import { InstallProgress } from './install-progress';
 import { TableCard } from '../../components/cards/table-card';
 import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
+import { UploadDialog } from '../../components/dialogs/upload-dialog';
 
 export const InstallSummary = () => {
     const [installState, setRefresh] = useOutletContext();
@@ -43,6 +44,12 @@ export const InstallSummary = () => {
     const [openAddSystemItemDialog, setOpenAddSystemItemDialog] =
         useState(false);
     const [openEditSystemDialog, setOpenEditSystemDialog] = useState(false);
+    const [openAddFileDialog, setOpenAddFileDialog] = useState(false);
+    const [
+        deleteFileDialogOpen,
+        handleOpenDeleteFileDialog,
+        handleCloseDeleteFileDialog,
+    ] = useDialog();
 
     const [phaseOptions, setPhaseOptions] = useState([]);
     const [existingSystemOptions, setExistingSystemOptions] = useState([]);
@@ -52,8 +59,10 @@ export const InstallSummary = () => {
     const [statusOptions, setStatusOptions] = useState([]);
 
     const [systemItems, setSystemItems] = useState([]);
+    const [files, setFiles] = useState([]);
     // Currently selected item in the system card
     const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
     const [
         deleteItemDialogOpen,
         handleOpenDeleteItemDialog,
@@ -68,6 +77,7 @@ export const InstallSummary = () => {
         setRoofPitchOptions([]);
         setStatusOptions([]);
         setSystemItems([]);
+        setFiles([]);
 
         try {
             const phasesAPI = await bpmAPI.getPhaseOptions();
@@ -118,6 +128,9 @@ export const InstallSummary = () => {
             const systemResult = await bpmAPI.getInstallSystemItems(
                 installState.data.install_id
             );
+            const fileResult = await bpmAPI.getInstallFiles(
+                installState.data.install_id
+            );
 
             if (mounted.current) {
                 setPhaseOptions(phasesResult);
@@ -127,6 +140,7 @@ export const InstallSummary = () => {
                 setRoofPitchOptions(roofPitchResult);
                 setStatusOptions(statusOptionsResult);
                 setSystemItems(systemResult);
+                setFiles(fileResult);
             }
         } catch (err) {
             console.error(err);
@@ -720,6 +734,70 @@ export const InstallSummary = () => {
         );
     };
 
+    const onFileUpload = async (file, id) => {
+        await bpmAPI.addFileToInstall(installState.data.install_id, id);
+    };
+
+    const onFileDelete = (pondID) => {};
+
+    const handleDeleteFile = async () => {
+        await bpmAPI.deleteFileFromInstall(
+            installState.data.install_id,
+            selectedFile.file_id
+        );
+        setRefresh(true);
+    };
+
+    const AddFileField = {
+        id: 1,
+        width: 12,
+        label: '',
+        multiple: true,
+        onUpload: onFileUpload,
+        onDelete: onFileDelete,
+    };
+
+    const fileRows = (item) => {
+        return (
+            <TableRow key={item.id}>
+                <TableCell>{item.file_name}</TableCell>
+                <TableCell sx={{ width: 135 }}>
+                    <Box sx={{ display: 'flex' }}>
+                        <Typography
+                            color="primary"
+                            sx={{ cursor: 'pointer' }}
+                            onClick={() => {
+                                bpmAPI.downloadFile(
+                                    item.file_id,
+                                    item.file_name
+                                );
+                            }}
+                            variant="subtitle2"
+                        >
+                            Download
+                        </Typography>
+                        <Divider
+                            flexItem
+                            orientation="vertical"
+                            sx={{ mx: 2 }}
+                        />
+                        <Typography
+                            color="error"
+                            onClick={() => {
+                                setSelectedFile(item);
+                                handleOpenDeleteFileDialog();
+                            }}
+                            sx={{ cursor: 'pointer' }}
+                            variant="subtitle2"
+                        >
+                            Delete
+                        </Typography>
+                    </Box>
+                </TableCell>
+            </TableRow>
+        );
+    };
+
     const renderContent = () => {
         if (installState.isLoading) {
             return (
@@ -893,6 +971,16 @@ export const InstallSummary = () => {
                                 ]}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <TableCard
+                                data={files}
+                                title="Files"
+                                columns={['File', 'Actions']}
+                                rows={fileRows}
+                                buttonLabel="Add Files"
+                                buttonOnClick={() => setOpenAddFileDialog(true)}
+                            />
+                        </Grid>
                     </Grid>
                     <Grid
                         container
@@ -961,6 +1049,23 @@ export const InstallSummary = () => {
                     formik={editSystemFormik}
                     title="Edit System"
                     fields={editSystemFormFields}
+                />
+                <UploadDialog
+                    onClose={() => {
+                        setRefresh(true);
+                        setOpenAddFileDialog(false);
+                    }}
+                    open={openAddFileDialog}
+                    title="Upload Files"
+                    field={AddFileField}
+                />
+                <ConfirmationDialog
+                    message="Are you sure you want to delete this file? This can't be undone."
+                    onCancel={handleCloseDeleteFileDialog}
+                    onConfirm={handleDeleteFile}
+                    open={deleteFileDialogOpen}
+                    title="Delete file"
+                    variant="error"
                 />
             </>
         );

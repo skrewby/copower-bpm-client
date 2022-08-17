@@ -158,6 +158,10 @@ export const LeadProgress = (props) => {
                     for (const item of systemItems) {
                         await bpmAPI.addItemToInstall(res.id, item);
                     }
+                    const files = await bpmAPI.getInstallFiles(res.id);
+                    for (const file of files) {
+                        await bpmAPI.addFileToInstall(res.id, file);
+                    }
                     const leadExtras = await bpmAPI.getLeadExtras(lead.lead_id);
                     for (const extra of leadExtras) {
                         console.log(extra);
