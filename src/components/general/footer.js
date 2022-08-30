@@ -21,7 +21,7 @@ const links = [
 export const Footer = () => (
     <div>
         <Container
-            maxWidth="xl"
+            maxWidth={false}
             sx={{
                 display: 'flex',
                 backgroundColor: 'background.default',
