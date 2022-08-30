@@ -35,17 +35,12 @@ export const CustomerSummary = () => {
             submit: null,
         },
         validationSchema: Yup.object().shape({
-            first_name: Yup.string()
-                .max(255)
-                .required('First name is required'),
-            last_name: Yup.string().max(255).required('Last name is required'),
+            first_name: Yup.string().max(255),
+            last_name: Yup.string().max(255),
             company_name: Yup.string().max(255),
             company_abn: Yup.string().max(255),
-            email: Yup.string()
-                .email('Must be a valid email')
-                .max(255)
-                .required('Email is required'),
-            phone: Yup.string().max(255).required('Contact number is required'),
+            email: Yup.string().email('Must be a valid email').max(255),
+            phone: Yup.string().max(255),
         }),
         onSubmit: async (values, helpers) => {
             try {
