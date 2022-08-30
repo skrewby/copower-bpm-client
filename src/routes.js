@@ -170,6 +170,13 @@ const CustomerInstalls = Loadable(
         }))
     )
 );
+const CustomerServices = Loadable(
+    lazy(() =>
+        import('./containers/customers/customer-services').then((module) => ({
+            default: module.CustomerServices,
+        }))
+    )
+);
 const Account = Loadable(
     lazy(() =>
         import('./containers/account/account').then((module) => ({
@@ -350,6 +357,10 @@ const routes = [
                             {
                                 path: 'installs',
                                 element: <CustomerInstalls />,
+                            },
+                            {
+                                path: 'services',
+                                element: <CustomerServices />,
                             },
                         ],
                     },

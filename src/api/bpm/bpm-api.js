@@ -68,6 +68,7 @@ import {
     getCustomerLogs,
     searchCustomer,
     getCustomerInstalls,
+    getCustomerServices,
 } from './customers';
 import {
     addFileToInstaller,
@@ -169,6 +170,7 @@ API.prototype.createCustomerLog = createCustomerLog;
 API.prototype.getCustomerLogs = getCustomerLogs;
 API.prototype.searchCustomer = searchCustomer;
 API.prototype.getCustomerInstalls = getCustomerInstalls;
+API.prototype.getCustomerServices = getCustomerServices;
 
 // Users
 API.prototype.getUsers = getUsers;
