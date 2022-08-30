@@ -266,6 +266,12 @@ export const Services = () => {
                 if (values.customer_id === -1) {
                     const customer = await bpmAPI.createCustomer(values);
                     values.customer_id = customer.id;
+                } else {
+                    const customer = await bpmAPI.getCustomer(
+                        values.customer_id
+                    );
+                    values.first_name = customer.first_name;
+                    values.last_name = customer.last_name;
                 }
                 await bpmAPI
                     .createService(values)
@@ -444,7 +450,7 @@ export const Services = () => {
     return (
         <>
             <Helmet>
-                <title>Services | Copower BPM</title>
+                <title>Services | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

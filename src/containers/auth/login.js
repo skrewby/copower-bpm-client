@@ -61,7 +61,7 @@ export const Login = () => {
     return (
         <>
             <Helmet>
-                <title>Login | Copower BPM</title>
+                <title>Login | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

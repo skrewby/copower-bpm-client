@@ -78,7 +78,7 @@ export async function createService(body) {
         .api()
         .url(`api/services`)
         .post(body)
-        .res((response) => {
+        .json((response) => {
             return response;
         });
 

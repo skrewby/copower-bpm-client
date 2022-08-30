@@ -518,7 +518,7 @@ export const Leads = () => {
     return (
         <>
             <Helmet>
-                <title>Leads | Copower BPM</title>
+                <title>Leads | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

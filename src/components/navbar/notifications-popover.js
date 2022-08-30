@@ -151,16 +151,7 @@ export const NotificationsPopover = (props) => {
                                         onClick={() => {
                                             if (notification.href) {
                                                 handleClose();
-                                                setNotifications(
-                                                    notifications.filter(
-                                                        (item) =>
-                                                            item.id !==
-                                                            notification.id
-                                                    )
-                                                );
-                                                bpmAPI.deleteNotification(
-                                                    notification.id
-                                                );
+                                                // TODO: Set notification to read
                                                 navigate(notification.href);
                                             }
                                         }}

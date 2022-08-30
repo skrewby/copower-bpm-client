@@ -68,7 +68,15 @@ import {
     searchCustomer,
     getCustomerInstalls,
 } from './customers';
-import { createInstaller, getInstallers, updateInstaller } from './installers';
+import {
+    addFileToInstaller,
+    createInstaller,
+    deleteFileFromInstaller,
+    getInstaller,
+    getInstallerFiles,
+    getInstallers,
+    updateInstaller,
+} from './installers';
 import { getEvents, createEvent, updateEvent, deleteEvent } from './events';
 import {
     createStockItem,
@@ -183,6 +191,10 @@ API.prototype.getRoofPitchOptions = getRoofPitchOptions;
 API.prototype.getInstallers = getInstallers;
 API.prototype.updateInstaller = updateInstaller;
 API.prototype.createInstaller = createInstaller;
+API.prototype.getInstaller = getInstaller;
+API.prototype.addFileToInstaller = addFileToInstaller;
+API.prototype.getInstallerFiles = getInstallerFiles;
+API.prototype.deleteFileFromInstaller = deleteFileFromInstaller;
 
 // Events
 API.prototype.getEvents = getEvents;

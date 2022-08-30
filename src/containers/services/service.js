@@ -278,7 +278,7 @@ export const Service = () => {
     return (
         <>
             <Helmet>
-                <title>Service | Copower BPM</title>
+                <title>Service | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

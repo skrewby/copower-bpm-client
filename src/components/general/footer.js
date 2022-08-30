@@ -21,14 +21,15 @@ const links = [
 export const Footer = () => (
     <div>
         <Container
-            maxWidth="lg"
+            maxWidth="xl"
             sx={{
                 display: 'flex',
+                backgroundColor: 'background.default',
                 flexDirection: {
                     sm: 'row',
                     xs: 'column',
                 },
-                py: 5,
+                py: 3,
                 '& a': {
                     mt: {
                         sm: 0,
@@ -44,7 +45,7 @@ export const Footer = () => (
             }}
         >
             <Typography color="textSecondary" variant="caption">
-                © 2022 Copower
+                © 2022 Space Solar
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
             {links.map((link) => (

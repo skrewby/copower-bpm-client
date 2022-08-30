@@ -287,7 +287,7 @@ export const Installs = () => {
     return (
         <>
             <Helmet>
-                <title>Installs | Copower BPM</title>
+                <title>Installs | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

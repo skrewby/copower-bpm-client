@@ -1,4 +1,4 @@
-# Copower BPM Client
+# Solar BPM Client
 
 ## Updating Docker Image
 

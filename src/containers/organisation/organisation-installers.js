@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -32,9 +33,13 @@ import { useDialog } from '../../hooks/use-dialog';
 // Components
 import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
 import { FormDialog } from '../../components/dialogs/form-dialog';
+import { format, parseISO } from 'date-fns';
+
+const now = new Date();
 
 export const OrganisationInstallers = () => {
     const mounted = useMounted();
+    let navigate = useNavigate();
     const [installersState, setInstallersState] = useState({ isLoading: true });
 
     const [openAdd, setOpenAdd] = useState(false);
@@ -98,6 +103,9 @@ export const OrganisationInstallers = () => {
             phone: '',
             accreditation: '',
             licence: '',
+            state: '',
+            expiry: now,
+            address: '',
             submit: null,
         },
         validationSchema: Yup.object().shape({
@@ -111,6 +119,9 @@ export const OrganisationInstallers = () => {
                 .max(255)
                 .required('Accreditation is required'),
             licence: Yup.string().max(255).required('Licence is required'),
+            state: Yup.string().nullable(),
+            address: Yup.string().nullable(),
+            expiry: Yup.date().nullable(),
         }),
         onSubmit: async (values, helpers) => {
             try {
@@ -163,6 +174,16 @@ export const OrganisationInstallers = () => {
         {
             id: 5,
             variant: 'Input',
+            width: 12,
+            touched: addMemberFormik.touched.address,
+            errors: addMemberFormik.errors.address,
+            value: addMemberFormik.values.address,
+            label: 'Address',
+            name: 'address',
+        },
+        {
+            id: 6,
+            variant: 'Input',
             width: 6,
             touched: addMemberFormik.touched.accreditation,
             errors: addMemberFormik.errors.accreditation,
@@ -171,7 +192,7 @@ export const OrganisationInstallers = () => {
             name: 'accreditation',
         },
         {
-            id: 6,
+            id: 7,
             variant: 'Input',
             width: 6,
             touched: addMemberFormik.touched.licence,
@@ -179,6 +200,26 @@ export const OrganisationInstallers = () => {
             value: addMemberFormik.values.licence,
             label: 'Licence',
             name: 'licence',
+        },
+        {
+            id: 8,
+            variant: 'Input',
+            width: 6,
+            touched: addMemberFormik.touched.state,
+            errors: addMemberFormik.errors.state,
+            value: addMemberFormik.values.state,
+            label: 'State',
+            name: 'state',
+        },
+        {
+            id: 9,
+            variant: 'Date',
+            label: 'Expiry Date',
+            name: 'expiry',
+            touched: addMemberFormik.touched.expiry,
+            errors: addMemberFormik.errors.expiry,
+            value: addMemberFormik.values.expiry,
+            width: 6,
         },
     ];
 
@@ -191,6 +232,9 @@ export const OrganisationInstallers = () => {
             phone: userEdit.phone,
             accreditation: userEdit.accreditation,
             licence: userEdit.licence,
+            state: userEdit.state || '',
+            expiry: userEdit.expiry || null,
+            address: userEdit.address || '',
             submit: null,
         },
         validationSchema: Yup.object().shape({
@@ -204,6 +248,9 @@ export const OrganisationInstallers = () => {
                 .max(255)
                 .required('Accreditation is required'),
             licence: Yup.string().max(255).required('Licence is required'),
+            state: Yup.string().nullable(),
+            address: Yup.string().nullable(),
+            expiry: Yup.date().nullable(),
         }),
         onSubmit: async (values, helpers) => {
             try {
@@ -256,6 +303,16 @@ export const OrganisationInstallers = () => {
         {
             id: 5,
             variant: 'Input',
+            width: 12,
+            touched: editMemberFormik.touched.address,
+            errors: editMemberFormik.errors.address,
+            value: editMemberFormik.values.address,
+            label: 'Address',
+            name: 'address',
+        },
+        {
+            id: 6,
+            variant: 'Input',
             width: 6,
             touched: editMemberFormik.touched.accreditation,
             errors: editMemberFormik.errors.accreditation,
@@ -264,7 +321,7 @@ export const OrganisationInstallers = () => {
             name: 'accreditation',
         },
         {
-            id: 6,
+            id: 7,
             variant: 'Input',
             width: 6,
             touched: editMemberFormik.touched.licence,
@@ -272,6 +329,26 @@ export const OrganisationInstallers = () => {
             value: editMemberFormik.values.licence,
             label: 'Licence',
             name: 'licence',
+        },
+        {
+            id: 8,
+            variant: 'Input',
+            width: 6,
+            touched: editMemberFormik.touched.state,
+            errors: editMemberFormik.errors.state,
+            value: editMemberFormik.values.state,
+            label: 'State',
+            name: 'state',
+        },
+        {
+            id: 9,
+            variant: 'Date',
+            label: 'Expiry Date',
+            name: 'expiry',
+            touched: editMemberFormik.touched.expiry,
+            errors: editMemberFormik.errors.expiry,
+            value: editMemberFormik.values.expiry,
+            width: 6,
         },
     ];
 
@@ -337,6 +414,8 @@ export const OrganisationInstallers = () => {
                                 <TableCell>Phone</TableCell>
                                 <TableCell>Accreditation</TableCell>
                                 <TableCell>Licence</TableCell>
+                                <TableCell>State</TableCell>
+                                <TableCell>Expiry</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -400,8 +479,46 @@ export const OrganisationInstallers = () => {
                                         >
                                             {member.licence}
                                         </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                color: textColour,
+                                            }}
+                                        >
+                                            {member.state}
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                color: textColour,
+                                            }}
+                                        >
+                                            {member.expiry
+                                                ? format(
+                                                      parseISO(member.expiry),
+                                                      'dd MMM yyyy'
+                                                  )
+                                                : ''}
+                                        </TableCell>
                                         <TableCell sx={{ width: 145 }}>
                                             <Box sx={{ display: 'flex' }}>
+                                                <Typography
+                                                    color="primary"
+                                                    onClick={() => {
+                                                        navigate(
+                                                            `/bpm/installer/${member.installer_id}`
+                                                        );
+                                                    }}
+                                                    sx={{
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    variant="subtitle2"
+                                                >
+                                                    View
+                                                </Typography>
+                                                <Divider
+                                                    flexItem
+                                                    orientation="vertical"
+                                                    sx={{ mx: 2 }}
+                                                />
                                                 <Typography
                                                     color="primary"
                                                     onClick={() => {
@@ -500,7 +617,7 @@ export const OrganisationInstallers = () => {
     return (
         <>
             <Helmet>
-                <title>Organisation | Copower BPM</title>
+                <title>Organisation | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

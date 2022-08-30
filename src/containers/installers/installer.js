@@ -5,8 +5,9 @@ import {
     useLocation,
     useParams,
 } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
+
+// Material UI
 import {
     Box,
     Button,
@@ -17,107 +18,66 @@ import {
     Tabs,
     Divider,
 } from '@mui/material';
-import { bpmAPI } from '../../api/bpm/bpm-api';
-import { ActionsMenu } from '../../components/actions-menu';
-import { useMounted } from '../../hooks/use-mounted';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 
-const now = new Date().toISOString();
+// Internal imports
+import { bpmAPI } from '../../api/bpm/bpm-api';
+import { useMounted } from '../../hooks/use-mounted';
 
-export const Install = () => {
-    let { installID } = useParams();
+export const Installer = () => {
+    let { installerID } = useParams();
     const mounted = useMounted();
-    const [installState, setInstallState] = useState({ isLoading: true });
+    const [installerState, setInstallerState] = useState({ isLoading: true });
+    const [files, setFiles] = useState([]);
     const [refresh, setRefresh] = useState(false);
     const location = useLocation();
 
     const tabs = [
         {
-            href: `/bpm/installs/${installID}`,
+            href: `/bpm/installer/${installerID}`,
             label: 'Summary',
         },
         {
-            href: `/bpm/installs/${installID}/meter`,
-            label: 'Meter',
-        },
-        {
-            href: `/bpm/installs/${installID}/schedule`,
-            label: 'Schedule',
-        },
-        {
-            href: `/bpm/installs/${installID}/finance`,
-            label: 'Finance',
-        },
-        {
-            href: `/bpm/installs/${installID}/log`,
-            label: 'Log',
+            href: `/bpm/installer/${installerID}/installs`,
+            label: 'Installs',
         },
     ];
 
-    const getInstall = useCallback(async () => {
-        setInstallState(() => ({ isLoading: true }));
+    const getInstaller = useCallback(async () => {
+        setInstallerState(() => ({ isLoading: true }));
+        setFiles([]);
 
         try {
-            const result = await bpmAPI.getInstall(installID);
-            // Need to set null dates to now in order to avoid infinite loops due to the dialogs
-            // We did not make the default in the database to current_timestamp as we don't want
-            // the default to be a really old date in case the install was created a few months
-            // prior
-            result.ptc.form_sent_date = result.ptc.form_sent_date ?? now;
-            result.ptc.approval_date = result.ptc.approval_date ?? now;
-            result.retailer_notice.date = result.retailer_notice.date ?? now;
-            result.finance.deposit_paid_date =
-                result.finance.deposit_paid_date ?? now;
-            result.finance.invoice_paid_date =
-                result.finance.invoice_paid_date ?? now;
-            result.finance.rebate_expiry = result.finance.rebate_expiry ?? now;
-            result.schedule.date = result.schedule.date ?? now;
-            result.inspection.booking_date =
-                result.inspection.booking_date ?? now;
-            result.inspection.completed_date =
-                result.inspection.completed_date ?? now;
-            result.review.date = result.review.date ?? now;
-            result.stc.submission_date = result.stc.submission_date ?? now;
-            result.stc.approval_date = result.stc.approval_date ?? now;
+            const result = await bpmAPI.getInstaller(installerID);
+            const filesResult = await bpmAPI.getInstallerFiles(installerID);
 
             if (mounted.current) {
-                setInstallState(() => ({
+                setInstallerState(() => ({
                     isLoading: false,
                     data: result,
                 }));
+                setFiles(filesResult);
             }
         } catch (err) {
             console.error(err);
 
             if (mounted.current) {
-                setInstallState(() => ({
+                setInstallerState(() => ({
                     isLoading: false,
                     error: err.message,
                 }));
             }
         }
-    }, [installID, mounted]);
+    }, [installerID, mounted]);
 
     useEffect(() => {
         setRefresh(false);
-        getInstall().catch(console.error);
-    }, [getInstall, refresh]);
-
-    const handleChangeAddress = () => {
-        toast.error('Not implemented yet');
-    };
-
-    const actions = [
-        {
-            label: 'Change Address',
-            onClick: handleChangeAddress,
-            disabled: false,
-        },
-    ];
+        getInstaller().catch(console.error);
+    }, [getInstaller, refresh]);
 
     const renderContent = () => {
-        if (installState.isLoading) {
+        if (installerState.isLoading) {
             return (
                 <Box sx={{ py: 4 }}>
                     <Skeleton height={42} />
@@ -127,7 +87,7 @@ export const Install = () => {
             );
         }
 
-        if (installState.error) {
+        if (installerState.error) {
             return (
                 <Box sx={{ py: 4 }}>
                     <Box
@@ -145,7 +105,7 @@ export const Install = () => {
                             sx={{ mt: 2 }}
                             variant="body2"
                         >
-                            {installState.error}
+                            {installerState.error}
                         </Typography>
                     </Box>
                 </Box>
@@ -160,10 +120,10 @@ export const Install = () => {
                             color="primary"
                             component={RouterLink}
                             startIcon={<ArrowBackOutlinedIcon />}
-                            to="/bpm/installs"
+                            to="/bpm/organisation/installers"
                             variant="text"
                         >
-                            Installs
+                            Installers
                         </Button>
                     </Box>
                     <Box
@@ -173,14 +133,8 @@ export const Install = () => {
                         }}
                     >
                         <Typography color="textPrimary" variant="h4">
-                            {`#${installState.data.install_id} - ${
-                                installState.data.customer.company
-                                    ? installState.data.customer.company
-                                    : installState.data.customer.name
-                            }`}
+                            {`#${installerState.data.installer_id} - ${installerState.data.name}`}
                         </Typography>
-                        <Box sx={{ flexGrow: 1 }} />
-                        <ActionsMenu actions={actions} />
                     </Box>
                     <Tabs
                         allowScrollButtonsMobile
@@ -201,7 +155,7 @@ export const Install = () => {
                     </Tabs>
                     <Divider />
                 </Box>
-                <Outlet context={[installState, setRefresh]} />
+                <Outlet context={[installerState, setRefresh, files]} />
             </>
         );
     };
@@ -209,7 +163,7 @@ export const Install = () => {
     return (
         <>
             <Helmet>
-                <title>Install | Solar BPM</title>
+                <title>Installer | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

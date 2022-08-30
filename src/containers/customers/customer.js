@@ -179,7 +179,7 @@ export const Customer = () => {
     return (
         <>
             <Helmet>
-                <title>Customer | Copower BPM</title>
+                <title>Customer | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

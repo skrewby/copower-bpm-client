@@ -56,7 +56,7 @@ export const Stock = () => {
     return (
         <>
             <Helmet>
-                <title>Stock | Copower BPM</title>
+                <title>Stock | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

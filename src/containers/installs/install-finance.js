@@ -1384,7 +1384,7 @@ export const InstallFinance = () => {
     return (
         <>
             <Helmet>
-                <title>Install | Copower BPM</title>
+                <title>Install | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

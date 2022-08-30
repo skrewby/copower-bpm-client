@@ -688,7 +688,7 @@ export const InstallSchedule = () => {
     return (
         <>
             <Helmet>
-                <title>Install | Copower BPM</title>
+                <title>Install | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

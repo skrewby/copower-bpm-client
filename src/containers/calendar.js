@@ -221,7 +221,7 @@ export const Calendar = () => {
     return (
         <>
             <Helmet>
-                <title>Calendar | Copower BPM</title>
+                <title>Calendar | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

@@ -226,6 +226,20 @@ const ServiceLog = Loadable(
         }))
     )
 );
+const Installer = Loadable(
+    lazy(() =>
+        import('./containers/installers/installer').then((module) => ({
+            default: module.Installer,
+        }))
+    )
+);
+const InstallerSummary = Loadable(
+    lazy(() =>
+        import('./containers/installers/installer-summary').then((module) => ({
+            default: module.InstallerSummary,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -336,6 +350,21 @@ const routes = [
                             {
                                 path: 'installs',
                                 element: <CustomerInstalls />,
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                path: 'installer',
+                children: [
+                    {
+                        path: ':installerID',
+                        element: <Installer />,
+                        children: [
+                            {
+                                path: '',
+                                element: <InstallerSummary />,
                             },
                         ],
                     },

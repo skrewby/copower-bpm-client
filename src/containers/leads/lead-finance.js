@@ -860,7 +860,7 @@ export const LeadFinance = () => {
     return (
         <>
             <Helmet>
-                <title>Lead | Copower BPM</title>
+                <title>Lead | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{

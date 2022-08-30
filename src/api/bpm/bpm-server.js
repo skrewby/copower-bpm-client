@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import wretch from 'wretch';
 
 class Server {
@@ -49,6 +50,8 @@ class Server {
                     .unauthorized((err) => {
                         window.sessionStorage.removeItem('idToken');
                         this.notify();
+                        const { navigate } = useNavigate();
+                        navigate(`/login`);
                     })
                     .json();
             });

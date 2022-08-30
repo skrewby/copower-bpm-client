@@ -141,7 +141,7 @@ export const Organisation = () => {
     return (
         <>
             <Helmet>
-                <title>Organisation | Copower BPM</title>
+                <title>Organisation | Solar BPM</title>
             </Helmet>
             <Box
                 sx={{
