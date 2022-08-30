@@ -259,6 +259,11 @@ export const Calendar = () => {
                                 eventDrop={handleEventDrop}
                                 eventResizableFromStart
                                 eventResize={handleEventResize}
+                                eventTimeFormat={{
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                    meridiem: 'short',
+                                }}
                                 events={events}
                                 headerToolbar={false}
                                 height={800}
