@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
+import * as Yup from 'yup';
+import toast from 'react-hot-toast';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 // Material UI
 import {
@@ -14,6 +17,7 @@ import {
     Typography,
     Divider,
     Card,
+    Button,
 } from '@mui/material';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 
@@ -26,6 +30,9 @@ import { DataTable } from '../../components/tables/data-table';
 import { Filter } from '../../components/tables/filter';
 import { Status } from '../../components/tables/status';
 import { useAuth } from '../../hooks/use-auth';
+import { useFormik } from 'formik';
+import { getRoleID } from '../../utils/get-role-id';
+import { FormDialog } from '../../components/dialogs/form-dialog';
 
 const views = [
     {
@@ -141,9 +148,13 @@ export const Installs = () => {
     const [installsState, setInstallsState] = useState({ isLoading: true });
     let navigate = useNavigate();
     const { user } = useAuth();
+    const [refresh, setRefresh] = useState(false);
+    const [openCreateDialog, setOpenCreateDialog] = useState();
+    const [salesUserOptions, setSalesUserOptions] = useState([]);
 
     const getData = useCallback(async () => {
         setInstallsState(() => ({ isLoading: true }));
+        setSalesUserOptions([]);
 
         try {
             const result = await bpmAPI.getInstalls({
@@ -154,12 +165,23 @@ export const Installs = () => {
                 sortBy: controller.sortBy,
                 view: controller.view,
             });
+            const usersAPI = await bpmAPI.getUsers();
+            const salesResult = usersAPI.filter(
+                (user) => user.disabled === false
+            );
+            const usersResult = salesResult.map((user) => {
+                return {
+                    id: user.account_id,
+                    name: user.name,
+                };
+            });
 
             if (mounted.current) {
                 setInstallsState(() => ({
                     isLoading: false,
                     data: result,
                 }));
+                setSalesUserOptions(usersResult);
             }
         } catch (err) {
             console.error(err);
@@ -183,7 +205,187 @@ export const Installs = () => {
 
     useEffect(() => {
         getData().catch(console.error);
-    }, [controller, getData]);
+    }, [controller, getData, refresh]);
+
+    const addInstallsFormik = useFormik({
+        enableReinitialize: true,
+        validateOnChange: false,
+        initialValues: {
+            customer_id: '',
+            address: '',
+            address_id: '',
+            email: '',
+            first_name: '',
+            last_name: '',
+            company_name: '',
+            company_abn: '',
+            sales_id: '',
+            phone: '',
+            submit: null,
+        },
+        validationSchema: Yup.object().shape({
+            customer_id: Yup.number(),
+            first_name: Yup.string().max(255),
+            last_name: Yup.string().max(255),
+            company_name: Yup.string().max(255),
+            company_abn: Yup.string().max(255),
+            email: Yup.string().email('Must be a valid email').max(255),
+            phone: Yup.string().max(255),
+            address: Yup.string().max(255).required('Must enter an address'),
+            address_id: Yup.string().max(255),
+            sales_id: Yup.string().max(255).required('Must assign to an user'),
+        }),
+        onSubmit: async (form_values, helpers) => {
+            try {
+                let values = Object.fromEntries(
+                    Object.entries(form_values).filter(
+                        ([_, v]) => v !== null && v !== ''
+                    )
+                );
+                // The Form will return a -1 if the user chose to create a new customer
+                if (values.customer_id === -1) {
+                    const customer = await bpmAPI.createCustomer(values);
+                    values.customer_id = customer.id;
+                } else {
+                    const customer = await bpmAPI.getCustomer(
+                        values.customer_id
+                    );
+                    values.first_name = customer.first_name;
+                    values.last_name = customer.last_name;
+                }
+                await bpmAPI
+                    .createInstallDirectly(values)
+                    .then(async (res) => {
+                        setOpenCreateDialog(false);
+                        toast.success(`Install Created`);
+                        const roles = await bpmAPI.getValidRoles();
+                        bpmAPI.createNotification({
+                            icon: 'announcement',
+                            title: `New Install`,
+                            details: `${values.first_name} ${values.last_name}: ${values.address}`,
+                            role: getRoleID(roles, 'Operations'),
+                            href: `/bpm/installs/${res.id}`,
+                        });
+                        setRefresh(true);
+                    })
+                    .catch((err) => {
+                        toast.error('There was an error. Try again.');
+                    });
+                helpers.resetForm();
+                helpers.setStatus({ success: true });
+                helpers.setSubmitting(false);
+            } catch (err) {
+                console.error(err);
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: err.message });
+                helpers.setSubmitting(false);
+            }
+        },
+    });
+
+    const addInstallFormFields = [
+        {
+            id: 1,
+            variant: 'Customer Search',
+            width: 12,
+            label: 'Assign Customer',
+            touched: addInstallsFormik.touched.customer_id,
+            errors: addInstallsFormik.errors.customer_id,
+            allowCreate: true,
+            name: 'customer_id',
+        },
+        {
+            id: 2,
+            variant: 'Input',
+            width: 6,
+            touched: addInstallsFormik.touched.first_name,
+            errors: addInstallsFormik.errors.first_name,
+            value: addInstallsFormik.values.first_name,
+            label: 'First Name',
+            name: 'first_name',
+            type: 'name',
+            hidden: !(addInstallsFormik.values.customer_id === -1),
+        },
+        {
+            id: 3,
+            variant: 'Input',
+            width: 6,
+            touched: addInstallsFormik.touched.last_name,
+            errors: addInstallsFormik.errors.last_name,
+            value: addInstallsFormik.values.last_name,
+            label: 'Last Name',
+            name: 'last_name',
+            type: 'name',
+            hidden: !(addInstallsFormik.values.customer_id === -1),
+        },
+        {
+            id: 4,
+            variant: 'Input',
+            width: 6,
+            touched: addInstallsFormik.touched.company_name,
+            errors: addInstallsFormik.errors.company_name,
+            value: addInstallsFormik.values.company_name,
+            label: 'Company Name',
+            name: 'company_name',
+            type: 'name',
+            hidden: !(addInstallsFormik.values.customer_id === -1),
+        },
+        {
+            id: 5,
+            variant: 'Input',
+            width: 6,
+            touched: addInstallsFormik.touched.company_abn,
+            errors: addInstallsFormik.errors.company_abn,
+            value: addInstallsFormik.values.company_abn,
+            label: 'Company ABN',
+            name: 'company_abn',
+            hidden: !(addInstallsFormik.values.customer_id === -1),
+        },
+        {
+            id: 6,
+            variant: 'Input',
+            width: 6,
+            touched: addInstallsFormik.touched.email,
+            errors: addInstallsFormik.errors.email,
+            value: addInstallsFormik.values.email,
+            label: 'Email',
+            name: 'email',
+            type: 'email',
+            hidden: !(addInstallsFormik.values.customer_id === -1),
+        },
+        {
+            id: 7,
+            variant: 'Input',
+            width: 6,
+            touched: addInstallsFormik.touched.phone,
+            errors: addInstallsFormik.errors.phone,
+            value: addInstallsFormik.values.phone,
+            label: 'Contact Number',
+            name: 'phone',
+            hidden: !(addInstallsFormik.values.customer_id === -1),
+        },
+        {
+            id: 9,
+            variant: 'Input',
+            width: 12,
+            touched: addInstallsFormik.touched.address,
+            errors: addInstallsFormik.errors.address,
+            value: addInstallsFormik.values.address,
+            label: 'Address',
+            name: 'address',
+        },
+        {
+            id: 10,
+            variant: 'Select',
+            width: 12,
+            touched: addInstallsFormik.touched.sales_id,
+            errors: addInstallsFormik.errors.sales_id,
+            value: addInstallsFormik.values.sales_id,
+            label: 'Assign Sales',
+            name: 'sales_id',
+            options: salesUserOptions,
+        },
+    ];
 
     const handleViewChange = (newView) => {
         setController({
@@ -314,6 +516,15 @@ export const Installs = () => {
                                 Installs
                             </Typography>
                             <Box sx={{ flexGrow: 1 }} />
+                            <Button
+                                color="primary"
+                                size="large"
+                                startIcon={<AddOutlinedIcon fontSize="small" />}
+                                onClick={() => setOpenCreateDialog(true)}
+                                variant="contained"
+                            >
+                                Add
+                            </Button>
                         </Box>
                     </Box>
                     <Card
@@ -354,6 +565,13 @@ export const Installs = () => {
                     </Card>
                 </Container>
             </Box>
+            <FormDialog
+                onClose={() => setOpenCreateDialog(false)}
+                open={openCreateDialog}
+                formik={addInstallsFormik}
+                title="Create Install"
+                fields={addInstallFormFields}
+            />
         </>
     );
 };

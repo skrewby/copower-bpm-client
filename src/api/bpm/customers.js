@@ -23,7 +23,7 @@ export async function getCustomers(options) {
         return customer;
     });
 
-    const queriedLeads = customers.filter((_customer) => {
+    const queriedCustomers = customers.filter((_customer) => {
         // If query exists, it looks in lead name and address
         if (
             !!query &&
@@ -52,7 +52,7 @@ export async function getCustomers(options) {
         // In this case, the view represents the resource status
         return _customer.status === view;
     });
-    const filteredLeads = applyFilters(queriedLeads, filters);
+    const filteredLeads = applyFilters(queriedCustomers, filters);
     const sortedLeads = applySort(filteredLeads, sort, sortBy);
     const paginatedLeads = applyPagination(sortedLeads, page);
 
@@ -78,14 +78,42 @@ export async function getCustomer(id) {
 export async function searchCustomer(query) {
     const data = await bpmServer
         .api()
-        .url(`api/customers`)
-        .query({ q: query })
+        .url('api/customers')
         .get()
         .json((response) => {
             return response;
         });
 
-    return Promise.resolve(data);
+    const customers = data.map((customer) => {
+        customer.create_date = parseISO(customer.create_date);
+        customer.last_updated = parseISO(customer.last_updated);
+        return customer;
+    });
+
+    const queriedCustomers = customers.filter((_customer) => {
+        // If query exists, it looks in lead name and address
+        if (
+            !!query &&
+            !_customer.first_name
+                ?.toLowerCase()
+                .includes(query.toLowerCase()) &&
+            !_customer.last_name?.toLowerCase().includes(query.toLowerCase()) &&
+            !_customer.address?.toLowerCase().includes(query.toLowerCase()) &&
+            !_customer.phone?.toLowerCase().includes(query.toLowerCase()) &&
+            !_customer.company_name
+                ?.toLowerCase()
+                .includes(query.toLowerCase()) &&
+            !_customer.company_abn
+                ?.toLowerCase()
+                .includes(query.toLowerCase()) &&
+            !_customer.email?.toLowerCase().includes(query.toLowerCase())
+        ) {
+            return false;
+        }
+        return true;
+    });
+
+    return Promise.resolve(queriedCustomers);
 }
 
 export async function updateCustomer(id, values) {

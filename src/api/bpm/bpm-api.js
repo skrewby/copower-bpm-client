@@ -57,6 +57,7 @@ import {
     getInstallExtras,
     deleteExtraFromInstall,
     updateInstallExtra,
+    createInstallDirectly,
 } from './installs';
 import {
     getCustomers,
@@ -157,6 +158,7 @@ API.prototype.addExtraToInstall = addExtraToInstall;
 API.prototype.getInstallExtras = getInstallExtras;
 API.prototype.deleteExtraFromInstall = deleteExtraFromInstall;
 API.prototype.updateInstallExtra = updateInstallExtra;
+API.prototype.createInstallDirectly = createInstallDirectly;
 
 // Customers
 API.prototype.getCustomers = getCustomers;

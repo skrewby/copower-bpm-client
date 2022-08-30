@@ -98,6 +98,18 @@ export async function createInstall(body) {
     return Promise.resolve(response);
 }
 
+export async function createInstallDirectly(body) {
+    const response = await bpmServer
+        .api()
+        .url(`api/installs/quick-add`)
+        .post(body)
+        .json((response) => {
+            return response;
+        });
+
+    return Promise.resolve(response);
+}
+
 export async function createInstallLog(id, entry, action) {
     const body = {
         content: entry,
