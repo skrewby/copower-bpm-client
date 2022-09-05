@@ -87,6 +87,20 @@ export const LeadProgress = (props) => {
             role: getRoleID(roles, 'Operations'),
             href: `/bpm/leads/${lead.lead_id}`,
         });
+        await bpmAPI.createNotification({
+            icon: 'success',
+            title: `Sale marked for review`,
+            details: `${lead.name}: ${lead.address}`,
+            role: getRoleID(roles, 'Manager'),
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
+        await bpmAPI.createNotification({
+            icon: 'success',
+            title: `Sale marked for review`,
+            details: `${lead.name}: ${lead.address}`,
+            role: getRoleID(roles, 'Administration Officer'),
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
         bpmAPI.createLeadLog(
             lead.lead_id,
             `Marked lead as Win - Awaiting review`,
@@ -345,6 +359,13 @@ export const LeadProgress = (props) => {
             title: `${user.name}: Lead Rejected`,
             details: `${lead.address}`,
             role: getRoleID(roles, 'Administration Officer'),
+            href: `/bpm/leads/${lead.lead_id}`,
+        });
+        bpmAPI.createNotification({
+            icon: 'failure',
+            title: `${user.name}: Lead Rejected`,
+            details: `${lead.address}`,
+            role: getRoleID(roles, 'Manager'),
             href: `/bpm/leads/${lead.lead_id}`,
         });
         return res;
