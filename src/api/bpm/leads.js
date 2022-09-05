@@ -24,7 +24,7 @@ export async function getLeads(options) {
     });
 
     const queriedLeads = leads.filter((_lead) => {
-        // If query exists, it looks in lead name and address
+        // If query exists, it looks in the following parameters
         if (
             !!query &&
             !_lead.first_name?.toLowerCase().includes(query.toLowerCase()) &&
@@ -32,7 +32,8 @@ export async function getLeads(options) {
             !_lead.address?.toLowerCase().includes(query.toLowerCase()) &&
             !_lead.phone?.toLowerCase().includes(query.toLowerCase()) &&
             !_lead.company_name?.toLowerCase().includes(query.toLowerCase()) &&
-            !_lead.company_abn?.toLowerCase().includes(query.toLowerCase())
+            !_lead.company_abn?.toLowerCase().includes(query.toLowerCase()) &&
+            !_lead.reference?.toLowerCase().includes(query.toLowerCase())
         ) {
             return false;
         }

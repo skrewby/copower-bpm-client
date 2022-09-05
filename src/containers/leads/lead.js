@@ -280,7 +280,7 @@ export const Lead = () => {
                         }}
                     >
                         <Typography color="textPrimary" variant="h4">
-                            {`#${leadState.data.lead_id} - ${leadState.data.name}`}
+                            {`${leadState.data.reference} - ${leadState.data.name}`}
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
                         {leadState.data.role !== 'Sales' && (

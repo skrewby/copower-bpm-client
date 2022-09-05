@@ -42,6 +42,10 @@ const columns = [
         label: 'ID',
     },
     {
+        id: 'reference',
+        label: 'Reference',
+    },
+    {
         id: 'name',
         label: 'Name',
     },
@@ -56,10 +60,6 @@ const columns = [
     {
         id: 'sales',
         label: 'Assigned Sales',
-    },
-    {
-        id: 'source',
-        label: 'Source',
     },
     {
         id: 'last_updated',
@@ -168,11 +168,11 @@ export const Leads = () => {
         return (
             <TableRow hover key={lead.lead_id}>
                 <TableCell>{lead.lead_id}</TableCell>
+                <TableCell>{lead.reference}</TableCell>
                 <TableCell>{lead.name}</TableCell>
                 <TableCell>{lead.address}</TableCell>
                 <TableCell>{lead.phone}</TableCell>
                 <TableCell>{lead.sales}</TableCell>
-                <TableCell>{lead.source}</TableCell>
                 <TableCell>
                     {format(lead.last_updated, 'dd MMM yyyy')}
                 </TableCell>
