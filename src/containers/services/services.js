@@ -285,6 +285,11 @@ export const Services = () => {
                             role: getRoleID(roles, 'Services'),
                             href: `/bpm/services/${res.id}`,
                         });
+                        bpmAPI.createServiceLog(
+                            res.id,
+                            `${values.comment}`,
+                            false
+                        );
                         setRefresh(true);
                     })
                     .catch((err) => {

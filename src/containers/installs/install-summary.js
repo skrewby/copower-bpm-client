@@ -697,7 +697,7 @@ export const InstallSummary = () => {
         },
         {
             content: 'Download',
-            label: 'Proposal',
+            label: 'Panel Design',
             onClick: downloadPanelDesign,
             disabled: !editSystemFormik.initialValues.panel_design,
         },
