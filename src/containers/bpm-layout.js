@@ -18,6 +18,7 @@ import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import GroupsIcon from '@mui/icons-material/Groups';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 const BPMLayoutRoot = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -69,6 +70,11 @@ const getNavbarItems = (role) => {
                 title: 'Organisation',
                 href: '/bpm/organisation',
             },
+            {
+                icon: InventoryIcon,
+                title: 'Archive',
+                href: '/bpm/archive',
+            },
         ];
     } else if (
         role === 'Administration Officer' ||
@@ -105,6 +111,11 @@ const getNavbarItems = (role) => {
                 icon: WarehouseOutlinedIcon,
                 title: 'Stock',
                 href: '/bpm/stock',
+            },
+            {
+                icon: InventoryIcon,
+                title: 'Archive',
+                href: '/bpm/archive',
             },
         ];
     } else if (role === 'Sales' || role === 'Sales Manager') {
@@ -156,6 +167,11 @@ const getNavbarItems = (role) => {
                 icon: WarehouseOutlinedIcon,
                 title: 'Stock',
                 href: '/bpm/stock',
+            },
+            {
+                icon: InventoryIcon,
+                title: 'Archive',
+                href: '/bpm/archive',
             },
         ];
     }

@@ -114,6 +114,7 @@ import {
     updateService,
     updateServiceItem,
 } from './services';
+import { getArchive } from './archive';
 
 class API {}
 
@@ -239,5 +240,8 @@ API.prototype.getServiceFiles = getServiceFiles;
 API.prototype.deleteFileFromService = deleteFileFromService;
 API.prototype.getServiceLogs = getServiceLogs;
 API.prototype.createServiceLog = createServiceLog;
+
+// Archive
+API.prototype.getArchive = getArchive;
 
 export const bpmAPI = new API();

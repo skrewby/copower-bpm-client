@@ -247,6 +247,13 @@ const InstallerSummary = Loadable(
         }))
     )
 );
+const Archive = Loadable(
+    lazy(() =>
+        import('./containers/archive/archive').then((module) => ({
+            default: module.Archive,
+        }))
+    )
+);
 
 const routes = [
     {
@@ -427,6 +434,10 @@ const routes = [
                         element: <OrganisationInstallers />,
                     },
                 ],
+            },
+            {
+                path: 'archive',
+                element: <Archive />,
             },
             {
                 path: 'account',
