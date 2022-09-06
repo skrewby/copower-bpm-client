@@ -40,6 +40,10 @@ const filterProperties = [
 
 const columns = [
     {
+        id: 'internal_id',
+        name: 'ID',
+    },
+    {
         id: 'name',
         label: 'Name',
     },
@@ -199,6 +203,7 @@ export const Archive = () => {
         const location = `http://45.77.237.40:8080/bpm/trace/taskLink?tid=${data.task_id}`;
         return (
             <TableRow hover key={data.id}>
+                <TableCell>{data.internal_id}</TableCell>
                 <TableCell>{data.name}</TableCell>
                 <TableCell>{data.address}</TableCell>
                 <TableCell>{data.phone}</TableCell>
