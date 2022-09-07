@@ -10,6 +10,7 @@ import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 // Local imports
 import { useMounted } from '../../hooks/use-mounted';
 import { bpmAPI } from '../../api/bpm/bpm-api';
+import { useAuth } from '../../hooks/use-auth';
 
 // Components
 import { LogAdd } from '../../components/logs/log-add';
@@ -21,6 +22,7 @@ export const LeadLog = () => {
     const [leadState, setRefresh] = useOutletContext();
     const mounted = useMounted();
     let { leadID } = useParams();
+    const { user } = useAuth();
 
     const [leadLogs, setLeadLogs] = useState({ isLoading: true, data: [] });
 
@@ -56,28 +58,34 @@ export const LeadLog = () => {
     const handleCreateLog = async (content) => {
         setRefresh(true);
         bpmAPI.createLeadLog(leadID, content, false);
-        bpmAPI.createNotification({
-            icon: 'comment',
-            title: `New entry added to log`,
-            details: `${leadState.data.name}: ${leadState.data.address}`,
-            user: `${leadState.data.sales_id}`,
-            href: `/bpm/leads/${leadID}/log`,
-        });
+        if (user.account_id !== leadState.data.sales_id) {
+            bpmAPI.createNotification({
+                icon: 'comment',
+                title: `New entry added to log`,
+                details: `${leadState.data.name}: ${leadState.data.address}`,
+                user: `${leadState.data.sales_id}`,
+                href: `/bpm/leads/${leadID}/log`,
+            });
+        }
         const roles = await bpmAPI.getValidRoles();
-        bpmAPI.createNotification({
-            icon: 'comment',
-            title: `New entry added to log`,
-            details: `${leadState.data.name}: ${leadState.data.address}`,
-            role: getRoleID(roles, 'Administration Officer'),
-            href: `/bpm/leads/${leadID}/log`,
-        });
-        bpmAPI.createNotification({
-            icon: 'comment',
-            title: `New entry added to log`,
-            details: `${leadState.data.name}: ${leadState.data.address}`,
-            role: getRoleID(roles, 'Operations'),
-            href: `/bpm/leads/${leadID}/log`,
-        });
+        if (user.role !== 'Administration Officer') {
+            bpmAPI.createNotification({
+                icon: 'comment',
+                title: `New entry added to log`,
+                details: `${leadState.data.name}: ${leadState.data.address}`,
+                role: getRoleID(roles, 'Administration Officer'),
+                href: `/bpm/leads/${leadID}/log`,
+            });
+        }
+        if (user.roles !== 'Manager') {
+            bpmAPI.createNotification({
+                icon: 'comment',
+                title: `New entry added to log`,
+                details: `${leadState.data.name}: ${leadState.data.address}`,
+                role: getRoleID(roles, 'Manager'),
+                href: `/bpm/leads/${leadID}/log`,
+            });
+        }
         toast.success('Log added');
     };
 

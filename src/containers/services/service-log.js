@@ -15,12 +15,14 @@ import { bpmAPI } from '../../api/bpm/bpm-api';
 import { LogAdd } from '../../components/logs/log-add';
 import { LogEntry } from '../../components/logs/log-entry';
 import { getRoleID } from '../../utils/get-role-id';
+import { useAuth } from '../../hooks/use-auth';
 
 export const ServiceLog = () => {
     // eslint-disable-next-line no-unused-vars
     const [service, setRefresh, statusOptions, items, files] =
         useOutletContext();
     const mounted = useMounted();
+    const { user } = useAuth();
 
     const [logs, setLogs] = useState({ isLoading: true, data: [] });
 
@@ -57,13 +59,15 @@ export const ServiceLog = () => {
         setRefresh(true);
         bpmAPI.createServiceLog(service.data.id, content, false);
         const roles = await bpmAPI.getValidRoles();
-        bpmAPI.createNotification({
-            icon: 'comment',
-            title: `New entry added to log`,
-            details: `${service.data.customer_name}: ${service.data.address}`,
-            role: getRoleID(roles, 'Services'),
-            href: `/bpm/services/${service.data.id}/log`,
-        });
+        if (user.role !== 'Services') {
+            bpmAPI.createNotification({
+                icon: 'comment',
+                title: `New entry added to log`,
+                details: `${service.data.customer_name}: ${service.data.address}`,
+                role: getRoleID(roles, 'Services'),
+                href: `/bpm/services/${service.data.id}/log`,
+            });
+        }
         toast.success('Log added');
     };
 

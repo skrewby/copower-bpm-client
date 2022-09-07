@@ -15,12 +15,14 @@ import { bpmAPI } from '../../api/bpm/bpm-api';
 import { LogAdd } from '../../components/logs/log-add';
 import { LogEntry } from '../../components/logs/log-entry';
 import { getRoleID } from '../../utils/get-role-id';
+import { useAuth } from '../../hooks/use-auth';
 
 export const InstallLog = () => {
     // eslint-disable-next-line no-unused-vars
     const [installState, setRefresh] = useOutletContext();
     const mounted = useMounted();
     let { installID } = useParams();
+    const { user } = useAuth();
 
     const [installLogs, setInstallLogs] = useState({
         isLoading: true,
@@ -60,20 +62,33 @@ export const InstallLog = () => {
         setRefresh(true);
         bpmAPI.createInstallLog(installID, content, false);
         const roles = await bpmAPI.getValidRoles();
-        bpmAPI.createNotification({
-            icon: 'comment',
-            title: `New entry added to log`,
-            details: `${installState.data.customer.name}: ${installState.data.property.address}`,
-            role: getRoleID(roles, 'Administration Officer'),
-            href: `/bpm/installs/${installID}/log`,
-        });
-        bpmAPI.createNotification({
-            icon: 'comment',
-            title: `New entry added to log`,
-            details: `${installState.data.customer.name}: ${installState.data.property.address}`,
-            role: getRoleID(roles, 'Operations'),
-            href: `/bpm/installs/${installID}/log`,
-        });
+        if (user.role !== 'Administration Officer') {
+            bpmAPI.createNotification({
+                icon: 'comment',
+                title: `New entry added to log`,
+                details: `${installState.data.customer.name}: ${installState.data.property.address}`,
+                role: getRoleID(roles, 'Administration Officer'),
+                href: `/bpm/installs/${installID}/log`,
+            });
+        }
+        if (user.role !== 'Operations') {
+            bpmAPI.createNotification({
+                icon: 'comment',
+                title: `New entry added to log`,
+                details: `${installState.data.customer.name}: ${installState.data.property.address}`,
+                role: getRoleID(roles, 'Operations'),
+                href: `/bpm/installs/${installID}/log`,
+            });
+        }
+        if (user.role !== 'Manager') {
+            bpmAPI.createNotification({
+                icon: 'comment',
+                title: `New entry added to log`,
+                details: `${installState.data.customer.name}: ${installState.data.property.address}`,
+                role: getRoleID(roles, 'Manager'),
+                href: `/bpm/installs/${installID}/log`,
+            });
+        }
         toast.success('Log added');
     };
 
