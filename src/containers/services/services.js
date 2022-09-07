@@ -43,12 +43,20 @@ const views = [
         value: 'New',
     },
     {
+        label: 'Quotation',
+        value: 'Quotation',
+    },
+    {
         label: 'In Progress',
         value: 'In Progress',
     },
     {
         label: 'Complete',
         value: 'Complete',
+    },
+    {
+        label: 'Closed',
+        value: 'Closed',
     },
 ];
 

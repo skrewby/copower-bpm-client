@@ -41,7 +41,7 @@ const filterProperties = [
 const columns = [
     {
         id: 'internal_id',
-        name: 'Ref',
+        name: 'ID',
     },
     {
         id: 'name',

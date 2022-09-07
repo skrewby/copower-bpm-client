@@ -22,6 +22,7 @@ export async function getArchive(options) {
             !_data.last_name?.toLowerCase().includes(query.toLowerCase()) &&
             !_data.phone?.toLowerCase().includes(query.toLowerCase()) &&
             !_data.email?.toLowerCase().includes(query.toLowerCase()) &&
+            !_data.internal_id?.toLowerCase().includes(query.toLowerCase()) &&
             !_data.address?.toLowerCase().includes(query.toLowerCase())
         ) {
             return false;
