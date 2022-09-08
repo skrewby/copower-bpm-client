@@ -32,6 +32,7 @@ import { DataTable } from '../../components/tables/data-table';
 import { Filter } from '../../components/tables/filter';
 import { Status } from '../../components/tables/status';
 import { FormDialog } from '../../components/dialogs/form-dialog';
+import { useAuth } from '../../hooks/use-auth';
 
 const views = [
     {
@@ -131,6 +132,7 @@ export const Services = () => {
     const [openCreateDialog, setOpenCreateDialog] = useState();
     const [refresh, setRefresh] = useState(false);
     let navigate = useNavigate();
+    const { user } = useAuth();
 
     const getData = useCallback(async () => {
         setServices(() => ({ isLoading: true }));
@@ -286,13 +288,15 @@ export const Services = () => {
                         setOpenCreateDialog(false);
                         toast.success(`Service Created`);
                         const roles = await bpmAPI.getValidRoles();
-                        bpmAPI.createNotification({
-                            icon: 'announcement',
-                            title: `New Service`,
-                            details: `${values.first_name} ${values.last_name}: ${values.address}`,
-                            role: getRoleID(roles, 'Services'),
-                            href: `/bpm/services/${res.id}`,
-                        });
+                        if (user.role !== 'Services') {
+                            bpmAPI.createNotification({
+                                icon: 'announcement',
+                                title: `New Service`,
+                                details: `${values.first_name} ${values.last_name}: ${values.address}`,
+                                role: getRoleID(roles, 'Services'),
+                                href: `/bpm/services/${res.id}`,
+                            });
+                        }
                         bpmAPI.createServiceLog(
                             res.id,
                             `${values.comment}`,
