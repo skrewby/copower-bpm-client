@@ -106,6 +106,10 @@ const columns = [
         label: 'ID',
     },
     {
+        id: 'reference',
+        label: 'Ref',
+    },
+    {
         id: 'name',
         label: 'Name',
     },
@@ -448,6 +452,7 @@ export const Installs = () => {
         return (
             <TableRow hover key={install.install_id}>
                 <TableCell>{install.install_id}</TableCell>
+                <TableCell>{install.reference}</TableCell>
                 <TableCell>{install.customer.name}</TableCell>
                 <TableCell>{install.customer.company}</TableCell>
                 <TableCell>{install.property.address}</TableCell>
