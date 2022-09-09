@@ -333,9 +333,18 @@ export const Leads = () => {
         });
     };
 
-    const exportLeads = () => {
-        if (leadsState.data) {
-            exportToCsv('leads.csv', leadsState.data.leads);
+    const exportLeads = async () => {
+        const leads = await bpmAPI.getLeads({
+            filters: controller.filters,
+            page: controller.page,
+            query: controller.query,
+            sort: controller.sort,
+            sortBy: controller.sortBy,
+            view: controller.view,
+            download: true,
+        });
+        if (leads) {
+            exportToCsv('leads.csv', leads.leads);
             toast.success('Leads exported');
         } else {
             toast.error('Something went wrong. Try again later');

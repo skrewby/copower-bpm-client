@@ -7,7 +7,15 @@ import { applySort } from '../../utils/apply-sort';
 import { bpmServer } from './bpm-server';
 
 export async function getLeads(options) {
-    const { filters, sort, sortBy, page, query, view } = options;
+    const {
+        filters,
+        sort,
+        sortBy,
+        page,
+        query,
+        view,
+        download = false,
+    } = options;
 
     const data = await bpmServer
         .api()
@@ -48,6 +56,14 @@ export async function getLeads(options) {
     });
     const filteredLeads = applyFilters(queriedLeads, filters);
     const sortedLeads = applySort(filteredLeads, sort, sortBy);
+
+    if (download) {
+        return Promise.resolve({
+            leads: sortedLeads,
+            leadsCount: filteredLeads.length,
+        });
+    }
+
     const paginatedLeads = applyPagination(sortedLeads, page);
 
     return Promise.resolve({

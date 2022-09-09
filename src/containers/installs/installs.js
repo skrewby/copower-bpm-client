@@ -107,7 +107,7 @@ const columns = [
     },
     {
         id: 'reference',
-        label: 'Ref',
+        label: 'Reference',
     },
     {
         id: 'name',
