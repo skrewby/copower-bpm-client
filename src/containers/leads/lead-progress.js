@@ -66,15 +66,22 @@ export const LeadProgress = (props) => {
         useState(false);
 
     const handleStatusChange = (event) => {
-        const new_status_id = event.target.value;
-        bpmAPI.createLeadLog(
-            lead.lead_id,
-            `Changed status to ${statusOptions[event.target.value - 1].name}`,
-            true
-        );
-        bpmAPI
-            .updateLead(lead.lead_id, { status_id: new_status_id })
-            .then(refresh(true));
+        const new_status = statusOptions[event.target.value - 1];
+
+        if (new_status.name === 'Rejected') {
+            handleRejectLead();
+        } else if (new_status.name === 'Win') {
+            handleSendToOperations();
+        } else {
+            bpmAPI.createLeadLog(
+                lead.lead_id,
+                `Changed status to ${new_status.name}`,
+                true
+            );
+            bpmAPI
+                .updateLead(lead.lead_id, { status_id: new_status.id })
+                .then(refresh(true));
+        }
     };
 
     const handleSendToOperations = async () => {
@@ -198,6 +205,13 @@ export const LeadProgress = (props) => {
                         icon: 'success',
                         title: `${lead.sales}: New Sale`,
                         details: `${lead.name} - ${lead.address}`,
+                        role: getRoleID(roles, 'Operations'),
+                        href: `/bpm/installs/${res.id}`,
+                    });
+                    bpmAPI.createNotification({
+                        icon: 'success',
+                        title: `${lead.sales}: New Sale`,
+                        details: `${lead.name} - ${lead.address}`,
                         role: getRoleID(roles, 'Manager'),
                         href: `/bpm/installs/${res.id}`,
                     });
@@ -252,7 +266,7 @@ export const LeadProgress = (props) => {
                     <ActionListItem
                         icon={CancelIcon}
                         label="Reject"
-                        onClick={handleOpenRejectLead}
+                        onClick={handleRejectLead}
                     />
                 </ActionList>
             );
@@ -267,7 +281,7 @@ export const LeadProgress = (props) => {
                     <ActionListItem
                         icon={CancelIcon}
                         label="Reject"
-                        onClick={handleOpenRejectLead}
+                        onClick={handleRejectLead}
                     />
                     <ActionListItem
                         icon={ArchiveIcon}
@@ -295,6 +309,11 @@ export const LeadProgress = (props) => {
                         label="Deny"
                         onClick={handleRejectDenyLead}
                     />
+                    <ActionListItem
+                        icon={ArchiveIcon}
+                        label="Close"
+                        onClick={handleOpenCloseLead}
+                    />
                 </ActionList>
             );
         }
@@ -316,6 +335,11 @@ export const LeadProgress = (props) => {
                         label="Deny"
                         onClick={handleReviewDeny}
                     />
+                    <ActionListItem
+                        icon={ArchiveIcon}
+                        label="Close"
+                        onClick={handleOpenCloseLead}
+                    />
                 </ActionList>
             );
         }
@@ -326,16 +350,16 @@ export const LeadProgress = (props) => {
     };
 
     const ChooseActionList = () => {
-        switch (lead.status_id) {
-            case 5:
+        switch (lead.status) {
+            case 'Win':
                 return <ActionListNothing />;
-            case 6:
+            case 'Review':
                 return <ActionListReview />;
-            case 7:
+            case 'Rejected':
                 return <ActionListNothing />;
-            case 9:
+            case 'Rejected - Pending':
                 return <ActionListRejectPending />;
-            case 10:
+            case 'Closed':
                 return <ActionListNothing />;
             default:
                 return <ActionListDefault />;
@@ -413,16 +437,125 @@ export const LeadProgress = (props) => {
         return res;
     };
 
+    const getStatusList = () => {
+        if (lead.status === 'Win') {
+            return statusOptions
+                .filter(
+                    (status) =>
+                        status.name !== 'Rejected' &&
+                        status.name !== 'Rejected - Pending' &&
+                        status.name !== 'Closed' &&
+                        status.name !== 'Lose' &&
+                        status.name !== 'Review'
+                )
+                .map((status) => status.name);
+        } else if (lead.status === 'Rejected') {
+            return statusOptions
+                .filter(
+                    (status) =>
+                        status.name !== 'Win' &&
+                        status.name !== 'Lose' &&
+                        status.name !== 'Rejected - Pending' &&
+                        status.name !== 'Closed' &&
+                        status.name !== 'Review'
+                )
+                .map((status) => status.name);
+        } else if (lead.status === 'Rejected - Pending') {
+            return statusOptions
+                .filter(
+                    (status) =>
+                        status.name !== 'Win' &&
+                        status.name !== 'Lose' &&
+                        status.name !== 'Closed' &&
+                        status.name !== 'Rejected' &&
+                        status.name !== 'Review'
+                )
+                .map((status) => status.name);
+        } else if (lead.status === 'Closed') {
+            return statusOptions
+                .filter(
+                    (status) =>
+                        status.name !== 'Win' &&
+                        status.name !== 'Lose' &&
+                        status.name !== 'Rejected' &&
+                        status.name !== 'Rejected - Pending' &&
+                        status.name !== 'Review'
+                )
+                .map((status) => status.name);
+        } else {
+            return statusOptions
+                .filter(
+                    (status) =>
+                        status.name !== 'Rejected' &&
+                        status.name !== 'Rejected - Pending' &&
+                        status.name !== 'Closed' &&
+                        status.name !== 'Lose'
+                )
+                .map((status) => status.name);
+        }
+    };
+
+    const isTimelineInclusive = () => {
+        return (
+            lead.status === 'Win' ||
+            lead.status === 'Closed' ||
+            lead.status === 'Rejected'
+        );
+    };
+
+    const getStatusDropdown = () => {
+        if (lead.status === 'Rejected') {
+            return statusOptions.filter(
+                (row) =>
+                    row.name !== 'Closed' &&
+                    row.name !== 'Rejected - Pending' &&
+                    row.name !== 'Lose' &&
+                    row.name !== 'Review'
+            );
+        } else if (lead.status === 'Rejected - Pending') {
+            return statusOptions.filter(
+                (row) =>
+                    row.name !== 'Closed' &&
+                    row.name !== 'Rejected' &&
+                    row.name !== 'Lose' &&
+                    row.name !== 'Review'
+            );
+        } else if (lead.status === 'Closed') {
+            return statusOptions.filter(
+                (row) =>
+                    row.name !== 'Rejected - Pending' &&
+                    row.name !== 'Lose' &&
+                    row.name !== 'Review'
+            );
+        } else if (lead.status === 'Review') {
+            return statusOptions.filter(
+                (row) =>
+                    row.name !== 'Closed' &&
+                    row.name !== 'Rejected - Pending' &&
+                    row.name !== 'Win' &&
+                    row.name !== 'Lose'
+            );
+        } else {
+            return statusOptions.filter(
+                (row) =>
+                    row.name !== 'Closed' &&
+                    row.name !== 'Rejected - Pending' &&
+                    row.name !== 'Lose' &&
+                    row.name !== 'Review'
+            );
+        }
+    };
+
     return (
         <>
             <Card variant="outlined" {...other}>
                 <CardHeader title="Lead Progress" />
                 <Divider />
                 <CardContent>
-                    {lead.status_id < 5 && (
+                    {lead.status !== 'Win' && (
                         <StatusSelect
                             onChange={handleStatusChange}
-                            options={statusOptions.filter((row) => row.id < 5)}
+                            options={getStatusDropdown()}
                             value={
                                 statusOptions.filter(
                                     (status) => status.id === lead.status_id
@@ -443,29 +576,11 @@ export const LeadProgress = (props) => {
                         )}`}
                     </Typography>
                     <Divider sx={{ my: 2 }} />
-                    {lead.status_id < 7 ? (
-                        lead.status_id === 5 ? (
-                            <StatusTimeline
-                                data={{ status: { label: lead.status } }}
-                                statusList={statusOptions
-                                    .filter((status) => status.id < 6)
-                                    .map((status) => status.name)}
-                                inclusive
-                            />
-                        ) : (
-                            <StatusTimeline
-                                data={{ status: { label: lead.status } }}
-                                statusList={statusOptions.map(
-                                    (status) => status.name
-                                )}
-                            />
-                        )
-                    ) : (
-                        <StatusDisplay
-                            status={lead.status}
-                            status_colour={lead.status_colour}
-                        />
-                    )}
+                    <StatusTimeline
+                        data={{ status: { label: lead.status } }}
+                        statusList={getStatusList()}
+                        inclusive={isTimelineInclusive()}
+                    />
                 </CardContent>
                 <Divider />
                 {ChooseActionList()}

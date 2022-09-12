@@ -283,9 +283,6 @@ export const Lead = () => {
                             {`${leadState.data.reference} - ${leadState.data.name}`}
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
-                        {leadState.data.role !== 'Sales' && (
-                            <ActionsMenu actions={actions} />
-                        )}
                     </Box>
                     <Tabs
                         allowScrollButtonsMobile
