@@ -41,6 +41,7 @@ export async function getLeads(options) {
             !_lead.phone?.toLowerCase().includes(query.toLowerCase()) &&
             !_lead.company_name?.toLowerCase().includes(query.toLowerCase()) &&
             !_lead.company_abn?.toLowerCase().includes(query.toLowerCase()) &&
+            !_lead.sales?.toLowerCase().includes(query.toLowerCase()) &&
             !_lead.reference?.toLowerCase().includes(query.toLowerCase())
         ) {
             return false;

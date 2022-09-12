@@ -35,6 +35,9 @@ export async function getInstalls(options) {
             !_install.customer.phone
                 ?.toLowerCase()
                 .includes(query.toLowerCase()) &&
+            !_install.sold_by.name
+                ?.toLowerCase()
+                .includes(query.toLowerCase()) &&
             !_install.property.address
                 ?.toLowerCase()
                 .includes(query.toLowerCase())
