@@ -97,7 +97,7 @@ export const InstallFinance = () => {
                 const d =
                     ((inPrice -
                         Number(installState.data.finance.selling_price)) /
-                        Number(installState.data.finance.selling_price)) *
+                        inPrice) *
                     100;
                 const dis = d.toFixed(2);
                 setDiscount(dis);
