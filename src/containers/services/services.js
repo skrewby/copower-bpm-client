@@ -101,10 +101,6 @@ const columns = [
         label: 'Phone',
     },
     {
-        id: 'email',
-        label: 'Email',
-    },
-    {
         id: 'create_date',
         label: 'Created',
     },
@@ -430,7 +426,6 @@ export const Services = () => {
                 <TableCell>{service.customer_company}</TableCell>
                 <TableCell>{service.address}</TableCell>
                 <TableCell>{service.customer_phone}</TableCell>
-                <TableCell>{service.customer_email}</TableCell>
                 <TableCell>
                     {format(service.create_date, 'dd MMM yyyy')}
                 </TableCell>
