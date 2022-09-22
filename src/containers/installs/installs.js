@@ -80,12 +80,12 @@ const views = [
 const filterProperties = [
     {
         label: 'Created Date',
-        name: 'createdDate',
+        name: 'create_date',
         type: 'date',
     },
     {
         label: 'Last Updated',
-        name: 'updatedDate',
+        name: 'last_updated',
         type: 'date',
     },
     {
@@ -146,7 +146,7 @@ export const Installs = () => {
         page: 0,
         query: '',
         sort: 'desc',
-        sortBy: 'createdDate',
+        sortBy: 'create_date',
         view: 'all',
     });
     const [installsState, setInstallsState] = useState({ isLoading: true });
