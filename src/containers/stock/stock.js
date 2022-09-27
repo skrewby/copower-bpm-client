@@ -39,6 +39,15 @@ export const Stock = () => {
                             Stock
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
+                        <Button
+                            color="primary"
+                            size="large"
+                            startIcon={<AddOutlinedIcon fontSize="small" />}
+                            onClick={() => setOpenCreateDialog(true)}
+                            variant="contained"
+                        >
+                            Add
+                        </Button>
                     </Box>
                     <Tabs
                         allowScrollButtonsMobile
@@ -86,15 +95,6 @@ export const Stock = () => {
                     {renderContent()}
                 </Container>
             </Box>
-            <Button
-                color="primary"
-                size="large"
-                startIcon={<AddOutlinedIcon fontSize="small" />}
-                onClick={() => setOpenCreateDialog(true)}
-                variant="contained"
-            >
-                Add
-            </Button>
         </>
     );
 };
