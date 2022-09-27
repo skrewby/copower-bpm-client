@@ -86,7 +86,7 @@ export async function getStockTypes() {
 export async function createStockItem(body) {
     const response = await bpmServer
         .api()
-        .url(`api/events`)
+        .url(`api/stock`)
         .post(body)
         .json((response) => {
             return response;
