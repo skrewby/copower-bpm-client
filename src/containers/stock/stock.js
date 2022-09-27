@@ -2,10 +2,21 @@ import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 // Material UI
-import { Box, Container, Typography, Tab, Tabs, Divider } from '@mui/material';
+import {
+    Box,
+    Container,
+    Typography,
+    Tab,
+    Tabs,
+    Divider,
+    Button,
+} from '@mui/material';
+import { useState } from 'react';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 export const Stock = () => {
     const location = useLocation();
+    const [openCreateDialog, setOpenCreateDialog] = useState();
 
     const tabs = [
         {
@@ -48,7 +59,7 @@ export const Stock = () => {
                     </Tabs>
                     <Divider />
                 </Box>
-                <Outlet />
+                <Outlet context={[openCreateDialog, setOpenCreateDialog]} />
             </>
         );
     };
@@ -75,6 +86,15 @@ export const Stock = () => {
                     {renderContent()}
                 </Container>
             </Box>
+            <Button
+                color="primary"
+                size="large"
+                startIcon={<AddOutlinedIcon fontSize="small" />}
+                onClick={() => setOpenCreateDialog(true)}
+                variant="contained"
+            >
+                Add
+            </Button>
         </>
     );
 };

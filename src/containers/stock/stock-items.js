@@ -33,6 +33,7 @@ import { DataTable } from '../../components/tables/data-table';
 import { FormDialog } from '../../components/dialogs/form-dialog';
 import { Query } from '../../components/tables/query';
 import { ConfirmationDialog } from '../../components/dialogs/confirmation-dialog';
+import { useOutletContext } from 'react-router-dom';
 
 const columns = [
     {
@@ -113,8 +114,7 @@ const views = [
 ];
 
 export const StockItems = () => {
-    const [openCreateDialog, setOpenCreateDialog] = useState();
-
+    const [openCreateDialog, setOpenCreateDialog] = useOutletContext();
     const [openEditDialog, setOpenEditDialog] = useState();
     // The information of the item that will be modified
     const [itemEdit, setItemEdit] = useState({});
