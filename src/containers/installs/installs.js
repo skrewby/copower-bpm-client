@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 // Material UI
 import {
@@ -24,6 +25,7 @@ import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 // Local import
 import { bpmAPI } from '../../api/bpm/bpm-api';
 import { useMounted } from '../../hooks/use-mounted';
+import { exportToCsv } from '../../utils/export-csv';
 
 // Components
 import { DataTable } from '../../components/tables/data-table';
@@ -391,6 +393,24 @@ export const Installs = () => {
         },
     ];
 
+    const exportInstalls = async () => {
+        const installs = await bpmAPI.getInstalls({
+            filters: controller.filters,
+            page: controller.page,
+            query: controller.query,
+            sort: controller.sort,
+            sortBy: controller.sortBy,
+            view: controller.view,
+            download: true,
+        });
+        if (installs) {
+            exportToCsv('installs.csv', installs.installs);
+            toast.success('Installs exported');
+        } else {
+            toast.error('Something went wrong. Try again later');
+        }
+    };
+
     const handleViewChange = (newView) => {
         setController({
             ...controller,
@@ -521,6 +541,18 @@ export const Installs = () => {
                                 Installs
                             </Typography>
                             <Box sx={{ flexGrow: 1 }} />
+                            <Button
+                                color="primary"
+                                size="large"
+                                startIcon={
+                                    <FileDownloadIcon fontSize="small" />
+                                }
+                                onClick={() => exportInstalls()}
+                                variant="contained"
+                            >
+                                Export
+                            </Button>
+                            <Box sx={{ px: 1 }} />
                             <Button
                                 color="primary"
                                 size="large"

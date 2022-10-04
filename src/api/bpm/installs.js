@@ -7,7 +7,15 @@ import { applySort } from '../../utils/apply-sort';
 import { bpmServer } from './bpm-server';
 
 export async function getInstalls(options) {
-    const { filters, sort, sortBy, page, query, view } = options;
+    const {
+        filters,
+        sort,
+        sortBy,
+        page,
+        query,
+        view,
+        download = false,
+    } = options;
 
     const data = await bpmServer
         .api()
@@ -55,6 +63,14 @@ export async function getInstalls(options) {
     });
     const filteredInstalls = applyFilters(queriedInstalls, filters);
     const sortedInstalls = applySort(filteredInstalls, sort, sortBy);
+
+    if (download) {
+        return Promise.resolve({
+            installs: sortedInstalls,
+            installsCount: filteredInstalls.length,
+        });
+    }
+
     const paginatedInstalls = applyPagination(sortedInstalls, page);
 
     return Promise.resolve({
