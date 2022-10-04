@@ -404,7 +404,25 @@ export const Installs = () => {
             download: true,
         });
         if (installs) {
-            exportToCsv('installs.csv', installs.installs);
+            const data = installs.installs;
+            const exportedData = {
+                id: data.install_id,
+                lead: data.lead_id,
+                reference: data.reference,
+                name: data.customer.name,
+                company: data.customer.company,
+                abn: data.customer.abn,
+                email: data.customer.email,
+                phone: data.customer.phone,
+                address: data.property.address,
+                system_size: data.system.size,
+                status: data.status.label,
+                scheduled: data.schedule.data,
+                sales: data.sold_by.name,
+                create_date: data.create_date,
+            };
+
+            exportToCsv('installs.csv', exportedData);
             toast.success('Installs exported');
         } else {
             toast.error('Something went wrong. Try again later');
