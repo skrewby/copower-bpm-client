@@ -590,7 +590,7 @@ export const InstallSummary = () => {
     };
 
     const handleDeleteItem = () => {
-        bpmAPI.deleteLeadSystemItem(selectedItem.id);
+        bpmAPI.deleteInstallSystemItem(selectedItem.id);
         setRefresh(true);
         setSelectedItem(null);
         handleCloseDeleteItemDialog();
